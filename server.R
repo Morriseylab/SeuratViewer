@@ -1252,10 +1252,11 @@ server <- function(input, output,session) {
      }
      if(input$checksource==T){result=result[result$Pair.Source %in% input$source,]}
      if(input$checkevi==T){result=result[result$Pair.Evidence %in% input$evidence,]}
+     result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
      return(result)
    })
    
-   #print table with lig-ec pairs
+   #print table with lig-rec pairs
    output$pairs_res = DT::renderDataTable({
      input$pairby
      input$clust1
@@ -1299,21 +1300,45 @@ server <- function(input, output,session) {
    ######################################################################################################
    ######################################################################################################
    #Generate drop-down to generate variables based on which you want to find pairs 
-   output$pairby2 <- renderUI({
+   output$pairby.net <- renderUI({
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
        scrna=fileload()
        metadata=as.data.frame(scrna@meta.data)
        metadata=metadata %>% select(starts_with("var_"))
        options=colnames(metadata)
-       selectInput("pairby","Select cell group ",options,selected=options[1])
+       selectInput("pairby.net","Select cell group ",options,selected=options[1])
      })
+   })
+   
+   #Generate slider to filter ligand receptor pairs by frequency of occurence
+   output$filter.net <- renderUI({
+     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+       result=ligrec(fileload(),pair=input$pairby.net,prj=input$projects)
+       edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
+       colnames(edges)=c("from","to")
+       e2=as.data.frame(table(edges[,1:2]))
+       min=min(e2$Freq)
+       max=max(e2$Freq)
+       sliderInput("filter.net", "Frequency of occurenct of ligand-receptor pairs",
+                   min = min, max = max, value = c(min,max),step=2)
+     })
+   })
+   
+   #For selected project and grouping variable, generate all possible ligand receptor pairs and filter based on user input
+   datasetInput.net = reactive({
+     results=ligrec(fileload(),pair=input$pairby.net,prj=input$projects)
+     edges=results %>% dplyr::select(Receptor_cluster,Lig_cluster)
+     e2=as.data.frame(table(edges[,1:2]))
+     e2=e2[e2$Freq>= input$filter.net[1] & e2$Freq<= input$filter.net[2],]
+     results=results[results$Receptor_cluster==e2$Receptor_cluster & results$Lig_cluster==e2$Lig_cluster,]
+     result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
    })
    
    #Render the same lig-rec pairs data table again to create network
    output$pairs_res2 = DT::renderDataTable({
-     input$pairby2
+     input$pairby.net
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       DT::datatable(datasetInput2(),
+       DT::datatable(datasetInput.net(),
                      extensions = c('Buttons','Scroller'),
                      options = list(dom = 'Bfrtip',
                                     searchHighlight = TRUE,
@@ -1325,16 +1350,11 @@ server <- function(input, output,session) {
      })
    })
    
-   #For selected project and grouping variable, generate all possible ligand receptor pairs
-   datasetInput2 = reactive({
-     results=ligrec(fileload(),pair=input$pairby2,prj=input$projects)
-   })
-   
    #create lig-receptor network plot
    #Render the ligand-receptor network plot
    output$lrnetwork = renderVisNetwork({
      withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       result=datasetInput2()
+       result=datasetInput.net()
        nodes=as.data.frame(unique(c(result$Receptor_cluster,result$Lig_cluster)))
        colnames(nodes)="id"
        edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
@@ -1343,7 +1363,6 @@ server <- function(input, output,session) {
        nodes$color=col
        nodes$groups=nodes$id
        e2=as.data.frame(table(edges[,1:2]))
-       e2=e2[e2$Freq!=0,]
        e2$title=paste(e2$from,"_",e2$to,"_freq",e2$Freq,sep="")
        visNetwork(nodes, e2) %>% visEdges(arrows ="to") %>% 
          visLegend(useGroups = FALSE, addNodes = data.frame(label = "Nodes", shape = "circle"), 

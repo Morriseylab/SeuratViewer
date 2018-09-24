@@ -327,8 +327,10 @@ ui <- dashboardPage(
     ######################################################################################################################################
     tabItem(tabName = "network",
             box(title = "Controls",solidHeader = TRUE,width=12,status='primary',
-                uiOutput("pairby2")  
-            ),#End box
+                fluidRow(
+                column(6,uiOutput("pairby.net")),
+                column(6,uiOutput("filter.net"))
+            )),#End box
             box(title = "Network",solidHeader = TRUE,width=12,status='primary',
                 visNetworkOutput("lrnetwork", height = 800)
             ),#End box
