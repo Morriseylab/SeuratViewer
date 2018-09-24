@@ -6,6 +6,7 @@ library(d3heatmap)
 library(shinyjs)
 library(rglwidget)
 library(reshape2)
+library(visNetwork)
 options(shiny.sanitize.errors = FALSE)
 ui <- dashboardPage(
   dashboardHeader(title = "sEuRaT",titleWidth = 350),
@@ -21,8 +22,8 @@ ui <- dashboardPage(
                      uiOutput("projects"),
                      #actionButton('load',"Load Project", icon = NULL),
                      menuItem('Project Summary', tabName = 'summ', icon = icon('hand-o-right')),
-                     menuItem('Variable Genes', tabName = 'vargenes', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
-                     menuItem('Principle component Analysis', tabName = 'pca', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
+                     menuItem('Variable Genes', tabName = 'vargenes', icon = icon('hand-o-right')),
+                     menuItem('Principle component Analysis', tabName = 'pca', icon = icon('hand-o-right')),
                      menuItem('tSNE Plots', tabName = 'tplot', icon = icon('hand-o-right'),
                               menuSubItem("Compare tSNE Plots", tabName = "tsneplot"),
                               menuSubItem("Interactive tSNE/uMap Plot", tabName = "intertsne")
@@ -49,7 +50,8 @@ ui <- dashboardPage(
                      
                      menuItem('Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
                      menuItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right')),
-                     menuItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right'))
+                     menuItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
+                     menuItem('Troubleshoot', tabName = 'troubleshoot', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green")
                    )#end of sidebar menu
   ),#end dashboardSidebar
   
@@ -72,7 +74,7 @@ ui <- dashboardPage(
               box(
                 width = 12, status = "primary",solidHeader = TRUE,
                 title = "Project Summary",
-                htmlOutput("prjsumm")
+                verbatimTextOutput("prjsumm")
               )
       ),
       
@@ -171,6 +173,7 @@ ui <- dashboardPage(
 
               box(
                 title = "Controls",solidHeader = TRUE,width=4,status='primary',
+                uiOutput("bigenedim"),
                 textInput("bigene_genea", label = "Gene A",value = "Sox2"),
                 #sliderInput("bigene_rangea", "Expression Limits Gene A(log2(UMI))",min = 0, max = 10, value = 0.5,step=.25),
                 uiOutput("bigene_rangea"),
@@ -275,6 +278,7 @@ ui <- dashboardPage(
               plotOutput("bigeneplot2", height = 800)
               ),
             box(width = 3, status = "primary",solidHeader = TRUE,title = "Controls",
+                uiOutput("bigenedimr"),
                 uiOutput("pairby"),
                 radioButtons("clust","Select Cluster", c("All clusters"="all","Select Cluster"="clust"),selected = "all"),
                 radioButtons("gene","Select Genes", c("All genes"="allgene","Enter Genelist"="genelist"),selected = "allgene"),
@@ -322,12 +326,21 @@ ui <- dashboardPage(
     ),#end of tabitem
     ######################################################################################################################################
     tabItem(tabName = "network",
+            box(title = "Controls",solidHeader = TRUE,width=12,status='primary',
+                uiOutput("pairby2")  
+            ),#End box
             box(title = "Network",solidHeader = TRUE,width=12,status='primary',
-                plotOutput("lrnetwork", height = 800)
+                visNetworkOutput("lrnetwork", height = 800)
             ),#End box
             box(title = "Ligand-Receptor pairs",solidHeader = TRUE,width=12,status='primary',
                 DT::dataTableOutput('pairs_res2')
-            ))#end of network
+            )),#end of network
+    ######################################################################################################################################
+    tabItem(tabName = "troubleshoot",
+            box(title = "Graphics device",solidHeader = TRUE,width=12,status='primary',
+                textOutput("device")
+            ),#End box
+            actionButton("devoff", "Click to reset the graphics device"))
     ######################################################################################################################################
     
     )#end of tabitems

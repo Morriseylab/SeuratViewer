@@ -16,6 +16,10 @@ library(rglwidget)
 library(Seurat)
 library(cowplot)
 library(data.table)
+#library(ggnetwork)
+#library(igraph)
+library(visNetwork)
+
 source("functions.R")
 #Specify color palette for the tSNE and UMAP plots
 cpallette=c("#64B2CE", "#DA5724", "#74D944", "#CE50CA", "#C0717C", "#CBD588", "#5F7FC7",
@@ -146,7 +150,8 @@ server <- function(input, output,session) {
   
   #Get all information from the scrna object (input file) and generate some basic project summary for the summary
   prjsumm <- reactive({
-    user=input$username
+    #user=input$username
+    user="allusers"
    prj= read.csv("data/param.csv")
    if(user=="allusers"){
      prj=prj
@@ -163,19 +168,17 @@ server <- function(input, output,session) {
    if(is.null(scrna@dr$pca)){
    maxdim=dim(scrna@dr$cca.aligned@cell.embeddings)[2]
    }else{maxdim=length(scrna@dr$pca@sdev)}
-   str1 <- paste("Project name - ",as.character(pname))
-   str2 <- paste("Project Description - ",as.character(pdesc))
-   str3 <- paste("Organism - ",as.character(porg))
-   str4 <- paste("Total nummber of cells - ",tcells)
-   str5 <- paste("Total number of genes - ",tgenes)
-   str6 <- paste("Dimension - ",maxdim)
-   HTML(paste(str1, str2,str3,str4,str5,str6, sep = '<br/>'))
+   c.cnt=as.data.frame(table(scrna@ident))
+   df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),tcells,tgenes,maxdim,"","",tab$Freq))
+   rownames(df)=c("Project name","Project Description","Organism","Total nummber of cells","Total number of genes","Dimension","","Cluster-wise number of genes",as.character(tab$Var1))
+   colnames(df)<- NULL
+   return(df)
   })
   
   output$prjsumm <- renderPrint({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    df=prjsumm()
-    return(df)
+    prjsumm()
+    #return(df)
     })
   })
   
@@ -451,48 +454,75 @@ server <- function(input, output,session) {
   })
   
   #Based on input options, generate left interative plot 
-  intertsne = reactive({
-    scrna=fileload()
-    plot1=DimPlot(object = scrna,reduction.use=input$umapint,group.by = input$setcategory,no.legend = FALSE,do.label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 5,vector.friendly = T, cols.use=cpallette)
-    plot=ggplotly(plot1)
-    return(plot)
-  })
+  # intertsne = reactive({
+  #   scrna=fileload()
+  #   plot1=DimPlot(object = scrna,reduction.use=input$umapint,group.by = input$setcategory,no.legend = FALSE,do.label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 5,vector.friendly = T, cols.use=cpallette)
+  #   plot=ggplotly(plot1)
+  #   return(plot)
+  # })
   
   
   output$intertsne = renderPlotly({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      intertsne()
+      pdf(NULL)
+      scrna=fileload()
+      plot1=DimPlot(object = scrna,reduction.use=input$umapint,group.by = input$setcategory,no.legend = FALSE,do.label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 5,vector.friendly = T, cols.use=cpallette)
+      plot=ggplotly(plot1)
+      dev.off()
+      return(plot)
     })
   })
   
   #Based on input options, generate right interative plot 
-  intergene = reactive({
-    pdf(NULL)
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data)
-    met= sapply(metadata,is.numeric)
-    #metadata=metadata %>% select(starts_with("var"))
-    tsnea=input$intervar
-    feature=names(met[met==TRUE])
-    #feature=c("nGene","nUMI","percent.mito","S.Score","G2M.Score","var.ratio.pca")
-    tsne=names(met[met==FALSE])
-    
-    if(input$intercat=="geneexp"){
-      plot1=FeaturePlot(object = scrna,reduction.use=input$umapint, features.plot = input$geneinter,vector.friendly = T, cols.use = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
-      plot1=eval(parse(text=paste("plot1$",input$geneinter,sep="")))
-    }else if(input$intercat =="var" & tsnea %in% tsne){
-      plot1=DimPlot(object = scrna,reduction.use=input$umapint,group.by = tsnea,no.legend = FALSE,do.label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 7, cols.use=cpallette,vector.friendly = T)
-    }else if(input$intercat =="var" & tsnea %in% feature){
-      plot1=FeaturePlot(object = scrna,reduction.use=input$umapint, features.plot = tsnea,vector.friendly = T, cols.use = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
-      plot1=eval(parse(text=paste("plot1$",tsnea,sep="")))
-    }
-    plot=ggplotly(plot1)
-    return(plot)
-  })
+  # intergene = reactive({
+  #   pdf(NULL)
+  #   scrna=fileload()
+  #   metadata=as.data.frame(scrna@meta.data)
+  #   met= sapply(metadata,is.numeric)
+  #   #metadata=metadata %>% select(starts_with("var"))
+  #   tsnea=input$intervar
+  #   feature=names(met[met==TRUE])
+  #   #feature=c("nGene","nUMI","percent.mito","S.Score","G2M.Score","var.ratio.pca")
+  #   tsne=names(met[met==FALSE])
+  #   
+  #   if(input$intercat=="geneexp"){
+  #     plot1=FeaturePlot(object = scrna,reduction.use=input$umapint, features.plot = input$geneinter,vector.friendly = T, cols.use = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
+  #     plot1=eval(parse(text=paste("plot1$",input$geneinter,sep="")))
+  #   }else if(input$intercat =="var" & tsnea %in% tsne){
+  #     plot1=DimPlot(object = scrna,reduction.use=input$umapint,group.by = tsnea,no.legend = FALSE,do.label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 7, cols.use=cpallette,vector.friendly = T)
+  #   }else if(input$intercat =="var" & tsnea %in% feature){
+  #     plot1=FeaturePlot(object = scrna,reduction.use=input$umapint, features.plot = tsnea,vector.friendly = T, cols.use = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
+  #     plot1=eval(parse(text=paste("plot1$",tsnea,sep="")))
+  #   }
+  #   plot=ggplotly(plot1)
+  #   dev.off()
+  #   return(plot)
+  # })
   
   output$intergene = renderPlotly({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      intergene()
+      pdf(NULL)
+      scrna=fileload()
+      metadata=as.data.frame(scrna@meta.data)
+      met= sapply(metadata,is.numeric)
+      #metadata=metadata %>% select(starts_with("var"))
+      tsnea=input$intervar
+      feature=names(met[met==TRUE])
+      #feature=c("nGene","nUMI","percent.mito","S.Score","G2M.Score","var.ratio.pca")
+      tsne=names(met[met==FALSE])
+      
+      if(input$intercat=="geneexp"){
+        plot1=FeaturePlot(object = scrna,reduction.use=input$umapint, features.plot = input$geneinter,vector.friendly = T, cols.use = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
+        plot1=eval(parse(text=paste("plot1$",input$geneinter,sep="")))
+      }else if(input$intercat =="var" & tsnea %in% tsne){
+        plot1=DimPlot(object = scrna,reduction.use=input$umapint,group.by = tsnea,no.legend = FALSE,do.label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 7, cols.use=cpallette,vector.friendly = T)
+      }else if(input$intercat =="var" & tsnea %in% feature){
+        plot1=FeaturePlot(object = scrna,reduction.use=input$umapint, features.plot = tsnea,vector.friendly = T, cols.use = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
+        plot1=eval(parse(text=paste("plot1$",tsnea,sep="")))
+      }
+      plot=ggplotly(plot1)
+      dev.off()
+      return(plot)
     })
   })
   
@@ -522,6 +552,14 @@ server <- function(input, output,session) {
     })
   })
   
+  #Generate dropdown to pick dimensionality reduction method for bigeneplot
+  output$bigenedim = renderUI({
+    scrna=fileload()
+    dimr=names(scrna@dr)
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      selectInput("bigenedim","Dimensionality Reduction",dimr,selected = "tsne")})
+  })
+  
 #plot the bi-gene plot
   output$bigeneplot <- renderPlot({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
@@ -529,7 +567,8 @@ server <- function(input, output,session) {
                     c(input$bigene_genea,input$bigene_geneb),
                     limita=input$bigene_rangea,
                     limitb=input$bigene_rangeb,
-                    marker_size = input$bigene_pointsize)
+                    marker_size = input$bigene_pointsize,
+                    type=input$bigenedim)
       p2 <- add_sub(p, paste(input$projects,"_Bigeneplot",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
       ggdraw(p2)
     })
@@ -547,7 +586,7 @@ server <- function(input, output,session) {
                        c(input$bigene_genea,input$bigene_geneb),
                        limita=input$bigene_rangea,
                        limitb=input$bigene_rangeb,
-                       marker_size = input$bigene_pointsize))
+                       marker_size = input$bigene_pointsize,type=input$bigenedimr))
       dev.off()
     })
   
@@ -1052,6 +1091,13 @@ server <- function(input, output,session) {
    ##### CONTROL PANEL FOR LIGAND-RECEPTOR PAIRS #####
    ###################################################
    ###################################################
+   #Generate drop down for dimensionality reduction for bi-gene plot
+   output$bigenedimr = renderUI({
+     scrna=fileload()
+     dimr=names(scrna@dr)
+     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+       selectInput("bigenedimr","Dimensionality Reduction",dimr,selected = "tsne")})
+   })
    
    #Generate drop-down to generate variables based on which you want to find pairs 
    #This is important for choosing the 'select cluster' option
@@ -1164,58 +1210,7 @@ server <- function(input, output,session) {
    
    #For selected project and grouping variable, generate all possible ligand receptor pairs
    datasetInput = reactive({
-     scrna=fileload()
-     #get grouping variable
-     var=as.character(input$pairby)
-     tt=rownames(scrna@raw.data)
-     #Read ligrec file based on organism
-     file = read.csv("data/param.csv")
-     org=as.character(file$organism[file$projects==input$projects])
-     genes=fread("data/ligrecgenes.txt",header = TRUE)
-     if(org=="human"){
-       genes$genes=toupper(genes$genes)
-     }
-     genes2=tt[tt %in% genes$genes]
-     #For all unique genes in the ligrec list, get their expression value for all cells and the groups the cells belong to
-     my.data=FetchData(scrna,c(var,"nGene",genes2))
-     colnames(my.data)[1]= "clust"
-     #my.data$clust=factor(my.data$clust,levels=unique(my.data$clust))
-     
-     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
-     result=data.frame()
-     res=data.frame()
-     #loop over each cluster to find pairs
-     for(i in 1:(length(levels(my.data$clust)))){
-       for(j in 1:(length(levels(my.data$clust)))){
-          if(i!=j){
-            #from the large martix, subselect receptor and lig subgoups (if i=1 and j=2, keep cells in grps 1 and 2)
-           test=my.data[my.data$clust==levels(my.data$clust)[i] | my.data$clust==levels(my.data$clust)[j],]
-           #Subselect genes in receptor list in cells in rec subgroup (say 1)
-           R_c1=test[test$clust==levels(my.data$clust)[i] ,(colnames(test) %in% rl$receptor)]
-           #Subselect genes in ligand list in cells in lig subgroup (say 2)
-           L_c2=test[test$clust==levels(my.data$clust)[j] , (colnames(test) %in% rl$ligand)]
-           if(nrow(R_c1)!=0 &nrow(L_c2)!=0){
-             #keep genes that are expressed in more than 50% of the cells
-           keep1 = colSums(R_c1>1)>=.5*dim(R_c1)[1]
-           keep2 = colSums(L_c2>1)>=.5*dim(L_c2)[1]
-           R_c1=R_c1[,keep1]
-           L_c2=L_c2[,keep2]
-           #get list of lig-rec pairs
-           res=rl[(rl$ligand %in% colnames(L_c2)) & (rl$receptor %in% colnames(R_c1)),]
-           }else{}
-
-         }
-         else{}
-         if(nrow(res)!=0){
-           res$Receptor_cluster=levels(my.data$clust)[i]
-           res$Lig_cluster=levels(my.data$clust)[j]
-           result=rbind(result,res)
-         }else{result=result}
-     }
-     }
-     # get final list of all lig-rec pairs
-     result=result[result$Receptor_cluster!=result$Lig_cluster,]
-     return(result)
+     results=ligrec(fileload(),pair=input$pairby,prj=input$projects)
    })
    
    #Subselect lig-rec pairs based on user input
@@ -1293,26 +1288,32 @@ server <- function(input, output,session) {
                      c(bigene_genea,bigene_geneb),
                      limita=input$bigene_rangea,
                      limitb=input$bigene_rangeb,
-                     marker_size = input$bigene_pointsize2)
+                     marker_size = input$bigene_pointsize2,type=input$bigenedimr)
        p2 <- add_sub(p, paste(input$projects,"_Bigeneplot",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
        ggdraw(p2)
      })
-     dev.off()
    })
    ######################################################################################################
    ######################################################################################################
    ################################# Network ############################################################
    ######################################################################################################
    ######################################################################################################
+   #Generate drop-down to generate variables based on which you want to find pairs 
+   output$pairby2 <- renderUI({
+     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+       scrna=fileload()
+       metadata=as.data.frame(scrna@meta.data)
+       metadata=metadata %>% select(starts_with("var_"))
+       options=colnames(metadata)
+       selectInput("pairby","Select cell group ",options,selected=options[1])
+     })
+   })
+   
    #Render the same lig-rec pairs data table again to create network
    output$pairs_res2 = DT::renderDataTable({
-     input$pairby
-     input$clust1
-     input$clust2
-     input$genelist1
-     input$genelist2
+     input$pairby2
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       DT::datatable(finalres(),
+       DT::datatable(datasetInput2(),
                      extensions = c('Buttons','Scroller'),
                      options = list(dom = 'Bfrtip',
                                     searchHighlight = TRUE,
@@ -1324,33 +1325,54 @@ server <- function(input, output,session) {
      })
    })
    
-   #create lig-receptor network plot
-   lrnetwork= reactive({
-     result=finalres()
-     test=as.data.frame(table(result[,6:7]))
-     test=test[test$Freq!=0,]
-     node=as.data.frame(unique(c(as.character(test$Receptor_cluster),as.character(test$Lig_cluster))))
-     colnames(node)="node"
-     net <- graph_from_data_frame(d=test, vertices=node, directed=T) 
-     gg=ggnetwork(net)
-     obj=ggplot(gg, aes(x = x, y = y, xend = xend, yend = yend)) +
-       geom_edges(color = "grey75",arrow = arrow(length = unit(6, "pt"), type = "closed")) +
-       geom_nodes(color = "gold", size = 8) +
-       geom_nodelabel_repel(aes(label = vertex.names)) +
-       geom_edgetext(aes(label = Freq), color = "white", fill = "grey25") +
-       theme_minimal() +
-       theme(axis.text = element_blank(),
-             axis.title = element_blank(),
-             panel.grid = element_blank())
-     return(obj)
+   #For selected project and grouping variable, generate all possible ligand receptor pairs
+   datasetInput2 = reactive({
+     results=ligrec(fileload(),pair=input$pairby2,prj=input$projects)
    })
    
+   #create lig-receptor network plot
    #Render the ligand-receptor network plot
-   output$lrnetwork = renderPlot({
+   output$lrnetwork = renderVisNetwork({
      withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       lrnetwork()
+       result=datasetInput2()
+       nodes=as.data.frame(unique(c(result$Receptor_cluster,result$Lig_cluster)))
+       colnames(nodes)="id"
+       edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
+       colnames(edges)=c("from","to")
+       col=cpallette[1:nrow(nodes)]
+       nodes$color=col
+       nodes$groups=nodes$id
+       e2=as.data.frame(table(edges[,1:2]))
+       e2=e2[e2$Freq!=0,]
+       e2$title=paste(e2$from,"_",e2$to,"_freq",e2$Freq,sep="")
+       visNetwork(nodes, e2) %>% visEdges(arrows ="to") %>% 
+         visLegend(useGroups = FALSE, addNodes = data.frame(label = "Nodes", shape = "circle"), 
+                   addEdges = data.frame(label = "Edges", color = "black")) %>% 
+         visOptions(highlightNearest =list(enabled=TRUE,hover=TRUE,degree=list(from=0.5,to=0.5)), 
+                    nodesIdSelection = list(enabled = TRUE, 
+                    style = 'width: 200px; height: 26px;background: #f8f8f8;color: darkblue;border:none;outline:none;')) %>%
+         visPhysics(stabilization=TRUE,timestep=0.2, adaptiveTimestep = T,barnesHut = list(avoidOverlap=0))
+       
      })
    })
    
+   observe({
+     visNetworkProxy("lrnetwork") %>%
+       visStabilize(iterations = 1000)
+   })
+   ######################################################################################################
+   ######################################################################################################
+   ################################# TROUBLESHOOT #######################################################
+   ######################################################################################################
+   ######################################################################################################
+   #list devices in use
+   output$device <- renderText({ 
+     dev.list()
+   })
+   
+   #Reset graphics device
+   observeEvent(input$devoff, {
+     graphics.off()
+   })
 
 }#end of server
