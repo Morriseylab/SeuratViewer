@@ -333,10 +333,26 @@ ui <- dashboardPage(
                 fluidRow(
                 column(6,uiOutput("pairbynet")),
                 column(6,uiOutput("filternet"))),
+                fluidRow(
+                  column(6,checkboxInput("checksource2", label = "Check to select by source", value = FALSE)),
+                  column(6,checkboxInput("checkevi2", label = "Check to select by evidence", value = FALSE)),
+                  conditionalPanel(
+                    condition = "input.checksource2 ==true",
+                    column(6,uiOutput('source2'))
+                  ),
+                  conditionalPanel(
+                    condition = "input.checkevi2 ==true",
+                    column(6,uiOutput('evidence2'))
+                  )
+                ),
             fluidRow(
               column(6,actionButton('freeze',"Freeze Network", icon = NULL)),
-              column(6,actionButton('dwldnet',"Download Network", icon = NULL))
-            )),#End box
+              column(6,hr())
+            ),
+            fluidRow(
+              column(6,actionButton("store_position", "Store positions !")),
+              column(6,downloadButton('dwldnet', 'Download Network plot'))
+                     )),#End box
             box(title = "Network",solidHeader = TRUE,width=12,status='primary',
                 visNetworkOutput("lrnetwork", height = 800)
             ),#End box

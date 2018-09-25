@@ -1319,9 +1319,27 @@ server <- function(input, output,session) {
        e2=as.data.frame(table(edges[,1:2]))
        min=min(e2$Freq)
        max=max(e2$Freq)
-       sliderInput("filternet", "Frequency of occurenct of ligand-receptor pairs",
+       sliderInput("filternet", "Frequency of occurence of ligand-receptor pairs",
                    min = min, max = max, value = c(min,max),step=2)
      })
+   })
+   
+   #Check if the data is from mouse/human and use the approprite file to list the options for source
+   output$source2 <- renderUI({
+     file = read.csv("data/param.csv")
+     org=as.character(file$organism[file$projects==input$projects])
+     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
+     options=as.character(unique(rl$Pair.Source))
+     checkboxGroupInput('source2', label='Select source(s)',choices=options,selected=options[1])
+   })
+   
+   #Check if the data is from mouse/human and use the approprite file to list the options for evidence
+   output$evidence2 <- renderUI({
+     file = read.csv("data/param.csv")
+     org=as.character(file$organism[file$projects==input$projects])
+     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
+     options=as.character(unique(rl$Pair.Evidence))
+     checkboxGroupInput('evidence2',label='Select Evidence(s)',choices=options,selected=options[1])
    })
    
    #For selected project and grouping variable, generate all possible ligand receptor pairs and filter based on user input
@@ -1334,6 +1352,8 @@ server <- function(input, output,session) {
      result$pair=paste(result$Receptor_cluster,"_",result$Lig_cluster,sep="")
      result=result[result$pair %in% e2$pair,]
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
+     if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
+     if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
      return(result)
    })
    
@@ -1353,35 +1373,107 @@ server <- function(input, output,session) {
      })
    })
    
-   #create lig-receptor network plot
-   #Render the ligand-receptor network plot
-   output$lrnetwork = renderVisNetwork({
+   #Get nodes 
+   nodes = reactive({
      withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
        result=datasetInputnet()
        nodes=as.data.frame(unique(c(result$Receptor_cluster,result$Lig_cluster)))
        colnames(nodes)="id"
-       edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
-       colnames(edges)=c("from","to")
        col=cpallette[1:nrow(nodes)]
        nodes$color=col
        nodes$groups=nodes$id
+       return(nodes)
+     })})
+   
+   #get edges
+   edges = reactive({
+     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+       result=datasetInputnet()
+       edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
+       colnames(edges)=c("from","to")
        e2=as.data.frame(table(edges[,1:2]))
-       e2$title=paste(e2$from,"_",e2$to,"_freq",e2$Freq,sep="")
-       visNetwork(nodes, e2) %>% visEdges(arrows ="to") %>% 
-         visLegend(useGroups = FALSE, addNodes = data.frame(label = "Nodes", shape = "circle"), 
-                   addEdges = data.frame(label = "Edges", color = "black")) %>% 
-         visOptions(highlightNearest =list(enabled=TRUE,hover=TRUE,degree=list(from=0.5,to=0.5)), 
-                    nodesIdSelection = list(enabled = TRUE, 
-                    style = 'width: 200px; height: 26px;background: #f8f8f8;color: darkblue;border:none;outline:none;')) %>%
-         visPhysics(stabilization=TRUE,timestep=0.2, adaptiveTimestep = T,barnesHut = list(avoidOverlap=0))
-       
+       e2$title=paste(e2$from,"_to_",e2$to,"_freq_",e2$Freq,sep="")
+       return(e2)
+     })})
+   
+   #create lig-receptor network plot
+   lrnetwork = reactive({
+     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+       e2=edges()
+       nodes=nodes()
+       if(input$freeze == 0){
+         visNetwork(nodes, e2) %>% visEdges(arrows ="to") %>% 
+           visLegend(useGroups = FALSE, addNodes = data.frame(label = "Nodes", shape = "circle"), 
+                     addEdges = data.frame(label = "Edges", color = "black")) %>% 
+           visOptions(highlightNearest =list(enabled=TRUE,hover=TRUE,degree=list(from=0.5,to=0.5)), 
+                      nodesIdSelection = list(enabled = TRUE, 
+                                              style = 'width: 200px; height: 26px;background: #f8f8f8;color: darkblue;border:none;outline:none;')) %>%
+           visPhysics(stabilization=TRUE,timestep=0.2, adaptiveTimestep = T,barnesHut = list(avoidOverlap=0))
+       }else{
+         visNetwork(nodes, e2) %>% visEdges(arrows ="to") %>% 
+           visLegend(useGroups = FALSE, addNodes = data.frame(label = "Nodes", shape = "circle"), 
+                     addEdges = data.frame(label = "Edges", color = "black")) %>% 
+           visOptions(highlightNearest =list(enabled=TRUE,hover=TRUE,degree=list(from=0.5,to=0.5)), 
+                      nodesIdSelection = list(enabled = TRUE, 
+                                              style = 'width: 200px; height: 26px;background: #f8f8f8;color: darkblue;border:none;outline:none;')) %>%
+           visPhysics(stabilization=TRUE,timestep=0.2, adaptiveTimestep = T,barnesHut = list(avoidOverlap=0)) %>% 
+           visInteraction(dragNodes = FALSE, dragView = FALSE, zoomView = FALSE)
+       }
      })
+   })
+   
+   
+   #Render the ligand-receptor network plot
+   output$lrnetwork = renderVisNetwork({
+     lrnetwork()
    })
    
    observe({
      visNetworkProxy("lrnetwork") %>%
        visStabilize(iterations = 1000)
    })
+   
+
+   # get position info
+   observeEvent(input$store_position, {
+     visNetworkProxy("lrnetwork") %>% visGetPositions()
+   })
+   
+   # format positions
+   nodes_positions <- reactive({
+     positions <- input$lrnetwork_positions
+     if(!is.null(positions)){
+       nodes_positions <- do.call("rbind", lapply(positions, function(x){ data.frame(x = x$x, y = x$y)}))
+       nodes_positions$id <- names(positions)
+       nodes_positions
+     } else {
+       NULL
+     }
+   })
+     
+   #Download plot
+   output$dwldnet <- downloadHandler(
+     filename = function() {
+       paste0(input$projects,"_lig-rec_Network.html",sep="")
+     },
+     content = function(con) {
+       nodes=nodes()
+         edges=edges()
+       nodes_positions <- nodes_positions()
+       if(!is.null(nodes_positions)){
+         nodes_save <- merge(nodes, nodes_positions, by = "id", all = T)
+       } else  {
+         nodes_save <- nodes
+       }
+       visNetwork(nodes = nodes_save, edges = edges, height = "800px") %>%
+         visOptions(highlightNearest = TRUE) %>% visExport() %>%
+         visPhysics(enabled = FALSE) %>% visEdges(smooth = FALSE) %>% visSave(con)
+     }
+   )
+   
+
+   
+   
    ######################################################################################################
    ######################################################################################################
    ################################# TROUBLESHOOT #######################################################
