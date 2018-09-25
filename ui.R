@@ -16,7 +16,10 @@ ui <- dashboardPage(
                    #            ".shiny-output-error { visibility: hidden; }",
                    #            ".shiny-output-error:before { visibility: hidden; }"
                    # ),
-                   tags$head(tags$style(HTML(".sidebar { height: 250vh; overflow-y: auto; }" ))),
+                   tags$head(tags$style(HTML(".sidebar { height: 250vh; overflow-y: auto; }
+                                             .shiny-notification{position: fixed;top: 33%;left: 33%;right: 33%;}
+                                             " )
+                                        )),
                    sidebarMenu(
                      menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
                      uiOutput("projects"),
@@ -329,7 +332,10 @@ ui <- dashboardPage(
             box(title = "Controls",solidHeader = TRUE,width=12,status='primary',
                 fluidRow(
                 column(6,uiOutput("pairby.net")),
-                column(6,uiOutput("filter.net"))
+                column(6,uiOutput("filter.net"))),
+            fluidRow(
+              column(6,actionButton('freeze',"Freeze Network", icon = NULL)),
+              column(6,actionButton('dwldnet',"Download Network", icon = NULL))
             )),#End box
             box(title = "Network",solidHeader = TRUE,width=12,status='primary',
                 visNetworkOutput("lrnetwork", height = 800)
