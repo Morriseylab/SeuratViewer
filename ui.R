@@ -331,8 +331,8 @@ ui <- dashboardPage(
     tabItem(tabName = "network",
             box(title = "Controls",solidHeader = TRUE,width=12,status='primary',
                 fluidRow(
-                column(6,uiOutput("pairby.net")),
-                column(6,uiOutput("filter.net"))),
+                column(6,uiOutput("pairbynet")),
+                column(6,uiOutput("filternet"))),
             fluidRow(
               column(6,actionButton('freeze',"Freeze Network", icon = NULL)),
               column(6,actionButton('dwldnet',"Download Network", icon = NULL))

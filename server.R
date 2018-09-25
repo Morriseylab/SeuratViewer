@@ -1300,45 +1300,48 @@ server <- function(input, output,session) {
    ######################################################################################################
    ######################################################################################################
    #Generate drop-down to generate variables based on which you want to find pairs 
-   output$pairby.net <- renderUI({
+   output$pairbynet <- renderUI({
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
        scrna=fileload()
        metadata=as.data.frame(scrna@meta.data)
        metadata=metadata %>% select(starts_with("var_"))
        options=colnames(metadata)
-       selectInput("pairby.net","Select cell group ",options,selected=options[1])
+       selectInput("pairbynet","Select cell group ",options,selected=options[1])
      })
    })
    
    #Generate slider to filter ligand receptor pairs by frequency of occurence
-   output$filter.net <- renderUI({
+   output$filternet <- renderUI({
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       result=ligrec(fileload(),pair=input$pairby.net,prj=input$projects)
+       result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects)
        edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
        colnames(edges)=c("from","to")
        e2=as.data.frame(table(edges[,1:2]))
        min=min(e2$Freq)
        max=max(e2$Freq)
-       sliderInput("filter.net", "Frequency of occurenct of ligand-receptor pairs",
+       sliderInput("filternet", "Frequency of occurenct of ligand-receptor pairs",
                    min = min, max = max, value = c(min,max),step=2)
      })
    })
    
    #For selected project and grouping variable, generate all possible ligand receptor pairs and filter based on user input
-   datasetInput.net = reactive({
-     results=ligrec(fileload(),pair=input$pairby.net,prj=input$projects)
-     edges=results %>% dplyr::select(Receptor_cluster,Lig_cluster)
+   datasetInputnet = reactive({
+     result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects)
+     edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
      e2=as.data.frame(table(edges[,1:2]))
-     e2=e2[e2$Freq>= input$filter.net[1] & e2$Freq<= input$filter.net[2],]
-     results=results[results$Receptor_cluster==e2$Receptor_cluster & results$Lig_cluster==e2$Lig_cluster,]
+     e2=e2[e2$Freq>= input$filternet[1] & e2$Freq<= input$filternet[2],]
+     e2$pair=paste(e2$Receptor_cluster,"_",e2$Lig_cluster,sep="")
+     result$pair=paste(result$Receptor_cluster,"_",result$Lig_cluster,sep="")
+     result=result[result$pair %in% e2$pair,]
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
+     return(result)
    })
    
    #Render the same lig-rec pairs data table again to create network
    output$pairs_res2 = DT::renderDataTable({
-     input$pairby.net
+     input$pairbynet
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       DT::datatable(datasetInput.net(),
+       DT::datatable(datasetInputnet(),
                      extensions = c('Buttons','Scroller'),
                      options = list(dom = 'Bfrtip',
                                     searchHighlight = TRUE,
@@ -1346,7 +1349,7 @@ server <- function(input, output,session) {
                                     lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
                                     scrollX = TRUE,
                                     buttons = c('copy', 'print')
-                     ),rownames=FALSE,caption= "Result",selection = list(mode = 'single', selected =1),escape = F)
+                     ),rownames=FALSE,caption= "Ligand Receptor Pairs Result",selection = list(mode = 'single', selected =1),escape = F)
      })
    })
    
@@ -1354,7 +1357,7 @@ server <- function(input, output,session) {
    #Render the ligand-receptor network plot
    output$lrnetwork = renderVisNetwork({
      withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       result=datasetInput.net()
+       result=datasetInputnet()
        nodes=as.data.frame(unique(c(result$Receptor_cluster,result$Lig_cluster)))
        colnames(nodes)="id"
        edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
