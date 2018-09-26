@@ -9,7 +9,7 @@ library(reshape2)
 library(visNetwork)
 options(shiny.sanitize.errors = FALSE)
 ui <- dashboardPage(
-  dashboardHeader(title = "sEuRaT",titleWidth = 350),
+  dashboardHeader(title = "sEuRaT",titleWidth = 350,dropdownMenuOutput("userloggedin")),
   dashboardSidebar(width = 350,
                    div(style="overflow-y: scroll"),
                    # tags$style(type="text/css",
@@ -17,7 +17,7 @@ ui <- dashboardPage(
                    #            ".shiny-output-error:before { visibility: hidden; }"
                    # ),
                    tags$head(tags$style(HTML(".sidebar { height: 250vh; overflow-y: auto; }
-                                             .shiny-notification{position: fixed;top: 33%;left: 33%;right: 33%;}
+                                             .shiny-notification{position: fixed;top: 33%;left: 45%;right: 33%;}
                                              " )
                                         )),
                    sidebarMenu(
@@ -52,13 +52,16 @@ ui <- dashboardPage(
                               ),
                      
                      menuItem('Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
-                     menuItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right')),
-                     menuItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
+                     menuItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right'),
+                              menuSubItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right')),
+                              menuSubItem('Ligand Receptor Heatmap', tabName = 'netheatmap', icon = icon('hand-o-right'))
+                              ),
                      menuItem('Troubleshoot', tabName = 'troubleshoot', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green")
                    )#end of sidebar menu
   ),#end dashboardSidebar
   
   dashboardBody(
+    shinyDashboardThemes(theme="blue_gradient"),
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
     ),
@@ -347,11 +350,13 @@ ui <- dashboardPage(
                 ),
             fluidRow(
               column(6,actionButton('freeze',"Freeze Network", icon = NULL)),
-              column(6,hr())
-            ),
+              column(6,actionButton('Unfreeze',"Unfreeze Network", icon = NULL))
+              #column(4,actionButton("appfil", "Apply filters"))
+            ),br(),
             fluidRow(
-              column(6,actionButton("store_position", "Store positions !")),
-              column(6,downloadButton('dwldnet', 'Download Network plot'))
+              #column(6,actionButton("store_position", "Store positions")),
+              column(6,downloadButton('dwldnet', 'Download Network plot')),
+              column(6,br())
                      )),#End box
             box(title = "Network",solidHeader = TRUE,width=12,status='primary',
                 visNetworkOutput("lrnetwork", height = 800)
@@ -359,6 +364,30 @@ ui <- dashboardPage(
             box(title = "Ligand-Receptor pairs",solidHeader = TRUE,width=12,status='primary',
                 DT::dataTableOutput('pairs_res2')
             )),#end of network
+    ######################################################################################################################################
+    tabItem(tabName = "netheatmap",
+            box(title = "Heatmap",solidHeader = TRUE,width=8,status='primary',
+                plotOutput("netheatmap")
+            ),
+            box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
+                uiOutput("pairbyheatnet"),
+                checkboxInput("checksourceheat", label = "Check to select by source", value = FALSE),
+                checkboxInput("checkeviheat", label = "Check to select by evidence", value = FALSE),
+                  conditionalPanel(
+                    condition = "input.checksourceheat ==true",
+                    uiOutput('source3')
+                  ),
+                  conditionalPanel(
+                    condition = "input.checkeviheat ==true",
+                    uiOutput('evidence3')
+                  ),
+                selectInput("hmpcolnet", "Select Heatmap Color Palette",c('YlGnBu' = "YlGnBu",'RdBu' = "RdBu",'YlOrRd' = "YlOrRd",'PRGn'="PRGn", 'Blues' = "Blues"))
+                
+                ),
+            box(title = "Ligand Receptor Pairs",solidHeader = TRUE,width=12,status='primary',
+                DT::dataTableOutput('pairs_res3')
+            )#End box
+    ),
     ######################################################################################################################################
     tabItem(tabName = "troubleshoot",
             box(title = "Graphics device",solidHeader = TRUE,width=12,status='primary',

@@ -19,8 +19,8 @@ library(data.table)
 #library(ggnetwork)
 #library(igraph)
 library(visNetwork)
-
 source("functions.R")
+
 #Specify color palette for the tSNE and UMAP plots
 cpallette=c("#64B2CE", "#DA5724", "#74D944", "#CE50CA", "#C0717C", "#CBD588", "#5F7FC7",
             "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD",
@@ -82,7 +82,19 @@ server <- function(input, output,session) {
   #     }
   #   }
   # })
-  # 
+
+  ###################################################
+  ###################################################
+  ####### Display username in notification bar  ####
+  ###################################################
+  ###################################################
+  # output$userloggedin = renderMenu({
+  #   msg= paste("Logged in as ",input$username,sep="")
+  #   prj= paste("Data: ",input$projects,sep="")
+  #   dropdownMenu(type = "notifications", badgeStatus = "info",
+  #                notificationItem(icon = icon("user"), status = "info",msg),
+  #                notificationItem(icon = icon("book"), status = "info",prj))
+  # })
   ###################################################
   ###################################################
   ####### Display project list and load data  #######
@@ -133,13 +145,17 @@ server <- function(input, output,session) {
   
   #Load Rdata
   fileload <- reactive({
-    #if(input$load != 0){
+    # validate(need(input$load != 0,"Load dataset"))
+    # 
+    # if(input$load == 0)
+    #   return()
+    # isolate({
     inFile = paste('data/',as.character(input$projects),'.RData',sep = '')
     load(inFile)
-    loaddata=scrna
-    return(loaddata)
-    #scrna <<- scrna
-    #}
+    #loaddata=scrna
+    return(scrna)
+    # scrna <<- scrna
+    # })
   })
 
   ###################################################
@@ -169,8 +185,8 @@ server <- function(input, output,session) {
    maxdim=dim(scrna@dr$cca.aligned@cell.embeddings)[2]
    }else{maxdim=length(scrna@dr$pca@sdev)}
    c.cnt=as.data.frame(table(scrna@ident))
-   df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),tcells,tgenes,maxdim,"","",tab$Freq))
-   rownames(df)=c("Project name","Project Description","Organism","Total nummber of cells","Total number of genes","Dimension","","Cluster-wise number of genes",as.character(tab$Var1))
+   df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),tcells,tgenes,maxdim,"","",c.cnt$Freq))
+   rownames(df)=c("Project name","Project Description","Organism","Total nummber of cells","Total number of genes","Dimension","","Cluster-wise number of genes",as.character(c.cnt$Var1))
    colnames(df)<- NULL
    return(df)
   })
@@ -1294,6 +1310,7 @@ server <- function(input, output,session) {
        ggdraw(p2)
      })
    })
+   
    ######################################################################################################
    ######################################################################################################
    ################################# Network ############################################################
@@ -1347,6 +1364,11 @@ server <- function(input, output,session) {
      result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects)
      edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
      e2=as.data.frame(table(edges[,1:2]))
+     # validate(need(input$appfil != 0,"Make your selections and click the Apply filter button"))
+     # 
+     # if(input$appfil == 0)
+     #   return()
+     # isolate({
      e2=e2[e2$Freq>= input$filternet[1] & e2$Freq<= input$filternet[2],]
      e2$pair=paste(e2$Receptor_cluster,"_",e2$Lig_cluster,sep="")
      result$pair=paste(result$Receptor_cluster,"_",result$Lig_cluster,sep="")
@@ -1354,12 +1376,16 @@ server <- function(input, output,session) {
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
      if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
      if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
+     #})
      return(result)
    })
    
    #Render the same lig-rec pairs data table again to create network
    output$pairs_res2 = DT::renderDataTable({
      input$pairbynet
+     input$filternet
+     input$source2
+     input$evidence2
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
        DT::datatable(datasetInputnet(),
                      extensions = c('Buttons','Scroller'),
@@ -1401,24 +1427,24 @@ server <- function(input, output,session) {
      withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
        e2=edges()
        nodes=nodes()
-       if(input$freeze == 0){
+       # if(input$freeze == 0){
+       #   visNetwork(nodes, e2) %>% visEdges(arrows ="to") %>% 
+       #     visLegend(useGroups = FALSE, addNodes = data.frame(label = "Nodes", shape = "circle"), 
+       #               addEdges = data.frame(label = "Edges", color = "black")) %>% 
+       #     visOptions(highlightNearest =list(enabled=TRUE,hover=TRUE,degree=list(from=0.5,to=0.5)), 
+       #                nodesIdSelection = list(enabled = TRUE, 
+       #                                        style = 'width: 200px; height: 26px;background: #f8f8f8;color: darkblue;border:none;outline:none;')) %>%
+       #     visPhysics(stabilization=TRUE,timestep=0.2, adaptiveTimestep = T,barnesHut = list(avoidOverlap=0))
+       # }else if(input$freeze != 0){
          visNetwork(nodes, e2) %>% visEdges(arrows ="to") %>% 
            visLegend(useGroups = FALSE, addNodes = data.frame(label = "Nodes", shape = "circle"), 
                      addEdges = data.frame(label = "Edges", color = "black")) %>% 
            visOptions(highlightNearest =list(enabled=TRUE,hover=TRUE,degree=list(from=0.5,to=0.5)), 
                       nodesIdSelection = list(enabled = TRUE, 
                                               style = 'width: 200px; height: 26px;background: #f8f8f8;color: darkblue;border:none;outline:none;')) %>%
-           visPhysics(stabilization=TRUE,timestep=0.2, adaptiveTimestep = T,barnesHut = list(avoidOverlap=0))
-       }else{
-         visNetwork(nodes, e2) %>% visEdges(arrows ="to") %>% 
-           visLegend(useGroups = FALSE, addNodes = data.frame(label = "Nodes", shape = "circle"), 
-                     addEdges = data.frame(label = "Edges", color = "black")) %>% 
-           visOptions(highlightNearest =list(enabled=TRUE,hover=TRUE,degree=list(from=0.5,to=0.5)), 
-                      nodesIdSelection = list(enabled = TRUE, 
-                                              style = 'width: 200px; height: 26px;background: #f8f8f8;color: darkblue;border:none;outline:none;')) %>%
-           visPhysics(stabilization=TRUE,timestep=0.2, adaptiveTimestep = T,barnesHut = list(avoidOverlap=0)) %>% 
+           visPhysics(stabilization=TRUE,timestep=0.2, adaptiveTimestep = T,barnesHut = list(avoidOverlap=0,gravitationalConstant=-25000)) %>% 
            visInteraction(dragNodes = FALSE, dragView = FALSE, zoomView = FALSE)
-       }
+       #}
      })
    })
    
@@ -1459,20 +1485,102 @@ server <- function(input, output,session) {
      content = function(con) {
        nodes=nodes()
          edges=edges()
-       nodes_positions <- nodes_positions()
-       if(!is.null(nodes_positions)){
-         nodes_save <- merge(nodes, nodes_positions, by = "id", all = T)
-       } else  {
-         nodes_save <- nodes
-       }
-       visNetwork(nodes = nodes_save, edges = edges, height = "800px") %>%
-         visOptions(highlightNearest = TRUE) %>% visExport() %>%
-         visPhysics(enabled = FALSE) %>% visEdges(smooth = FALSE) %>% visSave(con)
+       # nodes_positions <- nodes_positions()
+       # if(!is.null(nodes_positions)){
+       #   nodes_save <- merge(nodes, nodes_positions, by = "id", all = T)
+       # } else  {
+       #   nodes_save <- nodes
+       # }
+       visNetwork(nodes, edges) %>% visEdges(arrows ="to") %>% 
+         visLegend(useGroups = FALSE, addNodes = data.frame(label = "Nodes", shape = "circle"), 
+                   addEdges = data.frame(label = "Edges", color = "black")) %>% 
+         visOptions(highlightNearest =list(enabled=TRUE,hover=TRUE,degree=list(from=0.5,to=0.5)), 
+                    nodesIdSelection = list(enabled = TRUE, 
+                    style = 'width: 200px; height: 26px;background: #f8f8f8;color: darkblue;border:none;outline:none;')) %>%
+         visExport(type="pdf",name=paste(input$projects,"_Lig-Rec_network.pdf",sep="")) %>% 
+         visPhysics(stabilization=TRUE,timestep=0.2, adaptiveTimestep = T,barnesHut = list(avoidOverlap=0,gravitationalConstant=-25000)) %>%
+         visInteraction(dragNodes = FALSE, dragView = FALSE, zoomView = FALSE) %>% visEdges(smooth = FALSE) %>% visSave(con)
+
      }
    )
    
-
+   ######################################################################################################
+   ######################################################################################################
+   ################################# Ligand Receptor Heatmap ############################################
+   ######################################################################################################
+   ######################################################################################################
+   #Generate drop-down to generate variables based on which you want to find pairs 
+   output$pairbyheatnet <- renderUI({
+     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+       scrna=fileload()
+       metadata=as.data.frame(scrna@meta.data)
+       metadata=metadata %>% select(starts_with("var_"))
+       options=colnames(metadata)
+       selectInput("pairbyheatnet","Select cell group ",options,selected=options[1])
+     })
+   })
    
+   #Check if the data is from mouse/human and use the approprite file to list the options for source
+   output$source3 <- renderUI({
+     file = read.csv("data/param.csv")
+     org=as.character(file$organism[file$projects==input$projects])
+     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
+     options=as.character(unique(rl$Pair.Source))
+     checkboxGroupInput('source3', label='Select source(s)',choices=options,selected=options[1])
+   })
+   
+   #Check if the data is from mouse/human and use the approprite file to list the options for evidence
+   output$evidence3 <- renderUI({
+     file = read.csv("data/param.csv")
+     org=as.character(file$organism[file$projects==input$projects])
+     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
+     options=as.character(unique(rl$Pair.Evidence))
+     checkboxGroupInput('evidence3',label='Select Evidence(s)',choices=options,selected=options[1])
+   })
+   
+   #Generate lig-receptor pairs table
+   ligrecheat = reactive({
+     result=ligrec(fileload(),pair=input$pairbyheatnet,prj=input$projects)
+     result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
+     if(input$checksource2==T){result=result[result$Pair.Source %in% input$source3,]}
+     if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence3,]}
+     return(result)
+   })
+   
+   #Render the same lig-rec pairs data table again to create network
+   output$pairs_res3 = DT::renderDataTable({
+     input$pairbyheatnet
+     input$source3
+     input$evidence3
+     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+       DT::datatable(ligrecheat(),
+                     extensions = c('Buttons','Scroller'),
+                     options = list(dom = 'Bfrtip',
+                                    searchHighlight = TRUE,
+                                    pageLength = 10,
+                                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                    scrollX = TRUE,
+                                    buttons = c('copy', 'print')
+                     ),rownames=FALSE,caption= "Ligand Receptor Pairs Result",selection = list(mode = 'single', selected =1),escape = F)
+     })
+   })
+   
+  #Get ligand-receptor pairs and compute frequency and use it to generate a heatmap
+   netheatmap = reactive({
+     result=ligrecheat()
+     tab=table(result[,6:7])
+     tab=as.data.frame(tab)
+     tab = tab %>% spread(Receptor_cluster,Freq)
+     rownames(tab)=tab$Lig_cluster
+     tab= tab %>% dplyr::select(-Lig_cluster)
+     #aheatmap(as.matrix(tab),col = colorRampPalette(brewer.pal(n = 9,input$hmpcolnet))(30))
+     heatmap.2(as.matrix(tab),col = colorRampPalette(brewer.pal(n = 9,input$hmpcolnet))(30),xlab = "Receptor Cluster",ylab= "Ligand Cluster") 
+   })
+   #Render heatmap
+   output$netheatmap = renderPlot({
+     input$hmpcolnet
+     netheatmap()
+   })
    
    ######################################################################################################
    ######################################################################################################

@@ -97,7 +97,7 @@ ligrec <- function(scrna,pair,prj){
   #loop over each cluster to find pairs
   for(i in 1:(length(levels(my.data$clust)))){
     for(j in 1:(length(levels(my.data$clust)))){
-      if(i!=j){
+      #if(i!=j){
         #from the large martix, subselect receptor and lig subgoups (if i=1 and j=2, keep cells in grps 1 and 2)
         test=my.data[my.data$clust==levels(my.data$clust)[i] | my.data$clust==levels(my.data$clust)[j],]
         #Subselect genes in receptor list in cells in rec subgroup (say 1)
@@ -114,8 +114,8 @@ ligrec <- function(scrna,pair,prj){
           res=rl[(rl$ligand %in% colnames(L_c2)) & (rl$receptor %in% colnames(R_c1)),]
         }else{}
         
-      }
-      else{}
+      # }
+      # else{}
       if(nrow(res)!=0){
         res$Receptor_cluster=levels(my.data$clust)[i]
         res$Lig_cluster=levels(my.data$clust)[j]
