@@ -16,6 +16,7 @@ library(rglwidget)
 library(Seurat)
 library(cowplot)
 library(data.table)
+library(NMF)
 #library(ggnetwork)
 #library(igraph)
 library(visNetwork)
@@ -38,63 +39,63 @@ server <- function(input, output,session) {
   ################### AUTHENTICATION  ##############
   ###################################################
   ###################################################
-  #  values <- reactiveValues(authenticated = FALSE)
-  # 
-  #  # Return the UI for a modal dialog with data selection input. If 'failed'
-  #  # is TRUE, then display a message that the previous value was invalid.
-  #  dataModal <- function(failed = FALSE) {
-  #    modalDialog(
-  #      textInput("username", "Username:"),
-  #      passwordInput("password", "Password:"),
-  #      footer = tagList(
-  #        # modalButton("Cancel"),
-  #        actionButton("ok", "OK")
-  #      )
-  #    )
-  #  }
-  # 
-  #  # Show modal when button is clicked.
-  #  # This `observe` is suspended only whith right user credential
-  # 
-  #  obs1 <- observe({
-  #    showModal(dataModal())
-  #  })
-  # 
-  # # When OK button is pressed, attempt to authenticate. If successful,
-  # # remove the modal.
-  # obs2 <- observe({
-  #   req(input$ok)
-  #   isolate({
-  #     Username <- input$username
-  #     Password <- input$password
-  #   })
-  #   Id.username <- which(my_username == Username)
-  #   Id.password <- which(my_password == Password)
-  #   if (length(Id.username) > 0 & length(Id.password) > 0) {
-  #     if (Id.username == Id.password) {
-  #       Logged <<- TRUE
-  #       values$authenticated <- TRUE
-  #       obs1$suspend()
-  #       removeModal()
-  # 
-  #     } else {
-  #       values$authenticated <- FALSE
-  #     }
-  #   }
-  # })
+   values <- reactiveValues(authenticated = FALSE)
+
+   # Return the UI for a modal dialog with data selection input. If 'failed'
+   # is TRUE, then display a message that the previous value was invalid.
+   dataModal <- function(failed = FALSE) {
+     modalDialog(
+       textInput("username", "Username:"),
+       passwordInput("password", "Password:"),
+       footer = tagList(
+         # modalButton("Cancel"),
+         actionButton("ok", "OK")
+       )
+     )
+   }
+
+   # Show modal when button is clicked.
+   # This `observe` is suspended only whith right user credential
+
+   obs1 <- observe({
+     showModal(dataModal())
+   })
+
+  # When OK button is pressed, attempt to authenticate. If successful,
+  # remove the modal.
+  obs2 <- observe({
+    req(input$ok)
+    isolate({
+      Username <- input$username
+      Password <- input$password
+    })
+    Id.username <- which(my_username == Username)
+    Id.password <- which(my_password == Password)
+    if (length(Id.username) > 0 & length(Id.password) > 0) {
+      if (Id.username == Id.password) {
+        Logged <<- TRUE
+        values$authenticated <- TRUE
+        obs1$suspend()
+        removeModal()
+
+      } else {
+        values$authenticated <- FALSE
+      }
+    }
+  })
 
   ###################################################
   ###################################################
   ####### Display username in notification bar  ####
   ###################################################
   ###################################################
-  # output$userloggedin = renderMenu({
-  #   msg= paste("Logged in as ",input$username,sep="")
-  #   prj= paste("Data: ",input$projects,sep="")
-  #   dropdownMenu(type = "notifications", badgeStatus = "info",
-  #                notificationItem(icon = icon("user"), status = "info",msg),
-  #                notificationItem(icon = icon("book"), status = "info",prj))
-  # })
+  output$userloggedin = renderMenu({
+    msg= paste("Logged in as ",input$username,sep="")
+    prj= paste("Data: ",input$projects,sep="")
+    dropdownMenu(type = "notifications", badgeStatus = "info",
+                 notificationItem(icon = icon("user"), status = "info",msg),
+                 notificationItem(icon = icon("book"), status = "info",prj))
+  })
   ###################################################
   ###################################################
   ####### Display project list and load data  #######
@@ -102,13 +103,13 @@ server <- function(input, output,session) {
   ###################################################
   #Read the parameter file
   readexcel = reactive({
-     #user=input$username
+     user=input$username
      file = read.csv("data/param.csv")
-    # if(user=="allusers"){
-    #   file=file
-    # }else{
-    #   file=file[file$user==user,]
-    # }
+    if(user=="allusers"){
+      file=file
+    }else{
+      file=file[file$user==user,]
+    }
   })
   
   #Get Project list and populate drop-down
@@ -237,7 +238,9 @@ server <- function(input, output,session) {
   #Generate drop down menu to populate the max number of dimensions used in the scRNA analysis
   output$ndim = renderUI({
     scrna=fileload()
+    maxdim="NA"
     maxdim=length(scrna@dr$pca@sdev)
+    validate(is.na(maxdim)==T,"PCA dimensional Reduction has not been computed")
     var=1:maxdim
     selectInput("ndim","Choose number of dimensions",var,selected = 1)
   })
@@ -246,6 +249,7 @@ server <- function(input, output,session) {
   vizplot= reactive({
     scrna=fileload()
     dim=input$ndim
+    validate(is.na(dim)==T,"PCA dimensional Reduction has not been computed")
     par(mar=c(4,5,3,3))
     g1=VizPCA(object = scrna, pcs.use = dim:dim,nCol=1,font.size = 1,num.genes = input$ngenes)
     return(g1) 
@@ -1542,8 +1546,8 @@ server <- function(input, output,session) {
    ligrecheat = reactive({
      result=ligrec(fileload(),pair=input$pairbyheatnet,prj=input$projects)
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
-     if(input$checksource2==T){result=result[result$Pair.Source %in% input$source3,]}
-     if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence3,]}
+     if(input$checksourceheat==T){result=result[result$Pair.Source %in% input$source3,]}
+     if(input$checkeviheat==T){result=result[result$Pair.Evidence %in% input$evidence3,]}
      return(result)
    })
    
@@ -1573,12 +1577,28 @@ server <- function(input, output,session) {
      tab = tab %>% spread(Receptor_cluster,Freq)
      rownames(tab)=tab$Lig_cluster
      tab= tab %>% dplyr::select(-Lig_cluster)
-     #aheatmap(as.matrix(tab),col = colorRampPalette(brewer.pal(n = 9,input$hmpcolnet))(30))
-     heatmap.2(as.matrix(tab),col = colorRampPalette(brewer.pal(n = 9,input$hmpcolnet))(30),xlab = "Receptor Cluster",ylab= "Ligand Cluster") 
+     if(input$clusterby=="both"){
+       row=TRUE
+       column=TRUE
+     }else if(input$clusterby=="row"){
+       row=TRUE
+       column=FALSE
+     }else if(input$clusterby=="column"){
+       row=FALSE
+       column=TRUE
+     }else if(input$clusterby=="none"){
+       row=FALSE
+       column=FALSE
+     }
+     if(input$checkbox==TRUE){
+       aheatmap(as.matrix(tab),Rowv=row,Colv=column,col = colorRampPalette(brewer.pal(n = 9,input$hmpcolnet))(30),main= "Receptor genes (x) vs Ligand genes (y)")}
+     else{aheatmap(as.matrix(tab),Rowv=row,Colv=column,col = colorRampPalette(rev(brewer.pal(n = 9,input$hmpcolnet)))(30),main= "Receptor genes (x) vs Ligand genes (y)")}
    })
    #Render heatmap
    output$netheatmap = renderPlot({
      input$hmpcolnet
+     input$clusterby
+     input$checkbox
      netheatmap()
    })
    

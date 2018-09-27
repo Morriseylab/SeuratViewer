@@ -7,6 +7,7 @@ library(shinyjs)
 library(rglwidget)
 library(reshape2)
 library(visNetwork)
+library(dashboardthemes)
 options(shiny.sanitize.errors = FALSE)
 ui <- dashboardPage(
   dashboardHeader(title = "sEuRaT",titleWidth = 350,dropdownMenuOutput("userloggedin")),
@@ -17,7 +18,7 @@ ui <- dashboardPage(
                    #            ".shiny-output-error:before { visibility: hidden; }"
                    # ),
                    tags$head(tags$style(HTML(".sidebar { height: 250vh; overflow-y: auto; }
-                                             .shiny-notification{position: fixed;top: 33%;left: 45%;right: 33%;}
+                                             .shiny-notification{position: fixed;top: 33%;left: 45%;right: 30%;}
                                              " )
                                         )),
                    sidebarMenu(
@@ -52,7 +53,8 @@ ui <- dashboardPage(
                               ),
                      
                      menuItem('Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
-                     menuItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right'),
+                     menuItem('Ligand Receptor Pairs', tabName = 'ligrecmenu', icon = icon('hand-o-right'),
+                              menuSubItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right')),
                               menuSubItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right')),
                               menuSubItem('Ligand Receptor Heatmap', tabName = 'netheatmap', icon = icon('hand-o-right'))
                               ),
@@ -61,7 +63,6 @@ ui <- dashboardPage(
   ),#end dashboardSidebar
   
   dashboardBody(
-    shinyDashboardThemes(theme="blue_gradient"),
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
     ),
@@ -381,7 +382,9 @@ ui <- dashboardPage(
                     condition = "input.checkeviheat ==true",
                     uiOutput('evidence3')
                   ),
-                selectInput("hmpcolnet", "Select Heatmap Color Palette",c('YlGnBu' = "YlGnBu",'RdBu' = "RdBu",'YlOrRd' = "YlOrRd",'PRGn'="PRGn", 'Blues' = "Blues"))
+                selectInput("hmpcolnet", "Select Heatmap Color Palette",c('YlGnBu' = "YlGnBu",'RdBu' = "RdBu",'YlOrRd' = "YlOrRd",'PRGn'="PRGn", 'Blues' = "Blues")),
+                selectInput("clusterby", "Cluster By",c('Both'="both",'Receptor Genes' = "row",'Ligand Genes' = "column",'None' = "none")),
+                checkboxInput("checkbox", label = "Reverse Colors", value = FALSE)
                 
                 ),
             box(title = "Ligand Receptor Pairs",solidHeader = TRUE,width=12,status='primary',
