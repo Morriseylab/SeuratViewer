@@ -321,6 +321,7 @@ ui <- dashboardPage(
                 ),
                 uiOutput("bigene_rangea2"),
                 uiOutput("bigene_rangeb2"),
+                sliderInput("perc_cells", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 20,step=10),
                 sliderInput("bigene_pointsize2", "Point Size:",min = 0, max = 5, value = 1,step=.25)
             ),
             box(
@@ -336,7 +337,10 @@ ui <- dashboardPage(
             box(title = "Controls",solidHeader = TRUE,width=12,status='primary',
                 fluidRow(
                 column(6,uiOutput("pairbynet")),
-                column(6,uiOutput("filternet"))),
+                column(6,h1(""))),
+                fluidRow(
+                  column(6,sliderInput("perc_cells2", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 20,step=10)),
+                  column(6,uiOutput("filternet"))),
                 fluidRow(
                   column(6,checkboxInput("checksource2", label = "Check to select by source", value = FALSE)),
                   column(6,checkboxInput("checkevi2", label = "Check to select by evidence", value = FALSE)),
@@ -349,20 +353,21 @@ ui <- dashboardPage(
                     column(6,uiOutput('evidence2'))
                   )
                 ),
+                hr(),
+                h3("GO Analysis"),
+                fluidRow(
+                  column(12,uiOutput('grp1'))
+                ),hr(),
             fluidRow(
-              column(6,actionButton('freeze',"Freeze Network", icon = NULL)),
-              column(6,actionButton('Unfreeze',"Unfreeze Network", icon = NULL))
-              #column(4,actionButton("appfil", "Apply filters"))
-            ),br(),
-            fluidRow(
-              #column(6,actionButton("store_position", "Store positions")),
               column(6,downloadButton('dwldnet', 'Download Network plot')),
               column(6,br())
                      )),#End box
             box(title = "Network",solidHeader = TRUE,width=12,status='primary',
-                visNetworkOutput("lrnetwork", height = 800)
+                #visNetworkOutput("lrnetwork", height = 800)
+                plotOutput("lrnetwork", height = 800)
             ),#End box
             box(title = "Ligand-Receptor pairs",solidHeader = TRUE,width=12,status='primary',
+                DT::dataTableOutput('gotable'),
                 DT::dataTableOutput('pairs_res2')
             )),#end of network
     ######################################################################################################################################
@@ -382,10 +387,11 @@ ui <- dashboardPage(
                     condition = "input.checkeviheat ==true",
                     uiOutput('evidence3')
                   ),
+                sliderInput("perc_cells3", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 20,step=10),
                 selectInput("hmpcolnet", "Select Heatmap Color Palette",c('YlGnBu' = "YlGnBu",'RdBu' = "RdBu",'YlOrRd' = "YlOrRd",'PRGn'="PRGn", 'Blues' = "Blues")),
-                selectInput("clusterby", "Cluster By",c('Both'="both",'Receptor Genes' = "row",'Ligand Genes' = "column",'None' = "none")),
-                checkboxInput("checkbox", label = "Reverse Colors", value = FALSE)
-                
+                selectInput("clusterby", "Cluster By",c('Both'="both",'Receptor Genes' = "column",'Ligand Genes' = "row",'None' = "none")),
+                checkboxInput("checkbox", label = "Reverse Colors", value = FALSE),
+                downloadButton('downloadlrheatmap', 'Download Heatmap')
                 ),
             box(title = "Ligand Receptor Pairs",solidHeader = TRUE,width=12,status='primary',
                 DT::dataTableOutput('pairs_res3')

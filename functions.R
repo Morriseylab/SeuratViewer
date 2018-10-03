@@ -74,7 +74,7 @@ bigene_plot <- function (scrna, gene_probes, x=1,y=2, limita=c(1,100), limitb=c(
 
 
 #given scrna data, variable/ ident and project name, find all lig rec pairs
-ligrec <- function(scrna,pair,prj){
+ligrec <- function(scrna,pair,prj,perc){
   #get grouping variable
   var=as.character(pair)
   tt=rownames(scrna@raw.data)
@@ -90,7 +90,7 @@ ligrec <- function(scrna,pair,prj){
   my.data=FetchData(scrna,c(var,"nGene",genes2))
   colnames(my.data)[1]= "clust"
   #my.data$clust=factor(my.data$clust,levels=unique(my.data$clust))
-  
+  perc=perc/100
   if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
   result=data.frame()
   res=data.frame()
@@ -106,8 +106,8 @@ ligrec <- function(scrna,pair,prj){
         L_c2=test[test$clust==levels(my.data$clust)[j] , (colnames(test) %in% rl$ligand)]
         if(nrow(R_c1)!=0 &nrow(L_c2)!=0){
           #keep genes that are expressed in more than 50% of the cells
-          keep1 = colSums(R_c1>1)>=.5*dim(R_c1)[1]
-          keep2 = colSums(L_c2>1)>=.5*dim(L_c2)[1]
+          keep1 = colSums(R_c1>1)>=perc*dim(R_c1)[1]
+          keep2 = colSums(L_c2>1)>=perc*dim(L_c2)[1]
           R_c1=R_c1[,keep1]
           L_c2=L_c2[,keep2]
           #get list of lig-rec pairs
