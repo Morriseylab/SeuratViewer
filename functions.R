@@ -105,7 +105,7 @@ ligrec <- function(scrna,pair,prj,perc){
         #Subselect genes in ligand list in cells in lig subgroup (say 2)
         L_c2=test[test$clust==levels(my.data$clust)[j] , (colnames(test) %in% rl$ligand)]
         if(nrow(R_c1)!=0 &nrow(L_c2)!=0){
-          #keep genes that are expressed in more than 50% of the cells
+          #keep genes that are expressed in more than user-input percent of the cells
           keep1 = colSums(R_c1>1)>=perc*dim(R_c1)[1]
           keep2 = colSums(L_c2>1)>=perc*dim(L_c2)[1]
           R_c1=R_c1[,keep1]

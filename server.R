@@ -25,9 +25,9 @@ source("functions.R")
 
 #Specify color palette for the tSNE and UMAP plots
 cpallette=c("#64B2CE", "#DA5724", "#74D944", "#CE50CA", "#C0717C", "#CBD588", "#5F7FC7",
-            "#673770", "#D3D93E", "#38333E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD",
+            "#673770", "#D3D93E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD",
             "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#C84248", "#8569D5", "#5E738F", "#D1A33D",
-            "#8A7C64", "#599861","#000099","#FFCC66","#99CC33","#CC99CC","#666666")
+            "#8A7C64", "#599861","#000099","#FFCC66","#99CC33","#CC99CC","#666666", "#38333E")
 
 #Specify user-ids and passwords
 my_username <- c("Sealelab","Morriseylab","Jainlab","allusers")
@@ -461,7 +461,7 @@ server <- function(input, output,session) {
   output$setcategory = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% select(starts_with("var_"))
+    metadata=metadata %>% dplyr::select(starts_with("var_"))
     var=c(colnames(metadata))
     selectInput("setcategory","Choose category",var,"pick one")
   })
@@ -644,7 +644,7 @@ server <- function(input, output,session) {
   output$setidentlist = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% select(starts_with("var_"))
+    metadata=metadata %>% dplyr::select(starts_with("var_"))
     var=c(colnames(metadata))
     selectInput("setidentlist","Choose category to compare",var,"pick one")
     
@@ -866,7 +866,7 @@ server <- function(input, output,session) {
   output$setvar = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% select(starts_with("var_"))
+    metadata=metadata %>% dplyr::select(starts_with("var_"))
     var=c(colnames(metadata))
     selectInput("setvar","Choose category",var,"pick one")
   })
@@ -999,7 +999,7 @@ server <- function(input, output,session) {
   output$setdotvar = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% select(starts_with("var_"))
+    metadata=metadata %>% dplyr::select(starts_with("var_"))
     var=c(colnames(metadata))
     selectInput("setdotvar","Choose category",var,"pick one")
   })
@@ -1054,7 +1054,7 @@ server <- function(input, output,session) {
      withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
        scrna=fileload()
        metadata=as.data.frame(scrna@meta.data)
-       metadata=metadata %>% select(starts_with("var_"))
+       metadata=metadata %>% dplyr::select(starts_with("var_"))
        var=c("ident",colnames(metadata))
        selectInput("hmpgrp","Select a Variable",var,"pick one")
      })
@@ -1126,7 +1126,7 @@ server <- function(input, output,session) {
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
        scrna=fileload()
        metadata=as.data.frame(scrna@meta.data)
-       metadata=metadata %>% select(starts_with("var_"))
+       metadata=metadata %>% dplyr::select(starts_with("var_"))
        options=colnames(metadata)
        selectInput("pairby","Select cell group ",options,selected=options[1])
      })
@@ -1164,7 +1164,7 @@ server <- function(input, output,session) {
      })
    })
    
-   #If user chooses to select select both cluster and genes, generate drop down menus to pick ligand cluster
+   #If user chooses to select both cluster and genes, generate drop down menus to pick ligand cluster
    output$clust2.1 <- renderUI({
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
      scrna=fileload()
@@ -1335,7 +1335,7 @@ server <- function(input, output,session) {
    #Generate slider to filter ligand receptor pairs by frequency of occurence
    output$filternet <- renderUI({
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects)
+       result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2)
        edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
        colnames(edges)=c("from","to")
        e2=as.data.frame(table(edges[,1:2]))
@@ -1366,8 +1366,9 @@ server <- function(input, output,session) {
    
    #For selected project and grouping variable, generate all possible ligand receptor pairs and filter based on user input
    datasetInputnet = reactive({
+     #result=NA
      result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2)
-     validate(need(result,"Invalid Cell group. Pick a different option"))
+     validate(need(is.na(result)==F,"Invalid Cell group. Pick a different option"))
      edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
      e2=as.data.frame(table(edges[,1:2]))
      e2=e2[e2$Freq>= input$filternet[1] & e2$Freq<= input$filternet[2],]
@@ -1426,14 +1427,15 @@ server <- function(input, output,session) {
        #network <- network(edges, vertex.attr = nodes, matrix.type = "edgelist", ignore.eval = FALSE)
        
        routes_igraph <- graph_from_data_frame(d = edges, vertices = nodes, directed = TRUE)
-       plot(routes_igraph, edge.arrow.size = 0.2,vertex.color=col,edge.color=edge.col,edge.width=width,edge.arrow.width=3,edge.label=edge.lab)
+        return(routes_igraph)
      })
    })
    
    
    #Render the ligand-receptor network plot
    output$lrnetwork = renderPlot({
-     lrnetwork()
+     routes_igraph=lrnetwork()
+     plot(routes_igraph, edge.arrow.size = 0.2,label_color="black",vertex.color=col,edge.color=edge.col,edge.width=width,edge.arrow.width=3,edge.label=edge.lab)
    })
    
    #Download network
@@ -1509,7 +1511,7 @@ server <- function(input, output,session) {
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
        scrna=fileload()
        metadata=as.data.frame(scrna@meta.data)
-       metadata=metadata %>% select(starts_with("var_"))
+       metadata=metadata %>% dplyr::select(starts_with("var_"))
        options=colnames(metadata)
        selectInput("pairbyheatnet","Select cell group ",options,selected=options[1])
      })
