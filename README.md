@@ -48,4 +48,5 @@ save(scrna,file="projectname.RData")
 
 Add your data to the param.csv file and move it to the data directory. Please note that the data directory must be in the same location as your server.R, ui.R and function.R files. The param.csv file should also be saved in the data directory as the RData files.
 
+##NOTE
 Please note that this script requires a username and a password. Before running it, either comment out the Authentication section or add the username password to lines 34-35 of server.R. Also, the username has to be entered in the param.csv file as well.
