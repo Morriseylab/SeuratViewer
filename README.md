@@ -20,6 +20,7 @@ Run the following command to install all required packages
 install.packages(c("shiny","shinydashboard","shinyjs","shinyBS","shinyBS","RColorBrewer","reshape2","ggplot2",
                    "dplyr","tidyr","plotly","htmlwidgets","DT","shinyRGL","rgl","rglwidget","Seurat","cowplot",
                     "data.table","NMF","tibble","network","igraph"))
+                    
 ## try http:// if https:// URLs are not supported
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("biomaRt","Biobase"))
