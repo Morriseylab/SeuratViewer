@@ -41,7 +41,7 @@ for(c in levels(scrna@ident)){
 ```
 Save Seurat object  
 ```
-save(scrna,file="projectname.RData")
+save(scrna,file="scrna_data1.RData")
 ```
 
 ### Adding your dataset
