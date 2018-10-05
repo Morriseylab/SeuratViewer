@@ -52,13 +52,14 @@ ui <- dashboardPage(
                               bsTooltip(id = "q3", title = "Upload genelist to view the gene expression across cellgroups as a dotplot",placement = "right",trigger = "hover", options = NULL)
                               ),
                      
-                     menuItem('Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
+                     menuItem('Seurat Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
                      menuItem('Ligand Receptor Pairs', tabName = 'ligrecmenu', icon = icon('hand-o-right'),
                               menuSubItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right')),
                               menuSubItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right')),
                               menuSubItem('Ligand Receptor Heatmap', tabName = 'netheatmap', icon = icon('hand-o-right'))
                               ),
-                     menuItem('Troubleshoot', tabName = 'troubleshoot', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green")
+                     menuItem('Troubleshoot', tabName = 'troubleshoot', icon = icon('hand-o-right')),
+                     menuItem('Help page', tabName = 'help', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green")
                    )#end of sidebar menu
   ),#end dashboardSidebar
   
@@ -112,6 +113,10 @@ ui <- dashboardPage(
                   column(6,selectInput("categoryb2", "Select one",c('Categories' = "var",'Cluster' = "clust", 'Gene Expression' = "geneexp"),selected = "clust"))
                 ),
                 sliderInput("pointa2", "Point Size:",min = 0, max = 5, value = 1,step=.25),
+                fluidRow(
+                  column(6,selectInput("genecolor1", "Pick color 1 for Feature Plot",colors(),selected = "grey")),
+                  column(6,selectInput("genecolor2", "Pick color 2 for Feature Plot",colors(),selected = "blue"))
+                ),
                 fluidRow(
                   column(6,conditionalPanel(
                     condition = "input.categorya2 == 'var'",
@@ -190,7 +195,8 @@ ui <- dashboardPage(
                 sliderInput("bigene_pointsize", "Point Size:",min = 0, max = 5, value = 1,step=.25),
                 downloadButton('downloadbiplot', 'Download Bigene plot')
               )
-            )
+            ),
+            box(DT::dataTableOutput('bigene_genecount'),width=12, status='primary',title = "Gene Count Table",solidHeader = TRUE)
     ),#endbigeneplotTab
     ######################################################################################################################################
     tabItem(tabName = "deg",
@@ -353,15 +359,13 @@ ui <- dashboardPage(
                     column(6,uiOutput('evidence2'))
                   )
                 ),
-                hr(),
-                h3("GO Analysis"),
-                fluidRow(
-                  column(12,uiOutput('grp1'))
-                ),hr(),
             fluidRow(
               column(6,downloadButton('dwldnet', 'Download Network plot')),
               column(6,br())
                      )),#End box
+            box(title= 'GO Analysis', solidHeader = T, width=12, status = 'primary',
+               uiOutput('grp1')
+                ),
             box(title = "Network",solidHeader = TRUE,width=12,status='primary',
                 #visNetworkOutput("lrnetwork", height = 800)
                 plotOutput("lrnetwork", height = 800)
