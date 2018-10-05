@@ -1427,7 +1427,7 @@ server <- function(input, output,session) {
        #network <- network(edges, vertex.attr = nodes, matrix.type = "edgelist", ignore.eval = FALSE)
        
        routes_igraph <- graph_from_data_frame(d = edges, vertices = nodes, directed = TRUE)
-       plot(routes_igraph, edge.arrow.size = 0.2,vertex.label.color="black",vertex.color=col,edge.color=edge.col,edge.width=width,edge.arrow.width=3,edge.label=edge.lab)
+       plot(routes_igraph, edge.arrow.size = 0.2,vertex.label.color="black",edge.label.color="black",vertex.color=col,edge.color=edge.col,edge.width=width,edge.arrow.width=3,edge.label=edge.lab)
      })
    })
    
