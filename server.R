@@ -21,6 +21,7 @@ library(NMF)
 library(tibble)
 library(network)
 library(igraph)
+library(shinyBS)
 source("functions.R")
 
 #Specify color palette for the tSNE and UMAP plots
@@ -241,7 +242,7 @@ server <- function(input, output,session) {
     scrna=fileload()
     maxdim="NA"
     maxdim=length(scrna@dr$pca@sdev)
-    validate(is.na(maxdim)==T,"PCA dimensional Reduction has not been computed")
+    validate(need(is.na(maxdim)==F,"PCA dimensional Reduction has not been computed"))
     var=1:maxdim
     selectInput("ndim","Choose number of dimensions",var,selected = 1)
   })
@@ -250,7 +251,7 @@ server <- function(input, output,session) {
   vizplot= reactive({
     scrna=fileload()
     dim=input$ndim
-    validate(dim,"PCA dimensional Reduction has not been computed")
+    validate(need(dim,"PCA dimensional Reduction has not been computed"))
     par(mar=c(4,5,3,3))
     g1=VizPCA(object = scrna, pcs.use = dim:dim,nCol=1,font.size = 1,num.genes = input$ngenes)
     return(g1) 
@@ -748,6 +749,7 @@ server <- function(input, output,session) {
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
     met= sapply(metadata,is.numeric)
+    validate(need(is.null(scrna@meta.data$var_cluster)==F,"var_cluster not found in meta data"))
     scrna@meta.data$var_cluster=as.numeric(as.character(scrna@meta.data$var_cluster))
     tsnea=input$tsnea
     tsneb=input$tsneb
@@ -797,6 +799,87 @@ server <- function(input, output,session) {
     content = function(file){
       pdf(file, width = 12, height = 11,useDingbats=FALSE)
       plot(comptsne())
+      dev.off()
+    })
+  
+  ###################################################
+  ###################################################
+  ####### Display Heatmap plot with controls  #######
+  ###################################################
+  ###################################################
+  #get the list of the differentially expressed markers from the differential expression tab and compute min and max
+  #number of genes to show in the dotpot
+  output$heatmapgenes = renderUI({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      markers=markergenes()
+      validate(
+        need(nrow(markers)>0, "No Marker genes found")
+      )
+      if(nrow(markers)<10){
+        min=1
+        max=nrow(markers)
+      }else{
+        min=10
+        max=nrow(markers)
+      }
+      sliderInput("heatmapgenes", "Number of top genes to plot:",min = min, max = max,value = min)
+    })
+  })
+  
+  #Generate drop-down for list of variables to group cells by
+  output$hmpgrp = renderUI({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      scrna=fileload()
+      metadata=as.data.frame(scrna@meta.data)
+      metadata=metadata %>% dplyr::select(starts_with("var_"))
+      var=c("ident",colnames(metadata))
+      selectInput("hmpgrp","Select a Variable",var,"pick one")
+    })
+  })
+  
+  #generate the heatmap
+  heatmap <- reactive({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      scrna=fileload()
+      markers=markergenes()
+      if(input$hmpcol=="PuYl"){
+        lowcol="darkmagenta"
+        midcol="black"
+        highcol="yellow"
+      }else if(input$hmpcol=="BuGn"){
+        lowcol="yellow"
+        midcol="green"
+        highcol="blue"
+      }else if(input$hmpcol=="RdYl"){
+        lowcol="yellow"
+        midcol="red"
+        highcol="black"
+      }else if(input$hmpcol=="RdBu"){
+        lowcol="red"
+        midcol="white"
+        highcol="blue"}
+      p=DoHeatmap(object = scrna, genes.use = rownames(markers)[1:input$heatmapgenes],group.by = input$hmpgrp, draw.line= T,
+                  group.label.rot= T, col.low=lowcol, col.mid =midcol ,col.high = highcol,slim.col.label=TRUE)
+      p2 <- add_sub(p, paste(input$projects,"_Heatmap",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
+      ggdraw(p2)
+    })
+  })
+  
+  #Render the heatmap
+  output$heatmap <- renderPlot({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      heatmap()
+    })
+  })
+  
+  #Download function for the heatmap
+  output$downloadheatmap <- downloadHandler(
+    filename = function() {
+      paste0("Heatmap.pdf")
+    },
+    content = function(file){
+      pdf(file, width = 13, height = 8,useDingbats=FALSE)
+      plot(heatmap())
       dev.off()
     })
   
@@ -1024,88 +1107,6 @@ server <- function(input, output,session) {
     dev.off()
   })
   
-  ###################################################
-  ###################################################
-  ####### Display Heatmap plot with controls  #######
-  ###################################################
-  ###################################################
-  #get the list of the differentially expressed markers from the differential expression tab and compute min and max
-  #number of genes to show in the dotpot
-   output$heatmapgenes = renderUI({
-     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       markers=markergenes()
-       validate(
-         need(nrow(markers)>0, "No Marker genes found")
-       )
-       if(nrow(markers)<10){
-         min=1
-         max=nrow(markers)
-       }else{
-         min=10
-         max=nrow(markers)
-       }
-       sliderInput("heatmapgenes", "Number of top genes to plot:",min = min, max = max,value = min)
-     })
-   })
-   
-  #Generate drop-down for list of variables to group cells by
-   output$hmpgrp = renderUI({
-     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       scrna=fileload()
-       metadata=as.data.frame(scrna@meta.data)
-       metadata=metadata %>% dplyr::select(starts_with("var_"))
-       var=c("ident",colnames(metadata))
-       selectInput("hmpgrp","Select a Variable",var,"pick one")
-     })
-   })
-   
-   #generate the heatmap
-   heatmap <- reactive({
-     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       scrna=fileload()
-       markers=markergenes()
-       if(input$hmpcol=="PuYl"){
-         lowcol="darkmagenta"
-         midcol="black"
-         highcol="yellow"
-       }else if(input$hmpcol=="BuGn"){
-         lowcol="yellow"
-           midcol="green"
-           highcol="blue"
-       }else if(input$hmpcol=="RdYl"){
-         lowcol="yellow"
-           midcol="red"
-           highcol="black"
-       }else if(input$hmpcol=="RdBu"){
-         lowcol="red"
-         midcol="white"
-         highcol="blue"}
-       p=DoHeatmap(object = scrna, genes.use = rownames(markers)[1:input$heatmapgenes],group.by = input$hmpgrp, draw.line= T,
-                 group.label.rot= T, col.low=lowcol, col.mid =midcol ,col.high = highcol,slim.col.label=TRUE)
-       p2 <- add_sub(p, paste(input$projects,"_Heatmap",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
-       ggdraw(p2)
-     })
-   })
-   
-   #Render the heatmap
-   output$heatmap <- renderPlot({
-     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       heatmap()
-     })
-     dev.off()
-   })
-   
-   #Download function for the heatmap
-   output$downloadheatmap <- downloadHandler(
-     filename = function() {
-       paste0("Heatmap.pdf")
-     },
-     content = function(file){
-       pdf(file, width = 13, height = 8,useDingbats=FALSE)
-       plot(heatmap())
-       dev.off()
-     })
-   
    ###################################################
    ###################################################
    ##### CONTROL PANEL FOR LIGAND-RECEPTOR PAIRS #####

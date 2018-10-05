@@ -8,6 +8,7 @@ library(rglwidget)
 library(reshape2)
 library(visNetwork)
 library(dashboardthemes)
+library(shinyBS)
 options(shiny.sanitize.errors = FALSE)
 ui <- dashboardPage(
   dashboardHeader(title = "sEuRaT",titleWidth = 350,dropdownMenuOutput("userloggedin")),
@@ -34,6 +35,10 @@ ui <- dashboardPage(
                               ),
                      menuItem('Biplot', tabName = 'biplot', icon = icon('hand-o-right')),
                      menuItem('Differential Expression', tabName = 'deg', icon = icon('hand-o-right')),
+                     menuItem('Seurat Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
+                     bsPopover("heatmap",title="Note",content= "Please return to Differential Expression tab to generate marker genes before attemping to view this Heatmap",placement="left",trigger="hover",options=list(container="body")),
+                     
+                     
                      menuItem('Gene Expression Plots', tabName = 'geplot', icon = icon('hand-o-right'),
                               fluidRow(
                                 column(1,h4("")),
@@ -51,8 +56,6 @@ ui <- dashboardPage(
                               column(2,bsButton("q3", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
                               bsTooltip(id = "q3", title = "Upload genelist to view the gene expression across cellgroups as a dotplot",placement = "right",trigger = "hover", options = NULL)
                               ),
-                     
-                     menuItem('Seurat Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
                      menuItem('Ligand Receptor Pairs', tabName = 'ligrecmenu', icon = icon('hand-o-right'),
                               menuSubItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right')),
                               menuSubItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right')),
@@ -229,6 +232,17 @@ ui <- dashboardPage(
             )#End FluidRow
     ),#end of degtab
     ######################################################################################################################################
+    tabItem(tabName = "heatmap",
+            box(
+              title = "Controls",solidHeader = TRUE,width=12,status='primary',
+              uiOutput("heatmapgenes"),
+              uiOutput("hmpgrp"),
+              selectInput("hmpcol", "Select one",c('PurpleYellow' = "PuYl",'BlueGreen' = "BuGn", 'RedYellow' = "RdYl", 'RedBlue'="RdBu"),selected = "geneexp"),
+              downloadButton('downloadheatmap', 'Download Heatmap')
+            ),
+            box(plotOutput("heatmap", height = 900),width=12, status='primary',solidHeader = TRUE,title="Single cell heatmap of gene expression")
+    ),#end of tab
+    ######################################################################################################################################
     tabItem(tabName = "geplots",
             box(title = "Gene Expression Plots",solidHeader = TRUE,width=9,status='primary',
                 plotOutput("geplots", height = 1000)
@@ -274,17 +288,6 @@ ui <- dashboardPage(
                 plotOutput("dotplot", height = 500)
             )
     ),#end of dotplot
-        ######################################################################################################################################
-    tabItem(tabName = "heatmap",
-            box(
-              title = "Controls",solidHeader = TRUE,width=12,status='primary',
-              uiOutput("heatmapgenes"),
-              uiOutput("hmpgrp"),
-              selectInput("hmpcol", "Select one",c('PurpleYellow' = "PuYl",'BlueGreen' = "BuGn", 'RedYellow' = "RdYl", 'RedBlue'="RdBu"),selected = "geneexp"),
-              downloadButton('downloadheatmap', 'Download Heatmap')
-             ),
-            box(plotOutput("heatmap", height = 900),width=12, status='primary',solidHeader = TRUE,title="Single cell heatmap of gene expression")
-    ),#end of tab
     ######################################################################################################################################
     tabItem(tabName = "ligrec",
             box(width=9, status='primary',title = "Bigene Plot",solidHeader = TRUE,
