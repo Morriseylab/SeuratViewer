@@ -117,8 +117,8 @@ ui <- dashboardPage(
                 ),
                 sliderInput("pointa2", "Point Size:",min = 0, max = 5, value = 1,step=.25),
                 fluidRow(
-                  column(6,selectInput("genecolor1", "Pick color 1 for Feature Plot",colors(),selected = "grey")),
-                  column(6,selectInput("genecolor2", "Pick color 2 for Feature Plot",colors(),selected = "blue"))
+                  column(6,selectInput("genecolor1", "Pick color 1 for Gene Expression Plot",colors(),selected = "grey")),
+                  column(6,selectInput("genecolor2", "Pick color 2 for Gene Expression Plot",colors(),selected = "blue"))
                 ),
                 fluidRow(
                   column(6,conditionalPanel(
@@ -373,8 +373,10 @@ ui <- dashboardPage(
                 #visNetworkOutput("lrnetwork", height = 800)
                 plotOutput("lrnetwork", height = 800)
             ),#End box
+            box(title = "GO Terms",solidHeader = TRUE,width=12,status='primary',
+                DT::dataTableOutput('gotable')
+            ),
             box(title = "Ligand-Receptor pairs",solidHeader = TRUE,width=12,status='primary',
-                DT::dataTableOutput('gotable'),
                 DT::dataTableOutput('pairs_res2')
             )),#end of network
     ######################################################################################################################################
@@ -409,9 +411,49 @@ ui <- dashboardPage(
             box(title = "Graphics device",solidHeader = TRUE,width=12,status='primary',
                 textOutput("device")
             ),#End box
-            actionButton("devoff", "Click to reset the graphics device"))
+            actionButton("devoff", "Click to reset the graphics device")),
     ######################################################################################################################################
-    
+    tabItem(tabName = "help",
+            h4("All datasets hosted in this website are analysed using the Seurat package developed by the Satija Lab in NYGC."), 
+            h4("For more information", a("click here", href="https://satijalab.org/seurat/")),
+            br(),
+            h4(p(strong("1. Project Summary"))),
+            h4(p(div("The Project Summary tab gives a short description about the selected dataset and basic information such as organism, total number of cells, number of cells in each cluster, total number of genes and number of dimensions used in the analysis"))),
+            br(),
+            h4(p(strong("2. Variable Genes"))),
+            h4(p(div("The Variable genes tab lists the average expression and dispersion of highly variable genes"))),
+            br(),
+            h4(p(strong("3. Principle component Analysis"))),
+            h4(p(div("PCA is run on highly variable genes in the dataset. For a user-selected number of dimensions, the PCA tab displays a plot with the principle component values of top variable genes in the n'th dimension"))), 
+            br(),
+            h4(p(strong("4. tSNE Plots"))),
+            h4(p(div("The ",em("Compare tSNE plots")," displays two plots with same options. Users can choose the Dimensionality reduction method as well as pick between categories, clusters and gene expression. There are additional options to change colors of gene expression plot (also called feature plot) as well as subselect cells based on clusters or a range of numeric values"))),
+            h4(p(div("The ",em("Interactive tSNE/uMAP Plot"),"displays the same as in the ",em("Compare tSNE plots"),"tab except these plots are interactive. Users can zoom in, subselect and hover over for point information"))),
+            br(),
+            h4(p(strong("5. Biplot"))),
+            h4(p(div("The Biplot is similar to seurat's plot with the 'overlap' option. Users specify dimensionality reduction method, 2 genes and the expression limit of each gene in terms of logUMI to view a bigene plot based on the expression of the two genes. The tab also shows a table with the number of cells in each Cell group expression the 2 genes"))),
+            br(),
+            h4(p(strong("6. Differential Expression"))),
+            h4(p(div("The differential expression tab generates a table of marker genes specific to a cell group as well as plots showing the expression of each of those marker genes in each cell group.By default, the results displayed are each cell group again every other cell group. User can, however, find marker genes by checking the ",em("Check to choose a different category to compare")," option and selecting one cell group that can be compared against one or multiple other groups  "))),
+            br(),
+            h4(p(strong("7. Seurat heatmap"))),
+            h4(p(div("The Seurat heatmap tap generates an expression heatmap for given cells and marker genes from the table in ",em("Differential Expression")," tab "))),
+            br(),
+            h4(p(strong("8. Gene Expression plots"))),
+            h4(p(div("The",em("Gene Expression plots")," displays the same 3 expression, violin and ridge plots as in the ",em("Differential Expression")," tab. However, instead of having to select from a table, in this tab, users can manually specify the gene name they are interested in"))),
+            h4(p(div("The ",em("Cluster-wise Gene Expression")," tab shows a general dimension reduction plot as well as a gene expression plot along with a table of list of genes present in the data ordered by the percent of cells they are present in and their average expression across these cells"))),
+            h4(p(div("The ",em("Gene-Cellgroup Dotplot")," tab displays a dotplot like the one", a("here", href="https://satijalab.org/seurat/immune_alignment.html"),"where the genes are rows, cell-groups are the columns and the size of the dots show percentage of cells expressing that gene. Users please upload text files with one gene per line"))),
+            br(),
+            h4(p(strong("9. Ligand receptor Pairs"))), 
+            h4(p(div("The ",em("Ligand Receptor Pairs")," tab generates a table of all possible ligand receptor pairs (from", a("FANTOM5", href="http://fantom.gsc.riken.jp/5/suppl/Ramilowski_et_al_2015/data/PairsLigRec.txt"),") between each of the cell groups. Expression of each receptor/ligand gene per cell group is counted if it is expressed in at least 20% of the cells (by default. Users can change this and go upto 100%). This tab also displays a bigene plot for each of the ligand-receptor pair in the table"))),
+            h4(p(div("The ",em("Ligand Receptor Network")," tab displays a network where each cell group is a node and the edges denote the frequency of ligand-receptor pairs between the nodes. This tab also performs GO analysis on the selected pairs and displays the results in a table"))),
+            h4(p(div("The ",em("Ligand Receptor Heatmap")," tab displays the heatmap where rows are ligand cell groups and columns are receptor cell groups and the data represents the number of ligand-receptor pairs between the groups"))),
+            br(),
+            h4(p(strong("10. Troubleshoot"))),
+            h4(p(div("Due to high usage, we sometimes experience technical difficulties. If your plots are not being displayed, use the ",em("Click to reset graphics device")," button "))),
+            br(),
+            h4("For unknown errors or support, email xxx@xxxx.edu") 
+    )
     )#end of tabitems
   )#end of dashboard body
 )#end of dashboard page
