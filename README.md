@@ -15,7 +15,15 @@ SeuratViewer reads in the expression data, sample data, feature annotation, dime
 If you need help installing the above or getting started, refer to [this](https://deanattali.com/2015/05/09/setup-rstudio-shiny-server-digital-ocean/#install-r)
 
 ## Installation
-Run the config file to install all required packages
+Run the following command to install all required packages
+```
+install.packages(c("shiny","shinydashboard","shinyjs","shinyBS","shinyBS","RColorBrewer","reshape2","ggplot2",
+                   "dplyr","tidyr","plotly","htmlwidgets","DT","shinyRGL","rgl","rglwidget","Seurat","cowplot",
+                    "data.table","NMF","tibble","network","igraph"))
+## try http:// if https:// URLs are not supported
+source("https://bioconductor.org/biocLite.R")
+biocLite(c("biomaRt","Biobase"))
+```
 
 ## Input Data format
 ### Creating your dataset 
@@ -37,6 +45,6 @@ save(scrna,file="projectname.RData")
 
 ### Adding your dataset
 
-Add your data to the param.csv file and move it to the data directory. Please note that the data directory must be in the same location as your server.R, ui.R and function.R files.
+Add your data to the param.csv file and move it to the data directory. Please note that the data directory must be in the same location as your server.R, ui.R and function.R files. The param.csv file should also be saved in the data directory as the RData files.
 
 ## Example
