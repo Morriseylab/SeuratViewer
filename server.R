@@ -31,8 +31,9 @@ cpallette=c("#64B2CE", "#DA5724", "#74D944", "#CE50CA", "#C0717C", "#CBD588", "#
             "#8A7C64", "#599861","#000099","#FFCC66","#99CC33","#CC99CC","#666666", "#695F74")
 
 #Specify user-ids and passwords
-my_username <- c("admin","Sealelab","Morriseylab","Jainlab","allusers")
-my_password <- c("admin","pseale@999#","emorrisey$123","rjain@2018","allusers@1")
+auth=read.csv("data/authentication.csv")
+my_username <- auth$user
+my_password <- auth$pwd
 
 server <- function(input, output,session) {
   
