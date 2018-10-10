@@ -7,7 +7,6 @@ library(shinyjs)
 library(rglwidget)
 library(reshape2)
 library(visNetwork)
-library(dashboardthemes)
 library(shinyBS)
 options(shiny.sanitize.errors = FALSE)
 ui <- dashboardPage(
