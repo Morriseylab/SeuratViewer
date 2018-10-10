@@ -108,7 +108,7 @@ server <- function(input, output,session) {
   readexcel = reactive({
      user=input$username
      file = read.csv("data/param.csv")
-    if(user=="allusers"){
+    if(user=="allusers" | user=="admin" ){
       file=file
     }else{
       file=file[file$user==user,]
@@ -128,7 +128,7 @@ server <- function(input, output,session) {
     file=read.csv('data/param.csv',stringsAsFactors = F)
     colnames(file)=c("Project Name","Project Description","Organism","Username")
     file=file[order(file$`Project Name`),]
-    if(user=="allusers"){
+    if(user=="allusers" | user=="admin"){
       file=file
     }else{
       file=file[file$Username==user,] %>% dplyr::select(-Username)
@@ -173,7 +173,7 @@ server <- function(input, output,session) {
     user=input$username
     #user="allusers"
    prj= read.csv("data/param.csv")
-   if(user=="allusers"){
+   if(user=="allusers" | user=="admin"){
      prj=prj
    }else{
      prj=prj[prj$user==user,] 
