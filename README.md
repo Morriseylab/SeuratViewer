@@ -46,7 +46,7 @@ save(scrna,file="scrna_data1.RData")
 
 ### Adding your dataset
 
-Add your data to the param.csv file and move it to the data directory. Please note that the data directory must be in the same location as your server.R, ui.R and function.R files. The param.csv file should also be saved in the data directory as the RData files.
+Add your data to the param.csv file and move it to the data directory. You can find an example dataset [here.](http://165.123.69.6/SeuratViewer/scrna_data1.RData) Please note that the data directory must be in the same location as your server.R, ui.R and function.R files (rename the Example data folder into data). The param.csv file should also be saved in the data directory as the RData files.
 
 ### NOTE
 Please note that this script requires a username and a password. Before running it, either comment out the Authentication section in server.R or add the username and password in authentication.csv file in the data folder. The username has to be entered in the param.csv file as well so that the user can view only specific datasets.
