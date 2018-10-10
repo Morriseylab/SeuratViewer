@@ -1,0 +1,2558 @@
+pairname,ligand,receptor,Pair.Source,Pair.Evidence
+A2M_LRP1,A2M,LRP1,known,literature supported
+AANAT_MTNR1A,AANAT,MTNR1A,known,literature supported
+AANAT_MTNR1B,AANAT,MTNR1B,known,literature supported
+ACE_AGTR2,ACE,AGTR2,novel,literature supported
+ACE_BDKRB2,ACE,BDKRB2,novel,literature supported
+ADAM10_AXL,ADAM10,AXL,novel,literature supported
+ADAM10_EPHA3,ADAM10,EPHA3,novel,literature supported
+ADAM12_ITGA9,ADAM12,ITGA9,known,literature supported
+ADAM12_ITGB1,ADAM12,ITGB1,known,literature supported
+ADAM12_SDC4,ADAM12,SDC4,known,literature supported
+ADAM15_ITGA5,ADAM15,ITGA5,known,literature supported
+ADAM15_ITGA9,ADAM15,ITGA9,known,literature supported
+ADAM15_ITGAV,ADAM15,ITGAV,novel,literature supported
+ADAM15_ITGB1,ADAM15,ITGB1,known,literature supported
+ADAM15_ITGB3,ADAM15,ITGB3,known,literature supported
+ADAM17_ERBB4,ADAM17,ERBB4,novel,literature supported
+ADAM17_ITGA5,ADAM17,ITGA5,known,literature supported
+ADAM17_ITGB1,ADAM17,ITGB1,known,literature supported
+ADAM17_NOTCH1,ADAM17,NOTCH1,novel,literature supported
+ADAM23_ITGA5,ADAM23,ITGA5,known,literature supported
+ADAM23_ITGB3,ADAM23,ITGB3,known,literature supported
+ADAM28_ITGA4,ADAM28,ITGA4,novel,literature supported
+ADAM2_CD9,ADAM2,CD9,novel,literature supported
+ADAM2_ITGA6,ADAM2,ITGA6,known,literature supported
+ADAM2_ITGA9,ADAM2,ITGA9,novel,literature supported
+ADAM2_ITGB1,ADAM2,ITGB1,known,literature supported
+ADAM2_ITGB7,ADAM2,ITGB7,novel,literature supported
+ADAM9_ITGA3,ADAM9,ITGA3,novel,literature supported
+ADAM9_ITGA6,ADAM9,ITGA6,known,literature supported
+ADAM9_ITGAV,ADAM9,ITGAV,known,literature supported
+ADAM9_ITGB1,ADAM9,ITGB1,known,literature supported
+ADAM9_ITGB5,ADAM9,ITGB5,known,literature supported
+ADCYAP1_ADCYAP1R1,ADCYAP1,ADCYAP1R1,known,literature supported
+ADCYAP1_SCTR,ADCYAP1,SCTR,novel,literature supported
+ADCYAP1_VIPR1,ADCYAP1,VIPR1,known,literature supported
+ADCYAP1_VIPR2,ADCYAP1,VIPR2,known,literature supported
+ADIPOQ_ADIPOR1,ADIPOQ,ADIPOR1,known,literature supported
+ADIPOQ_ADIPOR2,ADIPOQ,ADIPOR2,known,literature supported
+ADM2_CALCR,ADM2,CALCR,known,literature supported
+ADM2_CALCRL,ADM2,CALCRL,known,literature supported
+ADM2_RAMP1,ADM2,RAMP1,known,literature supported
+ADM_CALCR,ADM,CALCR,known,literature supported
+ADM_CALCRL,ADM,CALCRL,known,literature supported
+ADM_GPR182,ADM,GPR182,known,literature supported
+ADM_MRGPRX2,ADM,MRGPRX2,known,literature supported
+ADM_RAMP2,ADM,RAMP2,known,literature supported
+AGRN_ATP1A3,AGRN,ATP1A3,novel,literature supported
+AGRN_LRP4,AGRN,LRP4,novel,literature supported
+AGRN_MUSK,AGRN,MUSK,known,literature supported
+AGRP_MC3R,AGRP,MC3R,known,literature supported
+AGRP_MC4R,AGRP,MC4R,known,literature supported
+AGRP_MC5R,AGRP,MC5R,known,literature supported
+AGRP_SDC3,AGRP,SDC3,novel,literature supported
+AGT_AGTR1,AGT,AGTR1,known,literature supported
+AGT_AGTR2,AGT,AGTR2,known,literature supported
+AGT_LRP2,AGT,LRP2,known,literature supported
+AGT_MAS1,AGT,MAS1,known,literature supported
+AHSG_INSR,AHSG,INSR,novel,literature supported
+ALB_LRP2,ALB,LRP2,novel,literature supported
+ALOX5AP_ALOX5,ALOX5AP,ALOX5,known,EXCLUDED not receptor
+AMELX_LAMP1,AMELX,LAMP1,novel,literature supported
+AMELY_LAMP1,AMELY,LAMP1,novel,literature supported
+AMH_ACVR1,AMH,ACVR1,novel,literature supported
+AMH_AMHR2,AMH,AMHR2,known,literature supported
+AMH_EGFR,AMH,EGFR,novel,literature supported
+ANGPT1_ITGA5,ANGPT1,ITGA5,novel,literature supported
+ANGPT1_ITGB1,ANGPT1,ITGB1,novel,putative
+ANGPT1_TEK,ANGPT1,TEK,known,literature supported
+ANGPT1_TIE1,ANGPT1,TIE1,known,literature supported
+ANGPT2_TEK,ANGPT2,TEK,known,literature supported
+ANGPT2_TIE1,ANGPT2,TIE1,novel,putative
+ANGPT4_TEK,ANGPT4,TEK,known,literature supported
+ANGPT4_TIE1,ANGPT4,TIE1,novel,putative
+ANGPTL1_TEK,ANGPTL1,TEK,known,literature supported
+ANGPTL2_TIE1,ANGPTL2,TIE1,novel,putative
+ANGPTL3_ITGA5,ANGPTL3,ITGA5,novel,literature supported
+ANGPTL3_ITGAV,ANGPTL3,ITGAV,novel,literature supported
+ANGPTL3_ITGB3,ANGPTL3,ITGB3,novel,literature supported
+ANGPTL4_TIE1,ANGPTL4,TIE1,novel,putative
+ANXA1_DYSF,ANXA1,DYSF,novel,literature supported
+ANXA1_EGFR,ANXA1,EGFR,novel,literature supported
+ANXA1_FPR1,ANXA1,FPR1,known,literature supported
+ANXA1_FPR2,ANXA1,FPR2,known,literature supported
+ANXA1_FPR3,ANXA1,FPR3,known,literature supported
+APLN_APLNR,APLN,APLNR,known,literature supported
+APOB_CALCR,APOB,CALCR,novel,putative
+APOB_ITGAM,APOB,ITGAM,novel,putative
+APOB_ITGB2,APOB,ITGB2,novel,putative
+APOB_LDLR,APOB,LDLR,known,literature supported
+APOB_LRP2,APOB,LRP2,novel,literature supported
+APOB_LRP6,APOB,LRP6,novel,putative
+APOB_LRP8,APOB,LRP8,novel,putative
+APOB_LSR,APOB,LSR,novel,literature supported
+APOB_OLR1,APOB,OLR1,novel,literature supported
+APOC3_SDC2,APOC3,SDC2,novel,putative
+APOC3_TLR2,APOC3,TLR2,novel,putative
+APOD_LEPR,APOD,LEPR,novel,literature supported
+APOE_CHRNA4,APOE,CHRNA4,novel,putative
+APOE_LDLR,APOE,LDLR,known,literature supported
+APOE_LRP1,APOE,LRP1,novel,literature supported
+APOE_LRP2,APOE,LRP2,novel,literature supported
+APOE_LRP5,APOE,LRP5,known,literature supported
+APOE_LRP8,APOE,LRP8,known,literature supported
+APOE_SCARB1,APOE,SCARB1,novel,literature supported
+APOE_SORL1,APOE,SORL1,known,literature supported
+APOE_VLDLR,APOE,VLDLR,known,literature supported
+APP_CAV1,APP,CAV1,novel,literature supported
+APP_CD74,APP,CD74,novel,literature supported
+APP_FPR2,APP,FPR2,known,literature supported
+APP_GPC1,APP,GPC1,novel,literature supported
+APP_LRP1,APP,LRP1,novel,literature supported
+APP_NCSTN,APP,NCSTN,novel,literature supported
+APP_NGFR,APP,NGFR,novel,putative
+APP_SLC45A3,APP,SLC45A3,novel,putative
+APP_TNFRSF21,APP,TNFRSF21,novel,literature supported
+AREGB_EGFR,AREGB,EGFR,known,literature supported
+AREGB_ERBB3,AREGB,ERBB3,novel,putative
+AREG_EGFR,AREG,EGFR,known,literature supported
+AREG_ERBB3,AREG,ERBB3,novel,literature supported
+ARF1_CHRM3,ARF1,CHRM3,novel,literature supported
+ARF1_INSR,ARF1,INSR,novel,literature supported
+ARF1_PLD2,ARF1,PLD2,known,literature supported
+ARTN_GFRA1,ARTN,GFRA1,novel,literature supported
+ARTN_GFRA3,ARTN,GFRA3,known,literature supported
+ARTN_RET,ARTN,RET,known,literature supported
+ASIP_ATRN,ASIP,ATRN,known,literature supported
+ASIP_F11R,ASIP,F11R,novel,literature supported
+ASIP_MC1R,ASIP,MC1R,known,literature supported
+ASIP_MC2R,ASIP,MC2R,novel,literature supported
+ASIP_MC3R,ASIP,MC3R,novel,literature supported
+ASIP_MC4R,ASIP,MC4R,novel,literature supported
+ASIP_MC5R,ASIP,MC5R,novel,literature supported
+ASIP_MGRN1,ASIP,MGRN1,known,EXCLUDED not receptor
+AVP_AVPR1A,AVP,AVPR1A,known,literature supported
+AVP_AVPR1B,AVP,AVPR1B,known,literature supported
+AVP_AVPR2,AVP,AVPR2,known,literature supported
+AVP_OXTR,AVP,OXTR,known,literature supported
+AZGP1_ITGAV,AZGP1,ITGAV,novel,literature supported
+B2M_CD1A,B2M,CD1A,novel,literature supported
+B2M_CD1B,B2M,CD1B,novel,literature supported
+B2M_CD247,B2M,CD247,novel,putative
+B2M_CD3D,B2M,CD3D,novel,putative
+B2M_CD3G,B2M,CD3G,novel,putative
+B2M_HFE,B2M,HFE,novel,literature supported
+B2M_HLA-F,B2M,HLA-F,novel,literature supported
+B2M_KIR2DL1,B2M,KIR2DL1,novel,putative
+B2M_KIR2DL3,B2M,KIR2DL3,novel,putative
+B2M_KIR3DL1,B2M,KIR3DL1,novel,putative
+B2M_KLRC1,B2M,KLRC1,novel,putative
+B2M_KLRD1,B2M,KLRD1,novel,putative
+B2M_LILRB1,B2M,LILRB1,novel,literature supported
+B2M_LILRB2,B2M,LILRB2,novel,putative
+B2M_TFRC,B2M,TFRC,novel,putative
+BCAN_EGFR,BCAN,EGFR,novel,putative
+BCAN_NRCAM,BCAN,NRCAM,novel,putative
+BDNF_DDR1,BDNF,DDR1,novel,putative
+BDNF_DRD4,BDNF,DRD4,novel,putative
+BDNF_NGFR,BDNF,NGFR,known,literature supported
+BDNF_NGFRAP1,BDNF,NGFRAP1,known,literature supported
+BDNF_NTRK2,BDNF,NTRK2,known,literature supported
+BDNF_SORT1,BDNF,SORT1,novel,literature supported
+BGN_LY96,BGN,LY96,novel,putative
+BGN_TLR1,BGN,TLR1,novel,putative
+BGN_TLR2,BGN,TLR2,novel,literature supported
+BGN_TLR4,BGN,TLR4,novel,literature supported
+BMP10_ACVR1,BMP10,ACVR1,known,putative
+BMP10_ACVR2A,BMP10,ACVR2A,known,literature supported
+BMP10_ACVR2B,BMP10,ACVR2B,known,putative
+BMP10_ACVRL1,BMP10,ACVRL1,known,literature supported
+BMP10_BMPR1A,BMP10,BMPR1A,known,literature supported
+BMP10_BMPR1B,BMP10,BMPR1B,known,literature supported
+BMP10_BMPR2,BMP10,BMPR2,known,literature supported
+BMP10_ENG,BMP10,ENG,novel,literature supported
+BMP15_ACVR1,BMP15,ACVR1,known,putative
+BMP15_ACVR2A,BMP15,ACVR2A,known,literature supported
+BMP15_ACVR2B,BMP15,ACVR2B,known,putative
+BMP15_BMPR1A,BMP15,BMPR1A,known,literature supported
+BMP15_BMPR1B,BMP15,BMPR1B,known,literature supported
+BMP15_BMPR2,BMP15,BMPR2,known,literature supported
+BMP2_ACVR1,BMP2,ACVR1,known,literature supported
+BMP2_ACVR2A,BMP2,ACVR2A,known,literature supported
+BMP2_ACVR2B,BMP2,ACVR2B,known,literature supported
+BMP2_BMPR1A,BMP2,BMPR1A,known,literature supported
+BMP2_BMPR1B,BMP2,BMPR1B,known,literature supported
+BMP2_BMPR2,BMP2,BMPR2,known,literature supported
+BMP2_ENG,BMP2,ENG,novel,literature supported
+BMP2_HFE2,BMP2,HFE2,novel,literature supported
+BMP3_ACVR1,BMP3,ACVR1,known,putative
+BMP3_ACVR2A,BMP3,ACVR2A,known,putative
+BMP3_ACVR2B,BMP3,ACVR2B,known,literature supported
+BMP3_BMPR1A,BMP3,BMPR1A,known,putative
+BMP3_BMPR1B,BMP3,BMPR1B,known,putative
+BMP3_BMPR2,BMP3,BMPR2,known,putative
+BMP4_ACVR1,BMP4,ACVR1,known,putative
+BMP4_ACVR2A,BMP4,ACVR2A,known,putative
+BMP4_ACVR2B,BMP4,ACVR2B,known,putative
+BMP4_BMPR1A,BMP4,BMPR1A,known,literature supported
+BMP4_BMPR1B,BMP4,BMPR1B,known,literature supported
+BMP4_BMPR2,BMP4,BMPR2,known,literature supported
+BMP4_HFE2,BMP4,HFE2,novel,putative
+BMP5_ACVR1,BMP5,ACVR1,known,putative
+BMP5_ACVR2A,BMP5,ACVR2A,known,putative
+BMP5_ACVR2B,BMP5,ACVR2B,known,putative
+BMP5_BMPR1A,BMP5,BMPR1A,known,literature supported
+BMP5_BMPR1B,BMP5,BMPR1B,known,putative
+BMP5_BMPR2,BMP5,BMPR2,known,putative
+BMP5_HFE2,BMP5,HFE2,novel,putative
+BMP6_ACVR1,BMP6,ACVR1,known,literature supported
+BMP6_ACVR2A,BMP6,ACVR2A,known,literature supported
+BMP6_ACVR2B,BMP6,ACVR2B,known,putative
+BMP6_BMPR1A,BMP6,BMPR1A,known,literature supported
+BMP6_BMPR1B,BMP6,BMPR1B,known,literature supported
+BMP6_BMPR2,BMP6,BMPR2,known,literature supported
+BMP7_ACVR1,BMP7,ACVR1,known,literature supported
+BMP7_ACVR2A,BMP7,ACVR2A,known,literature supported
+BMP7_ACVR2B,BMP7,ACVR2B,known,literature supported
+BMP7_BMPR1A,BMP7,BMPR1A,known,literature supported
+BMP7_BMPR1B,BMP7,BMPR1B,known,literature supported
+BMP7_BMPR2,BMP7,BMPR2,known,literature supported
+BMP7_ENG,BMP7,ENG,novel,literature supported
+BMP8B_ACVR1,BMP8B,ACVR1,known,putative
+BMP8B_ACVR2A,BMP8B,ACVR2A,known,putative
+BMP8B_ACVR2B,BMP8B,ACVR2B,known,putative
+BMP8B_BMPR1A,BMP8B,BMPR1A,known,putative
+BMP8B_BMPR1B,BMP8B,BMPR1B,known,putative
+BMP8B_BMPR2,BMP8B,BMPR2,known,putative
+BST1_CAV1,BST1,CAV1,novel,literature supported
+BTC_EGFR,BTC,EGFR,known,literature supported
+BTC_ERBB2,BTC,ERBB2,novel,literature supported
+BTC_ERBB3,BTC,ERBB3,known,literature supported
+BTC_ERBB4,BTC,ERBB4,known,literature supported
+BTLA_CD247,BTLA,CD247,novel,putative
+BTLA_CD79A,BTLA,CD79A,novel,literature supported
+BTLA_TNFRSF14,BTLA,TNFRSF14,known,literature supported
+BTLA_VTCN1,BTLA,VTCN1,novel,literature supported
+C1QA_CD93,C1QA,CD93,novel,literature supported
+C1QA_CR1,C1QA,CR1,novel,literature supported
+C1QA_CSPG4,C1QA,CSPG4,novel,literature supported
+C1QB_LRP1,C1QB,LRP1,novel,literature supported
+C1QTNF1_AVPR2,C1QTNF1,AVPR2,novel,literature supported
+C1QTNF5_MFRP,C1QTNF5,MFRP,novel,literature supported
+C1orf112_PLSCR4,C1orf112,PLSCR4,novel,putative
+C1orf194_PLSCR4,C1orf194,PLSCR4,novel,putative
+C1orf200_LY6G6C,C1orf200,LY6G6C,novel,putative
+C1orf200_SLC16A4,C1orf200,SLC16A4,novel,putative
+C3_C3AR1,C3,C3AR1,known,literature supported
+C3_C5AR2,C3,C5AR2,novel,literature supported
+C3_CD19,C3,CD19,novel,literature supported
+C3_CD46,C3,CD46,novel,literature supported
+C3_CD81,C3,CD81,novel,putative
+C3_CR1,C3,CR1,novel,literature supported
+C3_IFITM1,C3,IFITM1,novel,putative
+C3_ITGAM,C3,ITGAM,novel,literature supported
+C3_ITGAX,C3,ITGAX,known,literature supported
+C3_ITGB2,C3,ITGB2,known,literature supported
+C3_LRP1,C3,LRP1,known,literature supported
+C4A_C3AR1,C4A,C3AR1,novel,literature supported
+C4A_C5AR2,C4A,C5AR2,novel,literature supported
+C4A_CR1,C4A,CR1,novel,literature supported
+C4BPA_BMPR2,C4BPA,BMPR2,novel,literature supported
+C4BPA_CD40,C4BPA,CD40,novel,literature supported
+C4BPA_LRP1,C4BPA,LRP1,novel,literature supported
+C4B_CD46,C4B,CD46,novel,literature supported
+C4B_CR1,C4B,CR1,novel,literature supported
+C5_C5AR1,C5,C5AR1,known,literature supported
+C5_C5AR2,C5,C5AR2,known,literature supported
+C5orf55_TRAF2,C5orf55,TRAF2,novel,literature supported
+C6orf15_DDR1,C6orf15,DDR1,novel,putative
+CALCA_CALCR,CALCA,CALCR,known,literature supported
+CALCA_CALCRL,CALCA,CALCRL,known,literature supported
+CALCA_RAMP1,CALCA,RAMP1,known,literature supported
+CALCA_RAMP2,CALCA,RAMP2,novel,literature supported
+CALCB_CALCR,CALCB,CALCR,known,literature supported
+CALCB_CALCRL,CALCB,CALCRL,known,literature supported
+CALCB_RAMP1,CALCB,RAMP1,known,literature supported
+CALM1_ABCA1,CALM1,ABCA1,novel,EXCLUDED not ligand
+CALM1_ADCY8,CALM1,ADCY8,novel,EXCLUDED not ligand
+CALM1_ADCYAP1R1,CALM1,ADCYAP1R1,novel,EXCLUDED not ligand
+CALM1_AQP6,CALM1,AQP6,novel,EXCLUDED not ligand
+CALM1_CACNA1C,CALM1,CACNA1C,novel,EXCLUDED not ligand
+CALM1_CALCR,CALM1,CALCR,novel,EXCLUDED not ligand
+CALM1_CNGA2,CALM1,CNGA2,novel,EXCLUDED not ligand
+CALM1_CRHR1,CALM1,CRHR1,novel,EXCLUDED not ligand
+CALM1_EGFR,CALM1,EGFR,novel,EXCLUDED not ligand
+CALM1_FAS,CALM1,FAS,novel,EXCLUDED not ligand
+CALM1_GLP1R,CALM1,GLP1R,novel,EXCLUDED not ligand
+CALM1_GLP2R,CALM1,GLP2R,novel,EXCLUDED not ligand
+CALM1_GP6,CALM1,GP6,novel,EXCLUDED not ligand
+CALM1_GRM3,CALM1,GRM3,novel,EXCLUDED not ligand
+CALM1_GRM4,CALM1,GRM4,novel,EXCLUDED not ligand
+CALM1_GRM5,CALM1,GRM5,novel,EXCLUDED not ligand
+CALM1_GRM7,CALM1,GRM7,novel,EXCLUDED not ligand
+CALM1_HMMR,CALM1,HMMR,novel,EXCLUDED not ligand
+CALM1_HTR2C,CALM1,HTR2C,novel,EXCLUDED not ligand
+CALM1_INSR,CALM1,INSR,novel,EXCLUDED not ligand
+CALM1_KCNN4,CALM1,KCNN4,novel,EXCLUDED not ligand
+CALM1_KCNQ1,CALM1,KCNQ1,novel,EXCLUDED not ligand
+CALM1_KCNQ3,CALM1,KCNQ3,novel,EXCLUDED not ligand
+CALM1_KCNQ5,CALM1,KCNQ5,novel,EXCLUDED not ligand
+CALM1_MIP,CALM1,MIP,novel,EXCLUDED not ligand
+CALM1_MYLK,CALM1,MYLK,known,EXCLUDED not ligand
+CALM1_MYLK2,CALM1,MYLK2,known,EXCLUDED not ligand
+CALM1_OPRM1,CALM1,OPRM1,novel,EXCLUDED not ligand
+CALM1_PDE1A,CALM1,PDE1A,known,EXCLUDED not ligand
+CALM1_PDE1B,CALM1,PDE1B,known,EXCLUDED not ligand
+CALM1_PDE1C,CALM1,PDE1C,known,EXCLUDED not ligand
+CALM1_PPAPDC2,CALM1,PPAPDC2,novel,EXCLUDED not ligand
+CALM1_PTH2R,CALM1,PTH2R,novel,EXCLUDED not ligand
+CALM1_PTPRA,CALM1,PTPRA,novel,EXCLUDED not ligand
+CALM1_SCN10A,CALM1,SCN10A,novel,EXCLUDED not ligand
+CALM1_SCN4A,CALM1,SCN4A,novel,EXCLUDED not ligand
+CALM1_SCTR,CALM1,SCTR,novel,EXCLUDED not ligand
+CALM1_SELL,CALM1,SELL,novel,EXCLUDED not ligand
+CALM1_TRPC3,CALM1,TRPC3,novel,EXCLUDED not ligand
+CALM1_TRPC5,CALM1,TRPC5,novel,EXCLUDED not ligand
+CALM1_VIPR1,CALM1,VIPR1,novel,EXCLUDED not ligand
+CALM2_ABCA1,CALM2,ABCA1,novel,EXCLUDED not ligand
+CALM2_ADCY8,CALM2,ADCY8,novel,EXCLUDED not ligand
+CALM2_AQP6,CALM2,AQP6,novel,EXCLUDED not ligand
+CALM2_CACNA1C,CALM2,CACNA1C,novel,EXCLUDED not ligand
+CALM2_EGFR,CALM2,EGFR,novel,EXCLUDED not ligand
+CALM2_GP6,CALM2,GP6,novel,EXCLUDED not ligand
+CALM2_GRM5,CALM2,GRM5,novel,EXCLUDED not ligand
+CALM2_GRM7,CALM2,GRM7,novel,EXCLUDED not ligand
+CALM2_INSR,CALM2,INSR,novel,EXCLUDED not ligand
+CALM2_KCNQ1,CALM2,KCNQ1,novel,EXCLUDED not ligand
+CALM2_KCNQ3,CALM2,KCNQ3,novel,EXCLUDED not ligand
+CALM2_KCNQ5,CALM2,KCNQ5,novel,EXCLUDED not ligand
+CALM2_MYLK,CALM2,MYLK,known,EXCLUDED not ligand
+CALM2_MYLK2,CALM2,MYLK2,known,EXCLUDED not ligand
+CALM2_PDE1A,CALM2,PDE1A,known,EXCLUDED not ligand
+CALM2_PDE1B,CALM2,PDE1B,known,EXCLUDED not ligand
+CALM2_PDE1C,CALM2,PDE1C,known,EXCLUDED not ligand
+CALM2_PPAPDC2,CALM2,PPAPDC2,novel,EXCLUDED not ligand
+CALM2_SCN10A,CALM2,SCN10A,novel,EXCLUDED not ligand
+CALM2_SCN4A,CALM2,SCN4A,novel,EXCLUDED not ligand
+CALM2_SELL,CALM2,SELL,novel,EXCLUDED not ligand
+CALM2_TRPC5,CALM2,TRPC5,novel,EXCLUDED not ligand
+CALM3_ABCA1,CALM3,ABCA1,novel,EXCLUDED not ligand
+CALM3_ADCY8,CALM3,ADCY8,novel,EXCLUDED not ligand
+CALM3_AQP6,CALM3,AQP6,novel,EXCLUDED not ligand
+CALM3_EGFR,CALM3,EGFR,novel,EXCLUDED not ligand
+CALM3_GP6,CALM3,GP6,novel,EXCLUDED not ligand
+CALM3_GRM5,CALM3,GRM5,novel,EXCLUDED not ligand
+CALM3_GRM7,CALM3,GRM7,novel,EXCLUDED not ligand
+CALM3_INSR,CALM3,INSR,novel,EXCLUDED not ligand
+CALM3_KCNQ1,CALM3,KCNQ1,novel,EXCLUDED not ligand
+CALM3_KCNQ3,CALM3,KCNQ3,novel,EXCLUDED not ligand
+CALM3_KCNQ5,CALM3,KCNQ5,novel,EXCLUDED not ligand
+CALM3_MYLK,CALM3,MYLK,known,EXCLUDED not ligand
+CALM3_MYLK2,CALM3,MYLK2,known,EXCLUDED not ligand
+CALM3_PDE1A,CALM3,PDE1A,known,EXCLUDED not ligand
+CALM3_PDE1B,CALM3,PDE1B,known,EXCLUDED not ligand
+CALM3_PDE1C,CALM3,PDE1C,known,EXCLUDED not ligand
+CALM3_PPAPDC2,CALM3,PPAPDC2,novel,EXCLUDED not ligand
+CALM3_SCN10A,CALM3,SCN10A,novel,EXCLUDED not ligand
+CALM3_SCN4A,CALM3,SCN4A,novel,EXCLUDED not ligand
+CALM3_SELL,CALM3,SELL,novel,EXCLUDED not ligand
+CALM3_TRPC5,CALM3,TRPC5,novel,EXCLUDED not ligand
+CALR_HLA-F,CALR,HLA-F,novel,putative
+CALR_ITGA2B,CALR,ITGA2B,novel,literature supported
+CALR_ITGA3,CALR,ITGA3,novel,literature supported
+CALR_ITGAV,CALR,ITGAV,novel,literature supported
+CALR_LRP1,CALR,LRP1,novel,literature supported
+CALR_MTNR1A,CALR,MTNR1A,novel,literature supported
+CALR_SCARF1,CALR,SCARF1,known,literature supported
+CALR_TSHR,CALR,TSHR,novel,literature supported
+CAMP_EGFR,CAMP,EGFR,novel,putative
+CAMP_FPR2,CAMP,FPR2,known,literature supported
+CAMP_IGF1R,CAMP,IGF1R,novel,putative
+CAMP_P2RX7,CAMP,P2RX7,novel,putative
+CCK_CCKAR,CCK,CCKAR,known,literature supported
+CCK_CCKBR,CCK,CCKBR,known,literature supported
+CCL11_ACKR2,CCL11,ACKR2,known,literature supported
+CCL11_ACKR4,CCL11,ACKR4,novel,literature supported
+CCL11_CCR2,CCL11,CCR2,known,literature supported
+CCL11_CCR3,CCL11,CCR3,known,literature supported
+CCL11_CCR5,CCL11,CCR5,known,literature supported
+CCL11_CXCR3,CCL11,CXCR3,known,literature supported
+CCL13_ACKR2,CCL13,ACKR2,known,literature supported
+CCL13_ACKR4,CCL13,ACKR4,novel,literature supported
+CCL13_CCR1,CCL13,CCR1,known,literature supported
+CCL13_CCR2,CCL13,CCR2,known,literature supported
+CCL13_CCR3,CCL13,CCR3,known,literature supported
+CCL13_CCR5,CCL13,CCR5,known,literature supported
+CCL13_CCR9,CCL13,CCR9,novel,putative
+CCL13_CXCR3,CCL13,CXCR3,known,literature supported
+CCL14_ACKR2,CCL14,ACKR2,known,literature supported
+CCL14_CCR1,CCL14,CCR1,known,literature supported
+CCL14_CCR3,CCL14,CCR3,novel,literature supported
+CCL14_CCR5,CCL14,CCR5,known,literature supported
+CCL15_CCR1,CCL15,CCR1,known,literature supported
+CCL15_CCR3,CCL15,CCR3,known,literature supported
+CCL16_CCR1,CCL16,CCR1,known,literature supported
+CCL16_CCR2,CCL16,CCR2,known,literature supported
+CCL16_CCR5,CCL16,CCR5,known,literature supported
+CCL16_CCR8,CCL16,CCR8,novel,literature supported
+CCL16_HRH4,CCL16,HRH4,known,literature supported
+CCL17_CCR4,CCL17,CCR4,known,literature supported
+CCL17_CCR8,CCL17,CCR8,known,literature supported
+CCL17_DARC,CCL17,DARC,novel,literature supported
+CCL18_C14orf1,CCL18,C14orf1,novel,literature supported
+CCL19_ACKR2,CCL19,ACKR2,novel,literature supported
+CCL19_ACKR4,CCL19,ACKR4,known,literature supported
+CCL19_CCR10,CCL19,CCR10,novel,literature supported
+CCL19_CCR7,CCL19,CCR7,known,literature supported
+CCL19_CCRL2,CCL19,CCRL2,known,literature supported
+CCL19_CXCR3,CCL19,CXCR3,known,literature supported
+CCL1_CCR8,CCL1,CCR8,known,literature supported
+CCL20_CCR6,CCL20,CCR6,known,literature supported
+CCL20_CXCR3,CCL20,CXCR3,known,literature supported
+CCL21_ACKR2,CCL21,ACKR2,novel,literature supported
+CCL21_ACKR4,CCL21,ACKR4,known,literature supported
+CCL21_CCR7,CCL21,CCR7,known,literature supported
+CCL21_CXCR3,CCL21,CXCR3,known,literature supported
+CCL22_CCR4,CCL22,CCR4,known,literature supported
+CCL23_CCR1,CCL23,CCR1,known,literature supported
+CCL24_CCR2,CCL24,CCR2,known,literature supported
+CCL24_CCR3,CCL24,CCR3,known,literature supported
+CCL25_ACKR2,CCL25,ACKR2,novel,literature supported
+CCL25_ACKR4,CCL25,ACKR4,known,literature supported
+CCL25_CCR10,CCL25,CCR10,novel,literature supported
+CCL25_CCR9,CCL25,CCR9,known,literature supported
+CCL26_CCR1,CCL26,CCR1,novel,literature supported
+CCL26_CCR2,CCL26,CCR2,known,literature supported
+CCL26_CCR3,CCL26,CCR3,known,literature supported
+CCL27_ACKR2,CCL27,ACKR2,novel,literature supported
+CCL27_CCR10,CCL27,CCR10,known,literature supported
+CCL28_ACKR2,CCL28,ACKR2,novel,literature supported
+CCL28_CCR10,CCL28,CCR10,known,literature supported
+CCL28_CCR3,CCL28,CCR3,known,literature supported
+CCL2_ACKR2,CCL2,ACKR2,known,literature supported
+CCL2_ACKR4,CCL2,ACKR4,novel,literature supported
+CCL2_CCR1,CCL2,CCR1,known,literature supported
+CCL2_CCR10,CCL2,CCR10,novel,literature supported
+CCL2_CCR2,CCL2,CCR2,known,literature supported
+CCL2_CCR3,CCL2,CCR3,known,literature supported
+CCL2_CCR4,CCL2,CCR4,known,literature supported
+CCL2_CCR5,CCL2,CCR5,known,literature supported
+CCL2_DARC,CCL2,DARC,known,literature supported
+CCL3L1_CCR1,CCL3L1,CCR1,novel,literature supported
+CCL3L1_CCR3,CCL3L1,CCR3,novel,literature supported
+CCL3L1_CCR5,CCL3L1,CCR5,novel,literature supported
+CCL3L3_ACKR2,CCL3L3,ACKR2,novel,literature supported
+CCL3L3_CCR5,CCL3L3,CCR5,novel,literature supported
+CCL3_ACKR2,CCL3,ACKR2,novel,literature supported
+CCL3_CCR1,CCL3,CCR1,known,literature supported
+CCL3_CCR3,CCL3,CCR3,novel,literature supported
+CCL3_CCR4,CCL3,CCR4,novel,literature supported
+CCL3_CCR5,CCL3,CCR5,known,literature supported
+CCL4_ACKR2,CCL4,ACKR2,known,literature supported
+CCL4_CCR1,CCL4,CCR1,known,literature supported
+CCL4_CCR3,CCL4,CCR3,novel,literature supported
+CCL4_CCR5,CCL4,CCR5,known,literature supported
+CCL4_CCR8,CCL4,CCR8,known,literature supported
+CCL5_ACKR2,CCL5,ACKR2,known,literature supported
+CCL5_ACKR4,CCL5,ACKR4,novel,literature supported
+CCL5_CCR1,CCL5,CCR1,known,literature supported
+CCL5_CCR3,CCL5,CCR3,known,literature supported
+CCL5_CCR4,CCL5,CCR4,known,literature supported
+CCL5_CCR5,CCL5,CCR5,known,literature supported
+CCL5_CXCR3,CCL5,CXCR3,known,literature supported
+CCL5_DARC,CCL5,DARC,known,literature supported
+CCL5_GPR75,CCL5,GPR75,known,literature supported
+CCL5_SDC1,CCL5,SDC1,novel,literature supported
+CCL5_SDC4,CCL5,SDC4,novel,literature supported
+CCL7_ACKR2,CCL7,ACKR2,known,literature supported
+CCL7_ACKR4,CCL7,ACKR4,novel,literature supported
+CCL7_CCR1,CCL7,CCR1,known,literature supported
+CCL7_CCR10,CCL7,CCR10,novel,literature supported
+CCL7_CCR2,CCL7,CCR2,known,literature supported
+CCL7_CCR3,CCL7,CCR3,known,literature supported
+CCL7_CCR5,CCL7,CCR5,known,literature supported
+CCL7_CXCR3,CCL7,CXCR3,known,literature supported
+CCL7_DARC,CCL7,DARC,novel,literature supported
+CCL8_ACKR2,CCL8,ACKR2,known,literature supported
+CCL8_ACKR4,CCL8,ACKR4,novel,literature supported
+CCL8_CCR1,CCL8,CCR1,known,literature supported
+CCL8_CCR2,CCL8,CCR2,known,literature supported
+CCL8_CCR3,CCL8,CCR3,known,literature supported
+CCL8_CCR5,CCL8,CCR5,known,literature supported
+CCL8_DARC,CCL8,DARC,novel,literature supported
+CD14_ITGA4,CD14,ITGA4,novel,literature supported
+CD14_ITGB1,CD14,ITGB1,novel,literature supported
+CD24_SELP,CD24,SELP,known,literature supported
+CD34_SELL,CD34,SELL,known,literature supported
+CD34_SELP,CD34,SELP,novel,putative
+CD40LG_CD40,CD40LG,CD40,known,literature supported
+CD40LG_ITGAM,CD40LG,ITGAM,novel,putative
+CD40LG_ITGB2,CD40LG,ITGB2,novel,putative
+CD40LG_TRAF3,CD40LG,TRAF3,novel,putative
+CD55_CD97,CD55,CD97,known,literature supported
+CD55_CR1,CD55,CR1,novel,literature supported
+CD55_EMR2,CD55,EMR2,novel,putative
+CD5L_CD5,CD5L,CD5,novel,literature supported
+CD70_CD27,CD70,CD27,known,literature supported
+CDH1_CDH2,CDH1,CDH2,novel,putative
+CDH1_EGFR,CDH1,EGFR,novel,literature supported
+CDH1_ERBB3,CDH1,ERBB3,novel,putative
+CDH1_IGF1R,CDH1,IGF1R,novel,literature supported
+CDH1_ITGAE,CDH1,ITGAE,known,literature supported
+CDH1_ITGB7,CDH1,ITGB7,known,literature supported
+CDH1_KLRG1,CDH1,KLRG1,novel,putative
+CDH1_LRP5,CDH1,LRP5,novel,putative
+CDH1_PTPRF,CDH1,PTPRF,novel,literature supported
+CDH1_PTPRM,CDH1,PTPRM,novel,literature supported
+CELA3B_CHRM3,CELA3B,CHRM3,novel,putative
+CEL_CXCR4,CEL,CXCR4,novel,literature supported
+CFH_ITGAM,CFH,ITGAM,novel,literature supported
+CFH_SELL,CFH,SELL,known,literature supported
+CGA_FSHR,CGA,FSHR,known,literature supported
+CGA_LHCGR,CGA,LHCGR,known,literature supported
+CGA_SIRPA,CGA,SIRPA,novel,putative
+CGA_TSHR,CGA,TSHR,known,literature supported
+CGB8_SIRPA,CGB8,SIRPA,novel,putative
+CGB_LHCGR,CGB,LHCGR,known,literature supported
+CGN_F11R,CGN,F11R,novel,literature supported
+CGN_OCLN,CGN,OCLN,novel,putative
+CGN_TGFBR1,CGN,TGFBR1,novel,putative
+CGN_TGFBR2,CGN,TGFBR2,novel,putative
+CHAD_ITGA2,CHAD,ITGA2,known,literature supported
+CHAD_ITGB1,CHAD,ITGB1,known,literature supported
+CLCF1_CNTFR,CLCF1,CNTFR,known,literature supported
+CLCF1_CRLF1,CLCF1,CRLF1,known,literature supported
+CLCF1_IL6ST,CLCF1,IL6ST,known,literature supported
+CLCF1_LIFR,CLCF1,LIFR,known,literature supported
+CLEC11A_KIT,CLEC11A,KIT,known,putative
+CLEC3A_CLEC10A,CLEC3A,CLEC10A,novel,putative
+CLEC3A_CLEC2B,CLEC3A,CLEC2B,novel,putative
+CNTF_CNTFR,CNTF,CNTFR,known,literature supported
+CNTF_IL6R,CNTF,IL6R,novel,literature supported
+CNTF_IL6ST,CNTF,IL6ST,known,literature supported
+CNTF_LIFR,CNTF,LIFR,known,literature supported
+CNTN2_CNTN1,CNTN2,CNTN1,novel,literature supported
+CNTN2_CNTNAP2,CNTN2,CNTNAP2,novel,literature supported
+CNTN2_NRCAM,CNTN2,NRCAM,novel,literature supported
+CNTN2_NRP1,CNTN2,NRP1,novel,putative
+CNTN4_PTPRG,CNTN4,PTPRG,novel,literature supported
+COL11A1_DDR1,COL11A1,DDR1,novel,literature supported
+COL11A1_ITGA2,COL11A1,ITGA2,novel,putative
+COL11A1_ITGB1,COL11A1,ITGB1,novel,putative
+COL14A1_CD44,COL14A1,CD44,novel,literature supported
+COL18A1_GPC1,COL18A1,GPC1,known,literature supported
+COL18A1_GPC4,COL18A1,GPC4,novel,literature supported
+COL18A1_ITGA5,COL18A1,ITGA5,known,literature supported
+COL18A1_ITGB1,COL18A1,ITGB1,known,literature supported
+COL18A1_KDR,COL18A1,KDR,novel,literature supported
+COL1A1_CD36,COL1A1,CD36,novel,literature supported
+COL1A1_CD44,COL1A1,CD44,novel,literature supported
+COL1A1_CD93,COL1A1,CD93,novel,literature supported
+COL1A1_DDR1,COL1A1,DDR1,known,literature supported
+COL1A1_DDR2,COL1A1,DDR2,known,literature supported
+COL1A1_FLT4,COL1A1,FLT4,novel,putative
+COL1A1_ITGA1,COL1A1,ITGA1,novel,putative
+COL1A1_ITGA11,COL1A1,ITGA11,known,literature supported
+COL1A1_ITGA2,COL1A1,ITGA2,known,literature supported
+COL1A1_ITGA5,COL1A1,ITGA5,novel,literature supported
+COL1A1_ITGAV,COL1A1,ITGAV,novel,putative
+COL1A1_ITGB1,COL1A1,ITGB1,known,literature supported
+COL1A1_TMPRSS6,COL1A1,TMPRSS6,novel,literature supported
+COL1A2_CD36,COL1A2,CD36,novel,literature supported
+COL1A2_CD44,COL1A2,CD44,novel,literature supported
+COL1A2_CD93,COL1A2,CD93,novel,literature supported
+COL1A2_FLT4,COL1A2,FLT4,novel,putative
+COL1A2_ITGA1,COL1A2,ITGA1,novel,putative
+COL1A2_ITGA11,COL1A2,ITGA11,novel,putative
+COL1A2_ITGA2,COL1A2,ITGA2,novel,literature supported
+COL1A2_ITGA2B,COL1A2,ITGA2B,novel,literature supported
+COL1A2_ITGAV,COL1A2,ITGAV,novel,putative
+COL1A2_ITGB1,COL1A2,ITGB1,novel,putative
+COL1A2_ITGB3,COL1A2,ITGB3,novel,literature supported
+COL2A1_DDR1,COL2A1,DDR1,novel,literature supported
+COL2A1_ITGA1,COL2A1,ITGA1,novel,putative
+COL2A1_ITGA10,COL2A1,ITGA10,known,literature supported
+COL2A1_ITGA2,COL2A1,ITGA2,known,literature supported
+COL2A1_ITGA2B,COL2A1,ITGA2B,novel,literature supported
+COL2A1_ITGB1,COL2A1,ITGB1,known,literature supported
+COL2A1_MAG,COL2A1,MAG,novel,literature supported
+COL2A1_OR1E1,COL2A1,OR1E1,novel,putative
+COL2A1_TNFRSF10A,COL2A1,TNFRSF10A,novel,literature supported
+COL3A1_DDR1,COL3A1,DDR1,novel,literature supported
+COL3A1_DDR2,COL3A1,DDR2,novel,literature supported
+COL3A1_ITGA2,COL3A1,ITGA2,novel,putative
+COL3A1_ITGB1,COL3A1,ITGB1,novel,putative
+COL3A1_MAG,COL3A1,MAG,novel,literature supported
+COL4A1_CD47,COL4A1,CD47,novel,putative
+COL4A1_CD93,COL4A1,CD93,novel,literature supported
+COL4A1_ITGA1,COL4A1,ITGA1,known,literature supported
+COL4A1_ITGA2,COL4A1,ITGA2,novel,putative
+COL4A1_ITGAV,COL4A1,ITGAV,novel,literature supported
+COL4A1_ITGB1,COL4A1,ITGB1,known,literature supported
+COL4A1_ITGB8,COL4A1,ITGB8,known,literature supported
+COL4A2_CD93,COL4A2,CD93,novel,literature supported
+COL4A3_CD47,COL4A3,CD47,novel,literature supported
+COL4A3_CD93,COL4A3,CD93,novel,literature supported
+COL4A3_ITGA1,COL4A3,ITGA1,novel,putative
+COL4A3_ITGA2,COL4A3,ITGA2,novel,putative
+COL4A3_ITGAV,COL4A3,ITGAV,novel,literature supported
+COL4A3_ITGB1,COL4A3,ITGB1,novel,putative
+COL4A4_CD47,COL4A4,CD47,novel,putative
+COL4A4_CD93,COL4A4,CD93,novel,literature supported
+COL4A4_ITGA1,COL4A4,ITGA1,novel,putative
+COL4A4_ITGA2,COL4A4,ITGA2,novel,putative
+COL4A4_ITGAV,COL4A4,ITGAV,novel,putative
+COL4A4_ITGB1,COL4A4,ITGB1,novel,putative
+COL4A5_CD47,COL4A5,CD47,novel,putative
+COL4A5_CD93,COL4A5,CD93,novel,literature supported
+COL4A5_ITGA1,COL4A5,ITGA1,novel,putative
+COL4A5_ITGA2,COL4A5,ITGA2,novel,putative
+COL4A5_ITGAV,COL4A5,ITGAV,novel,putative
+COL4A5_ITGB1,COL4A5,ITGB1,novel,putative
+COL4A6_CD47,COL4A6,CD47,novel,putative
+COL4A6_CD93,COL4A6,CD93,novel,literature supported
+COL4A6_ITGA1,COL4A6,ITGA1,novel,putative
+COL4A6_ITGA2,COL4A6,ITGA2,novel,putative
+COL4A6_ITGAV,COL4A6,ITGAV,novel,putative
+COL4A6_ITGB1,COL4A6,ITGB1,novel,putative
+COL5A1_ITGA1,COL5A1,ITGA1,novel,putative
+COL5A1_ITGB1,COL5A1,ITGB1,novel,putative
+COL5A1_SDC3,COL5A1,SDC3,novel,literature supported
+COL5A2_DDR1,COL5A2,DDR1,novel,literature supported
+COL5A2_ITGA1,COL5A2,ITGA1,novel,putative
+COL5A2_ITGB1,COL5A2,ITGB1,novel,putative
+COL5A3_SDC3,COL5A3,SDC3,known,literature supported
+COL6A1_ITGA1,COL6A1,ITGA1,novel,putative
+COL6A1_ITGA2,COL6A1,ITGA2,novel,putative
+COL6A1_ITGA6,COL6A1,ITGA6,novel,putative
+COL6A1_ITGB1,COL6A1,ITGB1,novel,putative
+COL6A2_ITGA1,COL6A2,ITGA1,novel,putative
+COL6A2_ITGA2,COL6A2,ITGA2,novel,putative
+COL6A2_ITGB1,COL6A2,ITGB1,novel,putative
+COL6A3_ITGA1,COL6A3,ITGA1,novel,putative
+COL6A3_ITGA2,COL6A3,ITGA2,novel,putative
+COL6A3_ITGB1,COL6A3,ITGB1,novel,putative
+COL7A1_ITGA2,COL7A1,ITGA2,novel,putative
+COL7A1_ITGB1,COL7A1,ITGB1,novel,putative
+COL8A1_ITGA1,COL8A1,ITGA1,novel,literature supported
+COL8A1_ITGA2,COL8A1,ITGA2,novel,literature supported
+COL9A1_MAG,COL9A1,MAG,novel,literature supported
+COL9A2_MAG,COL9A2,MAG,novel,literature supported
+COL9A3_MAG,COL9A3,MAG,novel,literature supported
+COLQ_MUSK,COLQ,MUSK,novel,literature supported
+CORT_GHSR,CORT,GHSR,known,literature supported
+CORT_MRGPRX2,CORT,MRGPRX2,known,literature supported
+CORT_SSTR1,CORT,SSTR1,known,literature supported
+CORT_SSTR2,CORT,SSTR2,known,literature supported
+CORT_SSTR3,CORT,SSTR3,known,literature supported
+CORT_SSTR4,CORT,SSTR4,known,literature supported
+CORT_SSTR5,CORT,SSTR5,known,literature supported
+CPAMD8_SCTR,CPAMD8,SCTR,novel,literature supported
+CP_SLC40A1,CP,SLC40A1,novel,literature supported
+CRH_CRHR1,CRH,CRHR1,known,literature supported
+CRH_CRHR2,CRH,CRHR2,known,literature supported
+CRH_MC2R,CRH,MC2R,known,literature supported
+CRP_OLR1,CRP,OLR1,novel,literature supported
+CSF1_CSF1R,CSF1,CSF1R,known,literature supported
+CSF2_CSF1R,CSF2,CSF1R,known,literature supported
+CSF2_CSF2RA,CSF2,CSF2RA,known,literature supported
+CSF2_CSF2RB,CSF2,CSF2RB,known,literature supported
+CSF2_CSF3R,CSF2,CSF3R,known,literature supported
+CSF2_IL3RA,CSF2,IL3RA,novel,literature supported
+CSF2_ITGA9,CSF2,ITGA9,novel,putative
+CSF2_ITGB1,CSF2,ITGB1,novel,putative
+CSF2_SDC2,CSF2,SDC2,novel,literature supported
+CSF3_CSF1R,CSF3,CSF1R,known,literature supported
+CSF3_CSF3R,CSF3,CSF3R,known,literature supported
+CSH1_PRLR,CSH1,PRLR,known,literature supported
+CSH2_PRLR,CSH2,PRLR,known,literature supported
+CSHL1_GHR,CSHL1,GHR,novel,putative
+CSHL1_PRLR,CSHL1,PRLR,known,literature supported
+CTF1_IL6ST,CTF1,IL6ST,known,literature supported
+CTF1_LIFR,CTF1,LIFR,known,literature supported
+CTGF_ERBB4,CTGF,ERBB4,novel,literature supported
+CTGF_ITGA5,CTGF,ITGA5,novel,literature supported
+CTGF_ITGAM,CTGF,ITGAM,known,literature supported
+CTGF_ITGB2,CTGF,ITGB2,known,literature supported
+CTGF_LRP1,CTGF,LRP1,novel,literature supported
+CTGF_LRP6,CTGF,LRP6,known,literature supported
+CTGF_NTRK1,CTGF,NTRK1,novel,literature supported
+CTHRC1_FZD3,CTHRC1,FZD3,novel,literature supported
+CTHRC1_FZD5,CTHRC1,FZD5,novel,literature supported
+CTHRC1_FZD6,CTHRC1,FZD6,novel,literature supported
+CUBN_LRP2,CUBN,LRP2,novel,literature supported
+CX3CL1_CX3CR1,CX3CL1,CX3CR1,known,literature supported
+CXCL10_CCR3,CXCL10,CCR3,known,literature supported
+CXCL10_CXCR3,CXCL10,CXCR3,known,literature supported
+CXCL10_SDC4,CXCL10,SDC4,novel,literature supported
+CXCL11_ACKR3,CXCL11,ACKR3,known,literature supported
+CXCL11_CCR3,CXCL11,CCR3,known,literature supported
+CXCL11_CXCR3,CXCL11,CXCR3,known,literature supported
+CXCL12_ACKR3,CXCL12,ACKR3,known,literature supported
+CXCL12_CCR4,CXCL12,CCR4,novel,putative
+CXCL12_CD4,CXCL12,CD4,novel,literature supported
+CXCL12_CXCR3,CXCL12,CXCR3,known,literature supported
+CXCL12_CXCR4,CXCL12,CXCR4,known,literature supported
+CXCL12_ITGB1,CXCL12,ITGB1,novel,literature supported
+CXCL12_SDC4,CXCL12,SDC4,novel,putative
+CXCL13_ACKR4,CXCL13,ACKR4,novel,literature supported
+CXCL13_CCR10,CXCL13,CCR10,novel,literature supported
+CXCL13_CXCR3,CXCL13,CXCR3,novel,literature supported
+CXCL13_CXCR5,CXCL13,CXCR5,known,literature supported
+CXCL13_HTR2A,CXCL13,HTR2A,novel,putative
+CXCL13_OPRD1,CXCL13,OPRD1,novel,putative
+CXCL16_CXCR6,CXCL16,CXCR6,known,literature supported
+CXCL1_CXCR1,CXCL1,CXCR1,known,literature supported
+CXCL1_CXCR2,CXCL1,CXCR2,known,literature supported
+CXCL1_DARC,CXCL1,DARC,known,literature supported
+CXCL2_CXCR1,CXCL2,CXCR1,known,literature supported
+CXCL2_CXCR2,CXCL2,CXCR2,known,literature supported
+CXCL2_XCR1,CXCL2,XCR1,known,literature supported
+CXCL3_CXCR1,CXCL3,CXCR1,known,literature supported
+CXCL3_CXCR2,CXCL3,CXCR2,known,literature supported
+CXCL5_CXCR1,CXCL5,CXCR1,known,literature supported
+CXCL5_CXCR2,CXCL5,CXCR2,known,literature supported
+CXCL5_DARC,CXCL5,DARC,novel,literature supported
+CXCL6_CXCR1,CXCL6,CXCR1,known,literature supported
+CXCL6_CXCR2,CXCL6,CXCR2,known,literature supported
+CXCL9_CCR3,CXCL9,CCR3,known,literature supported
+CXCL9_CXCR3,CXCL9,CXCR3,known,literature supported
+CYR61_CAV1,CYR61,CAV1,novel,putative
+CYR61_ITGA5,CYR61,ITGA5,known,literature supported
+CYR61_ITGAM,CYR61,ITGAM,known,literature supported
+CYR61_ITGAV,CYR61,ITGAV,novel,literature supported
+CYR61_ITGB2,CYR61,ITGB2,known,literature supported
+CYR61_ITGB3,CYR61,ITGB3,known,literature supported
+CYR61_ITGB5,CYR61,ITGB5,novel,literature supported
+DCN_EGFR,DCN,EGFR,novel,literature supported
+DCN_ERBB4,DCN,ERBB4,novel,literature supported
+DCN_MET,DCN,MET,novel,literature supported
+DEFB103A_CCR6,DEFB103A,CCR6,novel,literature supported
+DEFB103B_CCR2,DEFB103B,CCR2,novel,literature supported
+DEFB103B_CCR6,DEFB103B,CCR6,novel,literature supported
+DEFB1_CCR6,DEFB1,CCR6,novel,literature supported
+DEFB4A_CCR6,DEFB4A,CCR6,known,literature supported
+DEFB4A_TLR4,DEFB4A,TLR4,novel,literature supported
+DEFB4B_CCR6,DEFB4B,CCR6,known,literature supported
+DHH_BOC,DHH,BOC,novel,literature supported
+DHH_CDON,DHH,CDON,novel,literature supported
+DHH_HHIP,DHH,HHIP,known,literature supported
+DHH_PTCH1,DHH,PTCH1,novel,literature supported
+DHH_PTCH2,DHH,PTCH2,known,literature supported
+DKK1_KREMEN1,DKK1,KREMEN1,known,literature supported
+DKK1_KREMEN2,DKK1,KREMEN2,known,literature supported
+DKK1_LRP5,DKK1,LRP5,novel,literature supported
+DKK1_LRP6,DKK1,LRP6,known,literature supported
+DKK2_KREMEN2,DKK2,KREMEN2,novel,literature supported
+DKK2_LRP6,DKK2,LRP6,known,literature supported
+DLK1_NOTCH1,DLK1,NOTCH1,known,literature supported
+DLK1_NOTCH2,DLK1,NOTCH2,known,putative
+DLK1_NOTCH3,DLK1,NOTCH3,known,putative
+DLK1_NOTCH4,DLK1,NOTCH4,known,putative
+DLK2_NOTCH1,DLK2,NOTCH1,novel,literature supported
+DLL1_NOTCH1,DLL1,NOTCH1,known,literature supported
+DLL1_NOTCH2,DLL1,NOTCH2,known,literature supported
+DLL1_NOTCH3,DLL1,NOTCH3,known,literature supported
+DLL1_NOTCH4,DLL1,NOTCH4,known,putative
+DLL3_NOTCH1,DLL3,NOTCH1,known,putative
+DLL3_NOTCH2,DLL3,NOTCH2,known,putative
+DLL3_NOTCH3,DLL3,NOTCH3,known,putative
+DLL3_NOTCH4,DLL3,NOTCH4,known,putative
+DLL4_NOTCH1,DLL4,NOTCH1,known,literature supported
+DLL4_NOTCH2,DLL4,NOTCH2,known,literature supported
+DLL4_NOTCH3,DLL4,NOTCH3,known,literature supported
+DLL4_NOTCH4,DLL4,NOTCH4,known,literature supported
+DSCAM_DCC,DSCAM,DCC,novel,putative
+DUSP18_CD151,DUSP18,CD151,known,EXCLUDED not ligand
+DUSP18_ITGA1,DUSP18,ITGA1,known,EXCLUDED not ligand
+DUSP18_ITGA2,DUSP18,ITGA2,known,EXCLUDED not ligand
+DUSP18_ITGA3,DUSP18,ITGA3,known,EXCLUDED not ligand
+DUSP18_ITGA6,DUSP18,ITGA6,known,EXCLUDED not ligand
+DUSP18_ITGA7,DUSP18,ITGA7,known,EXCLUDED not ligand
+DUSP18_ITGB1,DUSP18,ITGB1,known,EXCLUDED not ligand
+DUSP18_ITGB4,DUSP18,ITGB4,known,EXCLUDED not ligand
+DUSP18_RPSA,DUSP18,RPSA,known,EXCLUDED not ligand
+EBI3_IL27RA,EBI3,IL27RA,novel,literature supported
+EBI3_IL6ST,EBI3,IL6ST,novel,putative
+ECM1_CACHD1,ECM1,CACHD1,novel,putative
+EDA_EDA2R,EDA,EDA2R,known,literature supported
+EDA_EDAR,EDA,EDAR,known,literature supported
+EDIL3_ITGAV,EDIL3,ITGAV,novel,literature supported
+EDIL3_ITGB5,EDIL3,ITGB5,novel,putative
+EDN1_EDNRA,EDN1,EDNRA,known,literature supported
+EDN1_EDNRB,EDN1,EDNRB,novel,literature supported
+EDN1_ELTD1,EDN1,ELTD1,novel,putative
+EDN1_KEL,EDN1,KEL,novel,literature supported
+EDN2_EDNRA,EDN2,EDNRA,known,literature supported
+EDN2_EDNRB,EDN2,EDNRB,novel,literature supported
+EDN2_KEL,EDN2,KEL,novel,literature supported
+EDN3_EDNRA,EDN3,EDNRA,novel,literature supported
+EDN3_EDNRB,EDN3,EDNRB,known,literature supported
+EDN3_KEL,EDN3,KEL,novel,literature supported
+EFEMP1_EGFR,EFEMP1,EGFR,novel,literature supported
+EFEMP2_AQP1,EFEMP2,AQP1,novel,literature supported
+EFEMP2_CATSPER1,EFEMP2,CATSPER1,novel,literature supported
+EFEMP2_LINGO1,EFEMP2,LINGO1,novel,literature supported
+EFEMP2_PLSCR4,EFEMP2,PLSCR4,novel,literature supported
+EFNA1_EPHA1,EFNA1,EPHA1,known,literature supported
+EFNA1_EPHA2,EFNA1,EPHA2,known,literature supported
+EFNA1_EPHA3,EFNA1,EPHA3,known,literature supported
+EFNA1_EPHA4,EFNA1,EPHA4,known,literature supported
+EFNA1_EPHA5,EFNA1,EPHA5,known,literature supported
+EFNA1_EPHA6,EFNA1,EPHA6,known,literature supported
+EFNA1_EPHA7,EFNA1,EPHA7,known,literature supported
+EFNA1_EPHA8,EFNA1,EPHA8,known,literature supported
+EFNA1_EPHB1,EFNA1,EPHB1,novel,literature supported
+EFNA1_EPHB6,EFNA1,EPHB6,novel,putative
+EFNA2_EPHA1,EFNA2,EPHA1,known,putative
+EFNA2_EPHA2,EFNA2,EPHA2,known,literature supported
+EFNA2_EPHA3,EFNA2,EPHA3,known,literature supported
+EFNA2_EPHA4,EFNA2,EPHA4,known,literature supported
+EFNA2_EPHA5,EFNA2,EPHA5,known,literature supported
+EFNA2_EPHA6,EFNA2,EPHA6,known,literature supported
+EFNA2_EPHA7,EFNA2,EPHA7,known,literature supported
+EFNA2_EPHA8,EFNA2,EPHA8,known,literature supported
+EFNA3_EPHA1,EFNA3,EPHA1,known,literature supported
+EFNA3_EPHA2,EFNA3,EPHA2,known,literature supported
+EFNA3_EPHA3,EFNA3,EPHA3,known,literature supported
+EFNA3_EPHA4,EFNA3,EPHA4,known,literature supported
+EFNA3_EPHA5,EFNA3,EPHA5,known,literature supported
+EFNA3_EPHA6,EFNA3,EPHA6,known,literature supported
+EFNA3_EPHA7,EFNA3,EPHA7,known,literature supported
+EFNA3_EPHA8,EFNA3,EPHA8,known,literature supported
+EFNA3_EPHB1,EFNA3,EPHB1,known,literature supported
+EFNA3_EPHB6,EFNA3,EPHB6,novel,putative
+EFNA4_EPHA1,EFNA4,EPHA1,known,putative
+EFNA4_EPHA2,EFNA4,EPHA2,known,literature supported
+EFNA4_EPHA3,EFNA4,EPHA3,known,literature supported
+EFNA4_EPHA4,EFNA4,EPHA4,known,literature supported
+EFNA4_EPHA5,EFNA4,EPHA5,known,literature supported
+EFNA4_EPHA6,EFNA4,EPHA6,known,literature supported
+EFNA4_EPHA7,EFNA4,EPHA7,known,literature supported
+EFNA4_EPHA8,EFNA4,EPHA8,known,literature supported
+EFNA5_EPHA1,EFNA5,EPHA1,known,putative
+EFNA5_EPHA2,EFNA5,EPHA2,known,literature supported
+EFNA5_EPHA3,EFNA5,EPHA3,known,literature supported
+EFNA5_EPHA4,EFNA5,EPHA4,known,literature supported
+EFNA5_EPHA5,EFNA5,EPHA5,known,literature supported
+EFNA5_EPHA6,EFNA5,EPHA6,known,literature supported
+EFNA5_EPHA7,EFNA5,EPHA7,known,literature supported
+EFNA5_EPHA8,EFNA5,EPHA8,known,literature supported
+EFNA5_EPHB1,EFNA5,EPHB1,novel,literature supported
+EFNA5_EPHB2,EFNA5,EPHB2,known,literature supported
+EFNA5_EPHB6,EFNA5,EPHB6,novel,literature supported
+EFNB1_EPHA4,EFNB1,EPHA4,known,putative
+EFNB1_EPHA6,EFNB1,EPHA6,novel,putative
+EFNB1_EPHB1,EFNB1,EPHB1,known,literature supported
+EFNB1_EPHB2,EFNB1,EPHB2,known,literature supported
+EFNB1_EPHB3,EFNB1,EPHB3,known,literature supported
+EFNB1_EPHB4,EFNB1,EPHB4,known,literature supported
+EFNB1_EPHB6,EFNB1,EPHB6,known,literature supported
+EFNB1_ERBB2,EFNB1,ERBB2,novel,literature supported
+EFNB2_EPHA3,EFNB2,EPHA3,novel,literature supported
+EFNB2_EPHA4,EFNB2,EPHA4,known,literature supported
+EFNB2_EPHA6,EFNB2,EPHA6,novel,literature supported
+EFNB2_EPHB1,EFNB2,EPHB1,known,literature supported
+EFNB2_EPHB2,EFNB2,EPHB2,known,literature supported
+EFNB2_EPHB3,EFNB2,EPHB3,known,literature supported
+EFNB2_EPHB4,EFNB2,EPHB4,known,literature supported
+EFNB2_EPHB6,EFNB2,EPHB6,known,literature supported
+EFNB2_GRM1,EFNB2,GRM1,novel,literature supported
+EFNB2_GRM5,EFNB2,GRM5,novel,literature supported
+EFNB2_PECAM1,EFNB2,PECAM1,novel,literature supported
+EFNB2_RHBDL2,EFNB2,RHBDL2,novel,literature supported
+EFNB3_EPHA4,EFNB3,EPHA4,known,literature supported
+EFNB3_EPHB1,EFNB3,EPHB1,known,putative
+EFNB3_EPHB2,EFNB3,EPHB2,known,literature supported
+EFNB3_EPHB3,EFNB3,EPHB3,known,literature supported
+EFNB3_EPHB4,EFNB3,EPHB4,known,literature supported
+EFNB3_EPHB6,EFNB3,EPHB6,known,putative
+EFNB3_RHBDL2,EFNB3,RHBDL2,novel,literature supported
+EGFL8_NCR3,EGFL8,NCR3,novel,putative
+EGF_CAV1,EGF,CAV1,novel,putative
+EGF_EGFR,EGF,EGFR,known,literature supported
+EGF_ERBB2,EGF,ERBB2,novel,literature supported
+EGF_ERBB3,EGF,ERBB3,novel,literature supported
+EGF_ERBB4,EGF,ERBB4,novel,literature supported
+EGF_FSHR,EGF,FSHR,novel,putative
+EPGN_EGFR,EPGN,EGFR,known,literature supported
+EPO_EPOR,EPO,EPOR,known,literature supported
+EREG_EGFR,EREG,EGFR,known,literature supported
+EREG_ERBB2,EREG,ERBB2,novel,putative
+EREG_ERBB3,EREG,ERBB3,novel,putative
+EREG_ERBB4,EREG,ERBB4,known,literature supported
+F10_F3,F10,F3,novel,literature supported
+F10_ITGAM,F10,ITGAM,novel,putative
+F10_ITGB2,F10,ITGB2,novel,putative
+F11_GP1BA,F11,GP1BA,novel,literature supported
+F12_CD93,F12,CD93,novel,literature supported
+F12_GP1BA,F12,GP1BA,novel,literature supported
+F13A1_ITGA4,F13A1,ITGA4,novel,literature supported
+F13A1_ITGA9,F13A1,ITGA9,novel,literature supported
+F13A1_ITGB1,F13A1,ITGB1,novel,literature supported
+F2_F2R,F2,F2R,known,literature supported
+F2_F2RL1,F2,F2RL1,known,literature supported
+F2_F2RL2,F2,F2RL2,known,literature supported
+F2_F2RL3,F2,F2RL3,known,literature supported
+F2_GP1BA,F2,GP1BA,novel,literature supported
+F2_GP1BB,F2,GP1BB,novel,putative
+F2_GP9,F2,GP9,novel,literature supported
+F2_ITGA2B,F2,ITGA2B,novel,literature supported
+F2_THBD,F2,THBD,novel,literature supported
+F7_F3,F7,F3,known,literature supported
+F8_ASGR2,F8,ASGR2,novel,literature supported
+F8_LDLR,F8,LDLR,novel,literature supported
+F8_LRP1,F8,LRP1,known,literature supported
+F9_LRP1,F9,LRP1,known,literature supported
+FARP2_PLXNA1,FARP2,PLXNA1,novel,putative
+FARP2_PLXNA2,FARP2,PLXNA2,novel,putative
+FARP2_PLXNA3,FARP2,PLXNA3,novel,putative
+FARP2_PLXNA4,FARP2,PLXNA4,novel,putative
+FASLG_FAS,FASLG,FAS,known,literature supported
+FASLG_TNFRSF1A,FASLG,TNFRSF1A,novel,putative
+FASLG_TNFRSF6B,FASLG,TNFRSF6B,known,literature supported
+FAT4_DCHS1,FAT4,DCHS1,novel,literature supported
+FBLN1_ITGB1,FBLN1,ITGB1,novel,literature supported
+FBLN2_ITGB3,FBLN2,ITGB3,novel,literature supported
+FBN1_ITGA5,FBN1,ITGA5,novel,literature supported
+FBN1_ITGAV,FBN1,ITGAV,novel,literature supported
+FBN1_ITGB1,FBN1,ITGB1,novel,literature supported
+FBN1_ITGB3,FBN1,ITGB3,novel,literature supported
+FBN1_ITGB6,FBN1,ITGB6,novel,putative
+FCN2_LRP1,FCN2,LRP1,novel,literature supported
+FGA_CDH5,FGA,CDH5,novel,literature supported
+FGA_ITGA2B,FGA,ITGA2B,novel,literature supported
+FGA_ITGA5,FGA,ITGA5,novel,literature supported
+FGA_ITGAD,FGA,ITGAD,novel,putative
+FGA_ITGAM,FGA,ITGAM,novel,literature supported
+FGA_ITGAV,FGA,ITGAV,novel,literature supported
+FGA_ITGAX,FGA,ITGAX,known,literature supported
+FGA_ITGB1,FGA,ITGB1,novel,literature supported
+FGA_ITGB2,FGA,ITGB2,known,literature supported
+FGA_ITGB3,FGA,ITGB3,novel,literature supported
+FGA_PLAUR,FGA,PLAUR,novel,putative
+FGB_ITGA2B,FGB,ITGA2B,novel,literature supported
+FGB_ITGA5,FGB,ITGA5,novel,literature supported
+FGB_ITGAM,FGB,ITGAM,novel,literature supported
+FGB_ITGAV,FGB,ITGAV,novel,literature supported
+FGB_ITGB1,FGB,ITGB1,novel,literature supported
+FGB_ITGB2,FGB,ITGB2,novel,literature supported
+FGF10_FGFR1,FGF10,FGFR1,known,putative
+FGF10_FGFR2,FGF10,FGFR2,known,literature supported
+FGF10_FGFR3,FGF10,FGFR3,known,putative
+FGF10_FGFR4,FGF10,FGFR4,known,putative
+FGF11_FGFR1,FGF11,FGFR1,known,putative
+FGF11_FGFR2,FGF11,FGFR2,known,putative
+FGF11_FGFR3,FGF11,FGFR3,known,putative
+FGF11_FGFR4,FGF11,FGFR4,known,putative
+FGF12_FGFR1,FGF12,FGFR1,known,putative
+FGF12_FGFR2,FGF12,FGFR2,known,putative
+FGF12_FGFR3,FGF12,FGFR3,known,putative
+FGF12_FGFR4,FGF12,FGFR4,known,putative
+FGF13_EGFR,FGF13,EGFR,novel,putative
+FGF13_FGFR1,FGF13,FGFR1,known,putative
+FGF13_FGFR2,FGF13,FGFR2,known,putative
+FGF13_FGFR3,FGF13,FGFR3,known,putative
+FGF13_FGFR4,FGF13,FGFR4,known,putative
+FGF13_SCN5A,FGF13,SCN5A,novel,literature supported
+FGF13_SCN8A,FGF13,SCN8A,novel,literature supported
+FGF14_FGFR1,FGF14,FGFR1,known,putative
+FGF14_FGFR2,FGF14,FGFR2,known,putative
+FGF14_FGFR3,FGF14,FGFR3,known,putative
+FGF14_FGFR4,FGF14,FGFR4,known,putative
+FGF16_FGFR1,FGF16,FGFR1,known,putative
+FGF16_FGFR2,FGF16,FGFR2,known,literature supported
+FGF16_FGFR3,FGF16,FGFR3,known,literature supported
+FGF16_FGFR4,FGF16,FGFR4,known,literature supported
+FGF17_FGFR1,FGF17,FGFR1,known,literature supported
+FGF17_FGFR2,FGF17,FGFR2,known,literature supported
+FGF17_FGFR3,FGF17,FGFR3,known,literature supported
+FGF17_FGFR4,FGF17,FGFR4,known,literature supported
+FGF18_FGFR1,FGF18,FGFR1,known,literature supported
+FGF18_FGFR2,FGF18,FGFR2,known,literature supported
+FGF18_FGFR3,FGF18,FGFR3,known,literature supported
+FGF18_FGFR4,FGF18,FGFR4,known,literature supported
+FGF19_FGFR1,FGF19,FGFR1,known,literature supported
+FGF19_FGFR2,FGF19,FGFR2,known,literature supported
+FGF19_FGFR3,FGF19,FGFR3,known,literature supported
+FGF19_FGFR4,FGF19,FGFR4,known,literature supported
+FGF19_KLB,FGF19,KLB,novel,literature supported
+FGF1_CD44,FGF1,CD44,novel,putative
+FGF1_EGFR,FGF1,EGFR,novel,putative
+FGF1_FGFR1,FGF1,FGFR1,known,literature supported
+FGF1_FGFR2,FGF1,FGFR2,known,literature supported
+FGF1_FGFR3,FGF1,FGFR3,known,literature supported
+FGF1_FGFR4,FGF1,FGFR4,known,literature supported
+FGF1_FGFRL1,FGF1,FGFRL1,novel,putative
+FGF1_NRP1,FGF1,NRP1,novel,literature supported
+FGF20_FGFR4,FGF20,FGFR4,novel,literature supported
+FGF21_FGFR2,FGF21,FGFR2,novel,putative
+FGF21_FGFR4,FGF21,FGFR4,novel,literature supported
+FGF22_FGFR2,FGF22,FGFR2,known,literature supported
+FGF23_FGFR1,FGF23,FGFR1,known,literature supported
+FGF23_FGFR2,FGF23,FGFR2,known,literature supported
+FGF23_FGFR3,FGF23,FGFR3,novel,literature supported
+FGF23_FGFR4,FGF23,FGFR4,known,literature supported
+FGF23_PHEX,FGF23,PHEX,novel,literature supported
+FGF2_CD44,FGF2,CD44,novel,literature supported
+FGF2_FGFR1,FGF2,FGFR1,known,literature supported
+FGF2_FGFR2,FGF2,FGFR2,known,literature supported
+FGF2_FGFR3,FGF2,FGFR3,known,literature supported
+FGF2_FGFR4,FGF2,FGFR4,known,literature supported
+FGF2_FGFRL1,FGF2,FGFRL1,novel,literature supported
+FGF2_GPC4,FGF2,GPC4,novel,literature supported
+FGF2_NRP1,FGF2,NRP1,novel,literature supported
+FGF2_SDC1,FGF2,SDC1,novel,literature supported
+FGF2_SDC2,FGF2,SDC2,known,literature supported
+FGF2_SDC3,FGF2,SDC3,novel,literature supported
+FGF2_SDC4,FGF2,SDC4,known,literature supported
+FGF3_FGFR1,FGF3,FGFR1,known,literature supported
+FGF3_FGFR2,FGF3,FGFR2,known,literature supported
+FGF3_FGFR3,FGF3,FGFR3,novel,literature supported
+FGF3_FGFR4,FGF3,FGFR4,novel,literature supported
+FGF4_FGFR1,FGF4,FGFR1,known,literature supported
+FGF4_FGFR2,FGF4,FGFR2,known,literature supported
+FGF4_FGFR3,FGF4,FGFR3,known,literature supported
+FGF4_FGFR4,FGF4,FGFR4,known,literature supported
+FGF4_NRP1,FGF4,NRP1,novel,literature supported
+FGF5_FGFR1,FGF5,FGFR1,known,literature supported
+FGF5_FGFR2,FGF5,FGFR2,known,literature supported
+FGF5_FGFR3,FGF5,FGFR3,known,literature supported
+FGF5_FGFR4,FGF5,FGFR4,known,literature supported
+FGF6_FGFR1,FGF6,FGFR1,known,literature supported
+FGF6_FGFR2,FGF6,FGFR2,known,literature supported
+FGF6_FGFR3,FGF6,FGFR3,novel,literature supported
+FGF6_FGFR4,FGF6,FGFR4,known,literature supported
+FGF6_SDC4,FGF6,SDC4,novel,putative
+FGF7_FGFR1,FGF7,FGFR1,novel,literature supported
+FGF7_FGFR2,FGF7,FGFR2,known,literature supported
+FGF7_FGFR3,FGF7,FGFR3,novel,literature supported
+FGF7_FGFR4,FGF7,FGFR4,novel,literature supported
+FGF7_NRP1,FGF7,NRP1,novel,literature supported
+FGF8_FGFR1,FGF8,FGFR1,known,literature supported
+FGF8_FGFR2,FGF8,FGFR2,known,literature supported
+FGF8_FGFR3,FGF8,FGFR3,known,literature supported
+FGF8_FGFR4,FGF8,FGFR4,known,literature supported
+FGF9_FGFR1,FGF9,FGFR1,known,literature supported
+FGF9_FGFR2,FGF9,FGFR2,known,literature supported
+FGF9_FGFR3,FGF9,FGFR3,known,literature supported
+FGF9_FGFR4,FGF9,FGFR4,known,literature supported
+FGG_ITGA2B,FGG,ITGA2B,novel,literature supported
+FGG_ITGA5,FGG,ITGA5,novel,literature supported
+FGG_ITGAV,FGG,ITGAV,novel,literature supported
+FGG_ITGB1,FGG,ITGB1,novel,literature supported
+FGG_ITGB2,FGG,ITGB2,novel,literature supported
+FGL1_EGFR,FGL1,EGFR,novel,literature supported
+FIGF_FLT1,FIGF,FLT1,novel,putative
+FIGF_FLT4,FIGF,FLT4,known,literature supported
+FIGF_ITGA1,FIGF,ITGA1,novel,putative
+FIGF_ITGA2,FIGF,ITGA2,novel,putative
+FIGF_ITGA4,FIGF,ITGA4,novel,putative
+FIGF_ITGA5,FIGF,ITGA5,novel,putative
+FIGF_ITGA9,FIGF,ITGA9,novel,literature supported
+FIGF_ITGB1,FIGF,ITGB1,novel,putative
+FIGF_KDR,FIGF,KDR,known,literature supported
+FIGF_NRP2,FIGF,NRP2,known,literature supported
+FLT3LG_FLT3,FLT3LG,FLT3,known,literature supported
+FN1_C5AR1,FN1,C5AR1,novel,putative
+FN1_CD44,FN1,CD44,novel,literature supported
+FN1_CD79A,FN1,CD79A,novel,putative
+FN1_COL13A1,FN1,COL13A1,novel,literature supported
+FN1_FLT4,FN1,FLT4,novel,putative
+FN1_IL17RC,FN1,IL17RC,novel,putative
+FN1_ITGA2,FN1,ITGA2,known,literature supported
+FN1_ITGA2B,FN1,ITGA2B,known,literature supported
+FN1_ITGA3,FN1,ITGA3,novel,literature supported
+FN1_ITGA4,FN1,ITGA4,known,literature supported
+FN1_ITGA5,FN1,ITGA5,known,literature supported
+FN1_ITGA6,FN1,ITGA6,novel,putative
+FN1_ITGA8,FN1,ITGA8,known,literature supported
+FN1_ITGA9,FN1,ITGA9,novel,literature supported
+FN1_ITGAV,FN1,ITGAV,novel,literature supported
+FN1_ITGB1,FN1,ITGB1,known,literature supported
+FN1_ITGB3,FN1,ITGB3,known,literature supported
+FN1_ITGB6,FN1,ITGB6,known,literature supported
+FN1_ITGB7,FN1,ITGB7,novel,literature supported
+FN1_ITGB8,FN1,ITGB8,known,literature supported
+FN1_MAG,FN1,MAG,novel,literature supported
+FN1_NT5E,FN1,NT5E,novel,literature supported
+FN1_PLAUR,FN1,PLAUR,novel,literature supported
+FN1_ROBO4,FN1,ROBO4,novel,putative
+FN1_SDC2,FN1,SDC2,known,literature supported
+FN1_TMPRSS6,FN1,TMPRSS6,novel,literature supported
+FN1_TNFRSF11B,FN1,TNFRSF11B,novel,literature supported
+FN1_TSHR,FN1,TSHR,novel,literature supported
+FSHB_FSHR,FSHB,FSHR,known,literature supported
+FST_BMPR1B,FST,BMPR1B,novel,putative
+FST_BMPR2,FST,BMPR2,novel,putative
+FST_HFE2,FST,HFE2,novel,putative
+GAD1_GRM4,GAD1,GRM4,known,EXCLUDED not ligand
+GALP_GALR1,GALP,GALR1,known,literature supported
+GALP_GALR2,GALP,GALR2,known,literature supported
+GALP_GALR3,GALP,GALR3,known,literature supported
+GAL_GALR1,GAL,GALR1,known,literature supported
+GAL_GALR2,GAL,GALR2,known,literature supported
+GAL_GALR3,GAL,GALR3,known,literature supported
+GAL_GPR151,GAL,GPR151,novel,literature supported
+GAS6_AXL,GAS6,AXL,known,literature supported
+GAS6_MERTK,GAS6,MERTK,known,literature supported
+GAS6_TYRO3,GAS6,TYRO3,known,literature supported
+GAST_CCKBR,GAST,CCKBR,known,literature supported
+GCG_GCGR,GCG,GCGR,known,literature supported
+GCG_GLP1R,GCG,GLP1R,known,literature supported
+GCG_GLP2R,GCG,GLP2R,known,literature supported
+GDF10_ACVR1B,GDF10,ACVR1B,novel,putative
+GDF11_ACVR1B,GDF11,ACVR1B,known,literature supported
+GDF11_ACVR2A,GDF11,ACVR2A,known,literature supported
+GDF11_ACVR2B,GDF11,ACVR2B,known,literature supported
+GDF2_ACVR1,GDF2,ACVR1,novel,literature supported
+GDF2_ACVR2A,GDF2,ACVR2A,novel,literature supported
+GDF2_ACVR2B,GDF2,ACVR2B,novel,literature supported
+GDF2_ACVRL1,GDF2,ACVRL1,known,literature supported
+GDF2_BMPR2,GDF2,BMPR2,novel,literature supported
+GDF2_ENG,GDF2,ENG,novel,literature supported
+GDF5_ACVR1,GDF5,ACVR1,novel,literature supported
+GDF5_ACVR2A,GDF5,ACVR2A,novel,literature supported
+GDF5_ACVR2B,GDF5,ACVR2B,novel,literature supported
+GDF5_BMPR1A,GDF5,BMPR1A,novel,literature supported
+GDF5_BMPR1B,GDF5,BMPR1B,known,literature supported
+GDF5_BMPR2,GDF5,BMPR2,known,literature supported
+GDF5_ROR2,GDF5,ROR2,known,literature supported
+GDF6_BMPR1A,GDF6,BMPR1A,known,literature supported
+GDF6_BMPR1B,GDF6,BMPR1B,novel,literature supported
+GDF6_BMPR2,GDF6,BMPR2,known,literature supported
+GDF7_ACVR2A,GDF7,ACVR2A,known,literature supported
+GDF7_BMPR1A,GDF7,BMPR1A,known,literature supported
+GDF7_BMPR2,GDF7,BMPR2,known,literature supported
+GDF9_ACVR2A,GDF9,ACVR2A,novel,literature supported
+GDF9_BMPR1A,GDF9,BMPR1A,novel,literature supported
+GDF9_BMPR1B,GDF9,BMPR1B,novel,literature supported
+GDF9_BMPR2,GDF9,BMPR2,known,literature supported
+GDF9_FXYD6,GDF9,FXYD6,novel,literature supported
+GDF9_ORAI2,GDF9,ORAI2,novel,literature supported
+GDF9_TGFBR1,GDF9,TGFBR1,known,literature supported
+GDNF_EDNRB,GDNF,EDNRB,novel,putative
+GDNF_GFRA1,GDNF,GFRA1,known,literature supported
+GDNF_GFRA2,GDNF,GFRA2,known,literature supported
+GDNF_RET,GDNF,RET,known,literature supported
+GDNF_SLC44A5,GDNF,SLC44A5,novel,putative
+GH1_GHR,GH1,GHR,known,literature supported
+GH1_PRLR,GH1,PRLR,novel,literature supported
+GH2_GHR,GH2,GHR,known,literature supported
+GHRH_GHRHR,GHRH,GHRHR,known,literature supported
+GHRH_VIPR1,GHRH,VIPR1,known,literature supported
+GHRL_GHRHR,GHRL,GHRHR,novel,literature supported
+GHRL_GHSR,GHRL,GHSR,known,literature supported
+GHRL_GPR39,GHRL,GPR39,known,literature supported
+GHRL_MLNR,GHRL,MLNR,novel,literature supported
+GIP_DPP4,GIP,DPP4,novel,literature supported
+GIP_GIPR,GIP,GIPR,known,literature supported
+GIP_INSR,GIP,INSR,novel,putative
+GNAI2_ADCY1,GNAI2,ADCY1,novel,literature supported
+GNAI2_ADCY7,GNAI2,ADCY7,novel,putative
+GNAI2_ADCY8,GNAI2,ADCY8,novel,putative
+GNAI2_ADCY9,GNAI2,ADCY9,novel,putative
+GNAI2_ADORA1,GNAI2,ADORA1,novel,literature supported
+GNAI2_ADRA2A,GNAI2,ADRA2A,novel,literature supported
+GNAI2_ADRA2B,GNAI2,ADRA2B,novel,literature supported
+GNAI2_AGTR2,GNAI2,AGTR2,novel,literature supported
+GNAI2_C5AR1,GNAI2,C5AR1,novel,literature supported
+GNAI2_CAV1,GNAI2,CAV1,novel,literature supported
+GNAI2_CCR5,GNAI2,CCR5,novel,literature supported
+GNAI2_CHRM1,GNAI2,CHRM1,novel,literature supported
+GNAI2_CNR1,GNAI2,CNR1,novel,literature supported
+GNAI2_CXCR1,GNAI2,CXCR1,novel,literature supported
+GNAI2_CXCR2,GNAI2,CXCR2,novel,literature supported
+GNAI2_CXCR3,GNAI2,CXCR3,novel,putative
+GNAI2_DRD2,GNAI2,DRD2,novel,literature supported
+GNAI2_EDNRA,GNAI2,EDNRA,novel,literature supported
+GNAI2_EDNRB,GNAI2,EDNRB,novel,putative
+GNAI2_EGFR,GNAI2,EGFR,novel,literature supported
+GNAI2_F2R,GNAI2,F2R,novel,literature supported
+GNAI2_FPR1,GNAI2,FPR1,novel,literature supported
+GNAI2_IGF1R,GNAI2,IGF1R,novel,literature supported
+GNAI2_LHCGR,GNAI2,LHCGR,novel,literature supported
+GNAI2_LPAR3,GNAI2,LPAR3,novel,literature supported
+GNAI2_MTNR1A,GNAI2,MTNR1A,novel,literature supported
+GNAI2_MTNR1B,GNAI2,MTNR1B,novel,literature supported
+GNAI2_OPRD1,GNAI2,OPRD1,novel,literature supported
+GNAI2_OPRM1,GNAI2,OPRM1,novel,literature supported
+GNAI2_P2RY12,GNAI2,P2RY12,novel,literature supported
+GNAI2_PTPRU,GNAI2,PTPRU,novel,literature supported
+GNAI2_S1PR1,GNAI2,S1PR1,novel,putative
+GNAI2_S1PR3,GNAI2,S1PR3,novel,putative
+GNAI2_S1PR4,GNAI2,S1PR4,novel,putative
+GNAI2_S1PR5,GNAI2,S1PR5,novel,putative
+GNAI2_TBXA2R,GNAI2,TBXA2R,novel,literature supported
+GNAI2_TSHR,GNAI2,TSHR,novel,literature supported
+GNAI2_UNC5B,GNAI2,UNC5B,novel,putative
+GNAS_ADCY1,GNAS,ADCY1,novel,putative
+GNAS_ADCY7,GNAS,ADCY7,novel,putative
+GNAS_ADCY8,GNAS,ADCY8,novel,putative
+GNAS_ADCY9,GNAS,ADCY9,novel,putative
+GNAS_ADORA1,GNAS,ADORA1,novel,literature supported
+GNAS_ADRB3,GNAS,ADRB3,novel,literature supported
+GNAS_AVPR2,GNAS,AVPR2,novel,literature supported
+GNAS_CRHR1,GNAS,CRHR1,novel,literature supported
+GNAS_GCGR,GNAS,GCGR,novel,literature supported
+GNAS_GLP1R,GNAS,GLP1R,novel,putative
+GNAS_HTR6,GNAS,HTR6,novel,literature supported
+GNAS_LHCGR,GNAS,LHCGR,novel,literature supported
+GNAS_PTGDR,GNAS,PTGDR,novel,literature supported
+GNAS_PTGIR,GNAS,PTGIR,novel,literature supported
+GNAS_TSHR,GNAS,TSHR,novel,literature supported
+GNAS_VIPR1,GNAS,VIPR1,novel,literature supported
+GNB3_GABBR2,GNB3,GABBR2,novel,putative
+GNB3_TGFBR1,GNB3,TGFBR1,novel,literature supported
+GNRH1_GNRHR,GNRH1,GNRHR,known,literature supported
+GNRH2_GNRHR,GNRH2,GNRHR,known,literature supported
+GPC3_CD81,GPC3,CD81,novel,literature supported
+GPC3_IGF1R,GPC3,IGF1R,novel,literature supported
+GPHA2_TSHR,GPHA2,TSHR,known,literature supported
+GPI_AMFR,GPI,AMFR,known,literature supported
+GREM1_KDR,GREM1,KDR,novel,putative
+GRP_BRS3,GRP,BRS3,novel,literature supported
+GRP_GRPR,GRP,GRPR,known,literature supported
+GRP_NMBR,GRP,NMBR,novel,literature supported
+GSTP1_TRAF2,GSTP1,TRAF2,known,literature supported
+GUCA2A_GUCY2C,GUCA2A,GUCY2C,known,literature supported
+GUCA2B_GUCY2C,GUCA2B,GUCY2C,known,literature supported
+GUCA2B_GUCY2D,GUCA2B,GUCY2D,novel,literature supported
+GZMB_CHRM3,GZMB,CHRM3,novel,literature supported
+GZMB_IGF2R,GZMB,IGF2R,known,literature supported
+GZMB_PGRMC1,GZMB,PGRMC1,novel,putative
+HAS2_CD44,HAS2,CD44,known,literature supported
+HAS2_HMMR,HAS2,HMMR,known,literature supported
+HBEGF_CD44,HBEGF,CD44,novel,literature supported
+HBEGF_CD82,HBEGF,CD82,novel,literature supported
+HBEGF_CD9,HBEGF,CD9,novel,literature supported
+HBEGF_EGFR,HBEGF,EGFR,known,literature supported
+HBEGF_ERBB2,HBEGF,ERBB2,novel,literature supported
+HBEGF_ERBB4,HBEGF,ERBB4,known,literature supported
+HBEGF_PRLR,HBEGF,PRLR,novel,putative
+HCRT_HCRTR1,HCRT,HCRTR1,known,literature supported
+HCRT_HCRTR2,HCRT,HCRTR2,known,literature supported
+HCRT_NPFFR2,HCRT,NPFFR2,novel,literature supported
+HDC_HRH1,HDC,HRH1,known,EXCLUDED not ligand
+HDC_HRH2,HDC,HRH2,known,EXCLUDED not ligand
+HDC_HRH3,HDC,HRH3,known,EXCLUDED not ligand
+HDC_HRH4,HDC,HRH4,known,EXCLUDED not ligand
+HEBP1_FPR3,HEBP1,FPR3,known,literature supported
+HGF_CD44,HGF,CD44,novel,literature supported
+HGF_MET,HGF,MET,known,literature supported
+HGF_SDC1,HGF,SDC1,novel,literature supported
+HGF_SDC2,HGF,SDC2,novel,literature supported
+HGF_ST14,HGF,ST14,novel,literature supported
+HHIPL2_CACHD1,HHIPL2,CACHD1,novel,putative
+HHLA3_CHRM3,HHLA3,CHRM3,novel,putative
+HLA-A_APLP2,HLA-A,APLP2,novel,literature supported
+HLA-A_CD3D,HLA-A,CD3D,novel,putative
+HLA-A_CD3G,HLA-A,CD3G,novel,putative
+HLA-A_ERBB2,HLA-A,ERBB2,novel,literature supported
+HLA-A_KIR2DL1,HLA-A,KIR2DL1,novel,putative
+HLA-A_KIR2DL3,HLA-A,KIR2DL3,novel,putative
+HLA-A_KIR3DL1,HLA-A,KIR3DL1,novel,literature supported
+HLA-A_KIR3DL2,HLA-A,KIR3DL2,known,literature supported
+HLA-A_LILRB1,HLA-A,LILRB1,novel,literature supported
+HLA-A_LILRB2,HLA-A,LILRB2,novel,literature supported
+HLA-B_CANX,HLA-B,CANX,novel,literature supported
+HLA-B_CD3D,HLA-B,CD3D,novel,putative
+HLA-B_CD3G,HLA-B,CD3G,novel,putative
+HLA-B_KIR2DL3,HLA-B,KIR2DL3,novel,putative
+HLA-B_KIR3DL1,HLA-B,KIR3DL1,known,literature supported
+HLA-B_KLRD1,HLA-B,KLRD1,novel,literature supported
+HLA-B_LILRB1,HLA-B,LILRB1,novel,literature supported
+HLA-B_LILRB2,HLA-B,LILRB2,novel,literature supported
+HLA-C_CD3D,HLA-C,CD3D,novel,putative
+HLA-C_CD3G,HLA-C,CD3G,novel,putative
+HLA-C_DDR1,HLA-C,DDR1,novel,putative
+HLA-C_KIR2DL1,HLA-C,KIR2DL1,known,literature supported
+HLA-C_KIR2DL3,HLA-C,KIR2DL3,known,literature supported
+HLA-C_KIR2DS4,HLA-C,KIR2DS4,known,literature supported
+HLA-C_KIR3DL1,HLA-C,KIR3DL1,novel,putative
+HLA-C_LILRA3,HLA-C,LILRA3,novel,literature supported
+HLA-C_LILRB1,HLA-C,LILRB1,novel,literature supported
+HLA-C_LILRB2,HLA-C,LILRB2,novel,literature supported
+HLA-C_NOTCH4,HLA-C,NOTCH4,novel,putative
+HLA-C_SLC9C2,HLA-C,SLC9C2,novel,putative
+HLA-E_KIR3DL1,HLA-E,KIR3DL1,novel,putative
+HLA-E_KLRC1,HLA-E,KLRC1,known,literature supported
+HLA-E_KLRC2,HLA-E,KLRC2,known,literature supported
+HLA-E_KLRD1,HLA-E,KLRD1,known,literature supported
+HLA-E_SLC16A4,HLA-E,SLC16A4,novel,putative
+HLA-G_CD4,HLA-G,CD4,novel,putative
+HLA-G_KIR2DL4,HLA-G,KIR2DL4,known,literature supported
+HLA-G_KLRC1,HLA-G,KLRC1,known,literature supported
+HLA-G_KLRD1,HLA-G,KLRD1,known,literature supported
+HLA-G_LILRB1,HLA-G,LILRB1,known,literature supported
+HLA-G_LILRB2,HLA-G,LILRB2,novel,literature supported
+HMGB1_SDC1,HMGB1,SDC1,novel,literature supported
+HMGB1_THBD,HMGB1,THBD,novel,literature supported
+HP_ASGR1,HP,ASGR1,novel,putative
+HP_ASGR2,HP,ASGR2,novel,putative
+HP_ITGAM,HP,ITGAM,novel,literature supported
+HP_ITGB2,HP,ITGB2,novel,literature supported
+HRAS_AGTR1,HRAS,AGTR1,novel,literature supported
+HRAS_CAV1,HRAS,CAV1,novel,literature supported
+HRAS_GRIN2D,HRAS,GRIN2D,novel,literature supported
+HRAS_INSR,HRAS,INSR,novel,literature supported
+HRAS_SDC2,HRAS,SDC2,novel,putative
+HRAS_TLR2,HRAS,TLR2,novel,literature supported
+HRAS_TLR9,HRAS,TLR9,novel,literature supported
+HRG_FCGR1A,HRG,FCGR1A,novel,literature supported
+HSP90AA1_CFTR,HSP90AA1,CFTR,novel,literature supported
+HSP90AA1_EGFR,HSP90AA1,EGFR,novel,literature supported
+HSP90AA1_FGFR3,HSP90AA1,FGFR3,novel,literature supported
+HSP90B1_ASGR1,HSP90B1,ASGR1,novel,EXCLUDED not ligand
+HSP90B1_ERBB2,HSP90B1,ERBB2,novel,EXCLUDED not ligand
+HSP90B1_LRP1,HSP90B1,LRP1,known,EXCLUDED not ligand
+HSP90B1_TLR1,HSP90B1,TLR1,novel,EXCLUDED not ligand
+HSP90B1_TLR2,HSP90B1,TLR2,novel,EXCLUDED not ligand
+HSP90B1_TLR4,HSP90B1,TLR4,novel,EXCLUDED not ligand
+HSP90B1_TLR7,HSP90B1,TLR7,novel,EXCLUDED not ligand
+HSP90B1_TLR9,HSP90B1,TLR9,novel,EXCLUDED not ligand
+HSPA1A_GRIN2D,HSPA1A,GRIN2D,novel,EXCLUDED not ligand
+HSPA1A_TLR4,HSPA1A,TLR4,novel,EXCLUDED not ligand
+HSPG2_CHRM3,HSPG2,CHRM3,novel,putative
+HSPG2_COL13A1,HSPG2,COL13A1,novel,literature supported
+HSPG2_ITGA2,HSPG2,ITGA2,novel,literature supported
+HSPG2_ITGB1,HSPG2,ITGB1,novel,literature supported
+HSPG2_PTPRS,HSPG2,PTPRS,known,literature supported
+HSPG2_SDC1,HSPG2,SDC1,novel,putative
+IAPP_CALCR,IAPP,CALCR,known,literature supported
+IAPP_RAMP1,IAPP,RAMP1,novel,literature supported
+IAPP_RAMP2,IAPP,RAMP2,novel,literature supported
+IAPP_RAMP3,IAPP,RAMP3,novel,putative
+IBSP_ITGAV,IBSP,ITGAV,novel,putative
+ICAM1_CAV1,ICAM1,CAV1,novel,putative
+ICAM1_EGFR,ICAM1,EGFR,novel,literature supported
+ICAM1_IL2RA,ICAM1,IL2RA,novel,literature supported
+ICAM1_IL2RG,ICAM1,IL2RG,novel,literature supported
+ICAM1_ITGAL,ICAM1,ITGAL,known,literature supported
+ICAM1_ITGAM,ICAM1,ITGAM,novel,literature supported
+ICAM1_ITGAX,ICAM1,ITGAX,known,literature supported
+ICAM1_ITGB2,ICAM1,ITGB2,known,literature supported
+ICAM2_ITGAL,ICAM2,ITGAL,known,literature supported
+ICAM2_ITGAM,ICAM2,ITGAM,novel,literature supported
+ICAM2_ITGB2,ICAM2,ITGB2,known,literature supported
+ICAM3_CLEC4M,ICAM3,CLEC4M,novel,literature supported
+ICAM3_ITGAD,ICAM3,ITGAD,novel,literature supported
+ICAM3_ITGAL,ICAM3,ITGAL,known,literature supported
+ICAM3_ITGB2,ICAM3,ITGB2,known,literature supported
+ICAM4_ITGA2B,ICAM4,ITGA2B,known,literature supported
+ICAM4_ITGA4,ICAM4,ITGA4,novel,literature supported
+ICAM4_ITGAL,ICAM4,ITGAL,known,literature supported
+ICAM4_ITGAM,ICAM4,ITGAM,known,literature supported
+ICAM4_ITGAV,ICAM4,ITGAV,known,literature supported
+ICAM4_ITGB1,ICAM4,ITGB1,novel,literature supported
+ICAM4_ITGB2,ICAM4,ITGB2,known,literature supported
+ICAM4_ITGB3,ICAM4,ITGB3,known,literature supported
+ICAM4_RHAG,ICAM4,RHAG,novel,literature supported
+ICAM5_ITGAL,ICAM5,ITGAL,known,literature supported
+ICAM5_ITGB2,ICAM5,ITGB2,known,literature supported
+IFNA10_IFNAR1,IFNA10,IFNAR1,known,literature supported
+IFNA10_IFNAR2,IFNA10,IFNAR2,known,literature supported
+IFNA13_IFNAR1,IFNA13,IFNAR1,known,literature supported
+IFNA13_IFNAR2,IFNA13,IFNAR2,known,literature supported
+IFNA14_IFNAR1,IFNA14,IFNAR1,known,literature supported
+IFNA14_IFNAR2,IFNA14,IFNAR2,known,literature supported
+IFNA16_IFNAR1,IFNA16,IFNAR1,known,literature supported
+IFNA16_IFNAR2,IFNA16,IFNAR2,known,literature supported
+IFNA17_IFNAR1,IFNA17,IFNAR1,known,literature supported
+IFNA17_IFNAR2,IFNA17,IFNAR2,known,literature supported
+IFNA1_IFNAR1,IFNA1,IFNAR1,known,literature supported
+IFNA1_IFNAR2,IFNA1,IFNAR2,known,literature supported
+IFNA21_IFNAR1,IFNA21,IFNAR1,known,literature supported
+IFNA21_IFNAR2,IFNA21,IFNAR2,known,literature supported
+IFNA2_IFNAR1,IFNA2,IFNAR1,known,literature supported
+IFNA2_IFNAR2,IFNA2,IFNAR2,known,literature supported
+IFNA4_IFNAR1,IFNA4,IFNAR1,known,literature supported
+IFNA4_IFNAR2,IFNA4,IFNAR2,known,literature supported
+IFNA5_IFNAR1,IFNA5,IFNAR1,known,literature supported
+IFNA5_IFNAR2,IFNA5,IFNAR2,known,literature supported
+IFNA6_IFNAR1,IFNA6,IFNAR1,known,literature supported
+IFNA6_IFNAR2,IFNA6,IFNAR2,known,literature supported
+IFNA7_IFNAR1,IFNA7,IFNAR1,known,literature supported
+IFNA7_IFNAR2,IFNA7,IFNAR2,known,literature supported
+IFNA8_IFNAR1,IFNA8,IFNAR1,known,literature supported
+IFNA8_IFNAR2,IFNA8,IFNAR2,known,literature supported
+IFNB1_IFNAR1,IFNB1,IFNAR1,known,literature supported
+IFNB1_IFNAR2,IFNB1,IFNAR2,known,literature supported
+IFNG_IFNGR1,IFNG,IFNGR1,known,literature supported
+IFNG_IFNGR2,IFNG,IFNGR2,known,literature supported
+IFNL1_IFNLR1,IFNL1,IFNLR1,known,literature supported
+IFNL1_IL10RB,IFNL1,IL10RB,known,literature supported
+IFNL2_IFNLR1,IFNL2,IFNLR1,known,literature supported
+IFNL2_IL10RB,IFNL2,IL10RB,known,literature supported
+IFNL3_IFNLR1,IFNL3,IFNLR1,known,literature supported
+IFNL3_IL10RB,IFNL3,IL10RB,known,literature supported
+IFNW1_IFNAR1,IFNW1,IFNAR1,known,literature supported
+IFNW1_IFNAR2,IFNW1,IFNAR2,known,literature supported
+IGF1_IGF1R,IGF1,IGF1R,known,literature supported
+IGF1_INSR,IGF1,INSR,novel,putative
+IGF2_IGF1R,IGF2,IGF1R,known,literature supported
+IGF2_IGF2R,IGF2,IGF2R,known,literature supported
+IGF2_INSR,IGF2,INSR,known,literature supported
+IGFBP4_FZD8,IGFBP4,FZD8,novel,literature supported
+IGFBP4_LRP6,IGFBP4,LRP6,novel,literature supported
+IGFL1_IGFLR1,IGFL1,IGFLR1,novel,literature supported
+IGFL2_IGFLR1,IGFL2,IGFLR1,novel,literature supported
+IGFL3_IGFLR1,IGFL3,IGFLR1,novel,literature supported
+IHH_BOC,IHH,BOC,novel,literature supported
+IHH_CDON,IHH,CDON,novel,literature supported
+IHH_HHIP,IHH,HHIP,known,literature supported
+IHH_PTCH1,IHH,PTCH1,known,literature supported
+IHH_PTCH2,IHH,PTCH2,novel,literature supported
+IL10_IL10RA,IL10,IL10RA,known,literature supported
+IL10_IL10RB,IL10,IL10RB,known,literature supported
+IL10_SIRPG,IL10,SIRPG,novel,putative
+IL11_IL11RA,IL11,IL11RA,known,literature supported
+IL11_IL6ST,IL11,IL6ST,known,literature supported
+IL12A_CD28,IL12A,CD28,novel,literature supported
+IL12A_IL12RB1,IL12A,IL12RB1,known,literature supported
+IL12A_IL12RB2,IL12A,IL12RB2,known,literature supported
+IL12B_IL12RB1,IL12B,IL12RB1,known,literature supported
+IL12B_IL12RB2,IL12B,IL12RB2,known,literature supported
+IL12B_IL23R,IL12B,IL23R,novel,literature supported
+IL13_IL13RA1,IL13,IL13RA1,known,literature supported
+IL13_IL13RA2,IL13,IL13RA2,known,literature supported
+IL13_IL2RG,IL13,IL2RG,known,literature supported
+IL13_IL4R,IL13,IL4R,known,literature supported
+IL15_IL15RA,IL15,IL15RA,known,literature supported
+IL15_IL2RA,IL15,IL2RA,novel,literature supported
+IL15_IL2RB,IL15,IL2RB,known,literature supported
+IL15_IL2RG,IL15,IL2RG,known,literature supported
+IL16_CCR5,IL16,CCR5,novel,putative
+IL16_CD4,IL16,CD4,known,literature supported
+IL16_GRIN2C,IL16,GRIN2C,novel,literature supported
+IL16_GRIN2D,IL16,GRIN2D,novel,literature supported
+IL16_KCNA3,IL16,KCNA3,novel,literature supported
+IL16_KCND1,IL16,KCND1,novel,literature supported
+IL16_KCND2,IL16,KCND2,novel,literature supported
+IL16_KCNJ10,IL16,KCNJ10,novel,literature supported
+IL16_KCNJ15,IL16,KCNJ15,novel,literature supported
+IL16_KCNJ4,IL16,KCNJ4,novel,literature supported
+IL17A_IL17RA,IL17A,IL17RA,known,literature supported
+IL17A_IL17RC,IL17A,IL17RC,novel,literature supported
+IL17B_IL17RB,IL17B,IL17RB,known,literature supported
+IL17F_IL17RA,IL17F,IL17RA,novel,literature supported
+IL18_CD48,IL18,CD48,novel,putative
+IL18_IL18R1,IL18,IL18R1,known,literature supported
+IL18_IL18RAP,IL18,IL18RAP,known,literature supported
+IL18_IL1RAPL1,IL18,IL1RAPL1,known,literature supported
+IL18_IL1RL2,IL18,IL1RL2,novel,literature supported
+IL19_IL20RA,IL19,IL20RA,known,literature supported
+IL19_IL20RB,IL19,IL20RB,known,literature supported
+IL1A_IL1R1,IL1A,IL1R1,known,literature supported
+IL1A_IL1R2,IL1A,IL1R2,known,literature supported
+IL1A_IL1RAP,IL1A,IL1RAP,novel,literature supported
+IL1B_ADRB2,IL1B,ADRB2,novel,literature supported
+IL1B_IL1R1,IL1B,IL1R1,known,literature supported
+IL1B_IL1R2,IL1B,IL1R2,known,literature supported
+IL1B_IL1RAP,IL1B,IL1RAP,known,literature supported
+IL1F10_IL1R1,IL1F10,IL1R1,novel,literature supported
+IL1RN_IL1R1,IL1RN,IL1R1,known,literature supported
+IL1RN_IL1R2,IL1RN,IL1R2,known,literature supported
+IL1RN_IL1RL2,IL1RN,IL1RL2,novel,putative
+IL20_IL20RA,IL20,IL20RA,known,literature supported
+IL20_IL20RB,IL20,IL20RB,known,literature supported
+IL20_IL22RA1,IL20,IL22RA1,known,literature supported
+IL21_IL21R,IL21,IL21R,known,literature supported
+IL21_IL2RG,IL21,IL2RG,known,literature supported
+IL22_IL10RA,IL22,IL10RA,known,literature supported
+IL22_IL10RB,IL22,IL10RB,novel,literature supported
+IL22_IL21R,IL22,IL21R,novel,putative
+IL22_IL22RA1,IL22,IL22RA1,known,literature supported
+IL22_IL22RA2,IL22,IL22RA2,known,literature supported
+IL23A_IL12RB1,IL23A,IL12RB1,known,literature supported
+IL23A_IL23R,IL23A,IL23R,known,literature supported
+IL24_IL20RA,IL24,IL20RA,known,literature supported
+IL24_IL20RB,IL24,IL20RB,known,literature supported
+IL24_IL22RA1,IL24,IL22RA1,known,literature supported
+IL25_IL17RB,IL25,IL17RB,known,literature supported
+IL26_IL20RA,IL26,IL20RA,novel,putative
+IL27_IL27RA,IL27,IL27RA,novel,literature supported
+IL2_CD53,IL2,CD53,novel,literature supported
+IL2_GYPE,IL2,GYPE,novel,putative
+IL2_IL2RA,IL2,IL2RA,known,literature supported
+IL2_IL2RB,IL2,IL2RB,known,literature supported
+IL2_IL2RG,IL2,IL2RG,known,literature supported
+IL2_NGFR,IL2,NGFR,novel,literature supported
+IL31_IL31RA,IL31,IL31RA,known,literature supported
+IL31_OSMR,IL31,OSMR,known,literature supported
+IL34_CSF1R,IL34,CSF1R,novel,literature supported
+IL3_CSF2RB,IL3,CSF2RB,known,literature supported
+IL3_IL3RA,IL3,IL3RA,known,literature supported
+IL4_CD53,IL4,CD53,novel,literature supported
+IL4_IL13RA1,IL4,IL13RA1,known,literature supported
+IL4_IL13RA2,IL4,IL13RA2,novel,literature supported
+IL4_IL2RG,IL4,IL2RG,known,literature supported
+IL4_IL4R,IL4,IL4R,known,literature supported
+IL5_CSF2RB,IL5,CSF2RB,known,literature supported
+IL5_IL5RA,IL5,IL5RA,known,literature supported
+IL6_F3,IL6,F3,novel,putative
+IL6_IL6R,IL6,IL6R,known,literature supported
+IL6_IL6ST,IL6,IL6ST,known,literature supported
+IL7_IL2RG,IL7,IL2RG,known,literature supported
+IL7_IL7R,IL7,IL7R,known,literature supported
+IL8_CD79A,IL8,CD79A,novel,putative
+IL8_CXCR1,IL8,CXCR1,known,literature supported
+IL8_CXCR2,IL8,CXCR2,known,literature supported
+IL8_DARC,IL8,DARC,known,literature supported
+IL8_KDR,IL8,KDR,novel,putative
+IL8_SDC1,IL8,SDC1,novel,literature supported
+IL8_SDC2,IL8,SDC2,novel,literature supported
+IL8_SDC3,IL8,SDC3,novel,putative
+IL9_IL2RG,IL9,IL2RG,known,literature supported
+IL9_IL9R,IL9,IL9R,known,literature supported
+INHA_ACVR1,INHA,ACVR1,known,putative
+INHA_ACVR1B,INHA,ACVR1B,known,putative
+INHA_ACVR2A,INHA,ACVR2A,known,literature supported
+INHA_ACVR2B,INHA,ACVR2B,known,putative
+INHA_TGFBR3,INHA,TGFBR3,known,literature supported
+INHBA_ACVR1,INHBA,ACVR1,known,literature supported
+INHBA_ACVR1B,INHBA,ACVR1B,known,literature supported
+INHBA_ACVR2A,INHBA,ACVR2A,known,literature supported
+INHBA_ACVR2B,INHBA,ACVR2B,known,literature supported
+INHBA_BAMBI,INHBA,BAMBI,known,literature supported
+INHBA_ENG,INHBA,ENG,novel,literature supported
+INHBA_TGFBR3,INHBA,TGFBR3,novel,literature supported
+INHBB_ACVR1,INHBB,ACVR1,known,literature supported
+INHBB_ACVR1B,INHBB,ACVR1B,known,literature supported
+INHBB_ACVR1C,INHBB,ACVR1C,novel,literature supported
+INHBB_ACVR2A,INHBB,ACVR2A,known,literature supported
+INHBB_ACVR2B,INHBB,ACVR2B,known,literature supported
+INHBC_ACVR1,INHBC,ACVR1,known,literature supported
+INHBC_ACVR1B,INHBC,ACVR1B,known,literature supported
+INHBC_ACVR2A,INHBC,ACVR2A,known,literature supported
+INHBC_ACVR2B,INHBC,ACVR2B,known,literature supported
+INHBE_ACVR1,INHBE,ACVR1,novel,putative
+INHBE_ACVR1B,INHBE,ACVR1B,novel,putative
+INHBE_ACVR2A,INHBE,ACVR2A,novel,putative
+INHBE_ENG,INHBE,ENG,novel,putative
+INSL3_RXFP2,INSL3,RXFP2,known,literature supported
+INSL5_RXFP3,INSL5,RXFP3,known,literature supported
+INSL5_RXFP4,INSL5,RXFP4,known,literature supported
+INS_IGF1R,INS,IGF1R,novel,literature supported
+INS_INSR,INS,INSR,known,literature supported
+INS_LRP2,INS,LRP2,novel,literature supported
+ITGB3BP_ITGB3,ITGB3BP,ITGB3,novel,literature supported
+ITGB3BP_ITGB5,ITGB3BP,ITGB5,novel,literature supported
+ITIH2_FCER1A,ITIH2,FCER1A,novel,literature supported
+JAG1_NOTCH1,JAG1,NOTCH1,known,literature supported
+JAG1_NOTCH2,JAG1,NOTCH2,known,literature supported
+JAG1_NOTCH3,JAG1,NOTCH3,known,literature supported
+JAG1_NOTCH4,JAG1,NOTCH4,known,literature supported
+JAG2_NOTCH1,JAG2,NOTCH1,known,literature supported
+JAG2_NOTCH2,JAG2,NOTCH2,known,literature supported
+JAG2_NOTCH3,JAG2,NOTCH3,known,literature supported
+JAG2_NOTCH4,JAG2,NOTCH4,known,putative
+KAL1_FGFR1,KAL1,FGFR1,novel,literature supported
+KAL1_SDC2,KAL1,SDC2,novel,literature supported
+KISS1_KISS1R,KISS1,KISS1R,known,literature supported
+KISS1_MMP24,KISS1,MMP24,novel,literature supported
+KITLG_EPOR,KITLG,EPOR,novel,literature supported
+KITLG_KIT,KITLG,KIT,known,literature supported
+KLK3_EPOR,KLK3,EPOR,novel,literature supported
+KNG1_BDKRB1,KNG1,BDKRB1,known,literature supported
+KNG1_BDKRB2,KNG1,BDKRB2,known,literature supported
+KNG1_CD93,KNG1,CD93,novel,literature supported
+KNG1_GP1BA,KNG1,GP1BA,novel,literature supported
+KNG1_GPR135,KNG1,GPR135,known,literature supported
+KNG1_ITGAM,KNG1,ITGAM,novel,putative
+KNG1_ITGB2,KNG1,ITGB2,novel,literature supported
+KNG1_PLAUR,KNG1,PLAUR,novel,literature supported
+KNG1_RXFP4,KNG1,RXFP4,novel,literature supported
+KNG1_SDC2,KNG1,SDC2,novel,putative
+KRTAP4-12_AQP1,KRTAP4-12,AQP1,novel,literature supported
+KRTAP4-12_CATSPER1,KRTAP4-12,CATSPER1,novel,literature supported
+KRTAP4-12_CLDN2,KRTAP4-12,CLDN2,novel,literature supported
+KRTAP4-12_CNTFR,KRTAP4-12,CNTFR,novel,literature supported
+KRTAP4-12_DLK2,KRTAP4-12,DLK2,novel,EXCLUDED
+KRTAP4-12_LINGO1,KRTAP4-12,LINGO1,novel,literature supported
+KRTAP4-12_PDGFRB,KRTAP4-12,PDGFRB,novel,literature supported
+KRTAP4-12_PLSCR4,KRTAP4-12,PLSCR4,novel,literature supported
+L1CAM_CNTN1,L1CAM,CNTN1,novel,literature supported
+L1CAM_EGFR,L1CAM,EGFR,novel,literature supported
+L1CAM_EPHB2,L1CAM,EPHB2,novel,putative
+L1CAM_ERBB2,L1CAM,ERBB2,novel,literature supported
+L1CAM_ERBB3,L1CAM,ERBB3,novel,literature supported
+L1CAM_FGFR2,L1CAM,FGFR2,novel,putative
+L1CAM_ITGA5,L1CAM,ITGA5,novel,literature supported
+L1CAM_ITGAV,L1CAM,ITGAV,novel,literature supported
+LACRT_SDC1,LACRT,SDC1,novel,literature supported
+LAMA1_GPC1,LAMA1,GPC1,novel,putative
+LAMA1_ITGA1,LAMA1,ITGA1,novel,literature supported
+LAMA1_ITGA2,LAMA1,ITGA2,novel,literature supported
+LAMA1_ITGA3,LAMA1,ITGA3,novel,putative
+LAMA1_ITGA6,LAMA1,ITGA6,novel,putative
+LAMA1_ITGA7,LAMA1,ITGA7,known,literature supported
+LAMA1_ITGB1,LAMA1,ITGB1,known,literature supported
+LAMA1_ITGB4,LAMA1,ITGB4,novel,putative
+LAMA1_ITGB8,LAMA1,ITGB8,known,literature supported
+LAMA1_NT5E,LAMA1,NT5E,novel,literature supported
+LAMA1_RPSA,LAMA1,RPSA,known,literature supported
+LAMA1_SDC2,LAMA1,SDC2,novel,putative
+LAMA1_SDC4,LAMA1,SDC4,novel,putative
+LAMA1_TMPRSS6,LAMA1,TMPRSS6,novel,literature supported
+LAMA2_ITGA1,LAMA2,ITGA1,novel,putative
+LAMA2_ITGA2,LAMA2,ITGA2,novel,putative
+LAMA2_ITGA3,LAMA2,ITGA3,novel,putative
+LAMA2_ITGA6,LAMA2,ITGA6,novel,putative
+LAMA2_ITGA7,LAMA2,ITGA7,known,literature supported
+LAMA2_ITGB1,LAMA2,ITGB1,known,literature supported
+LAMA2_ITGB4,LAMA2,ITGB4,novel,putative
+LAMA2_RPSA,LAMA2,RPSA,known,literature supported
+LAMA3_SDC2,LAMA3,SDC2,novel,literature supported
+LAMA4_ITGA3,LAMA4,ITGA3,novel,putative
+LAMA4_ITGA6,LAMA4,ITGA6,novel,putative
+LAMA4_ITGAV,LAMA4,ITGAV,novel,putative
+LAMA4_ITGB1,LAMA4,ITGB1,novel,putative
+LAMA5_BCAM,LAMA5,BCAM,novel,literature supported
+LAMA5_ITGA2,LAMA5,ITGA2,novel,putative
+LAMA5_ITGA3,LAMA5,ITGA3,novel,putative
+LAMA5_ITGA6,LAMA5,ITGA6,novel,putative
+LAMA5_ITGB1,LAMA5,ITGB1,novel,putative
+LAMA5_ITGB4,LAMA5,ITGB4,novel,putative
+LAMA5_SDC1,LAMA5,SDC1,novel,putative
+LAMB1_ITGA1,LAMB1,ITGA1,novel,putative
+LAMB1_ITGA2,LAMB1,ITGA2,novel,putative
+LAMB1_ITGA3,LAMB1,ITGA3,novel,putative
+LAMB1_ITGA6,LAMB1,ITGA6,known,literature supported
+LAMB1_ITGA7,LAMB1,ITGA7,novel,putative
+LAMB1_ITGAV,LAMB1,ITGAV,novel,putative
+LAMB1_ITGB1,LAMB1,ITGB1,known,literature supported
+LAMB1_ITGB4,LAMB1,ITGB4,novel,putative
+LAMB2_RPSA,LAMB2,RPSA,known,literature supported
+LAMB3_CD151,LAMB3,CD151,novel,putative
+LAMB3_COL17A1,LAMB3,COL17A1,novel,putative
+LAMB3_ITGA2,LAMB3,ITGA2,novel,putative
+LAMB3_ITGA3,LAMB3,ITGA3,novel,putative
+LAMB3_ITGA6,LAMB3,ITGA6,novel,putative
+LAMB3_ITGB1,LAMB3,ITGB1,novel,putative
+LAMB3_ITGB4,LAMB3,ITGB4,novel,putative
+LAMC1_ITGA1,LAMC1,ITGA1,novel,putative
+LAMC1_ITGA2,LAMC1,ITGA2,novel,putative
+LAMC1_ITGA3,LAMC1,ITGA3,novel,putative
+LAMC1_ITGA6,LAMC1,ITGA6,novel,putative
+LAMC1_ITGA7,LAMC1,ITGA7,novel,putative
+LAMC1_ITGAV,LAMC1,ITGAV,novel,putative
+LAMC1_ITGB1,LAMC1,ITGB1,novel,putative
+LAMC1_ITGB4,LAMC1,ITGB4,novel,putative
+LAMC2_CD151,LAMC2,CD151,novel,putative
+LAMC2_COL17A1,LAMC2,COL17A1,novel,putative
+LAMC2_ITGA2,LAMC2,ITGA2,novel,putative
+LAMC2_ITGA3,LAMC2,ITGA3,known,literature supported
+LAMC2_ITGA6,LAMC2,ITGA6,known,literature supported
+LAMC2_ITGB1,LAMC2,ITGB1,known,literature supported
+LAMC2_ITGB4,LAMC2,ITGB4,known,literature supported
+LAMC3_ITGA2,LAMC3,ITGA2,novel,putative
+LAMC3_ITGA3,LAMC3,ITGA3,novel,putative
+LAMC3_ITGA6,LAMC3,ITGA6,novel,putative
+LAMC3_ITGB1,LAMC3,ITGB1,novel,putative
+LAMC3_ITGB4,LAMC3,ITGB4,novel,putative
+LCN1_LMBR1L,LCN1,LMBR1L,novel,literature supported
+LCN2_LRP2,LCN2,LRP2,novel,literature supported
+LEFTY2_ACVR2B,LEFTY2,ACVR2B,known,literature supported
+LEP_LEPR,LEP,LEPR,known,literature supported
+LEP_LRP2,LEP,LRP2,novel,putative
+LGALS3BP_ITGB1,LGALS3BP,ITGB1,novel,literature supported
+LGALS3BP_VANGL1,LGALS3BP,VANGL1,novel,putative
+LHB_LHCGR,LHB,LHCGR,known,literature supported
+LIF_IL6ST,LIF,IL6ST,known,literature supported
+LIF_LIFR,LIF,LIFR,known,literature supported
+LIN7C_ABCA1,LIN7C,ABCA1,novel,literature supported
+LIN7C_HTR2C,LIN7C,HTR2C,novel,literature supported
+LIN7C_KCNJ4,LIN7C,KCNJ4,novel,putative
+LIPC_LRP1,LIPC,LRP1,novel,literature supported
+LIPH_LPAR1,LIPH,LPAR1,known,literature supported
+LIPH_LPAR2,LIPH,LPAR2,known,literature supported
+LIPH_LPAR4,LIPH,LPAR4,known,literature supported
+LPA_ITGAM,LPA,ITGAM,novel,putative
+LPA_ITGB2,LPA,ITGB2,novel,putative
+LPA_LRP2,LPA,LRP2,novel,literature supported
+LPL_CD44,LPL,CD44,novel,putative
+LPL_GPIHBP1,LPL,GPIHBP1,novel,literature supported
+LPL_LRP1,LPL,LRP1,novel,literature supported
+LPL_LRP2,LPL,LRP2,novel,literature supported
+LPL_SDC1,LPL,SDC1,novel,literature supported
+LPL_VLDLR,LPL,VLDLR,novel,literature supported
+LRP1B_PLAUR,LRP1B,PLAUR,novel,literature supported
+LRPAP1_LDLR,LRPAP1,LDLR,novel,literature supported
+LRPAP1_LRP1,LRPAP1,LRP1,known,literature supported
+LRPAP1_LRP2,LRPAP1,LRP2,novel,literature supported
+LRPAP1_LRP8,LRPAP1,LRP8,novel,literature supported
+LRPAP1_SORL1,LRPAP1,SORL1,novel,literature supported
+LRPAP1_SORT1,LRPAP1,SORT1,novel,literature supported
+LRPAP1_VLDLR,LRPAP1,VLDLR,novel,literature supported
+LTA_CACHD1,LTA,CACHD1,novel,putative
+LTA_EDNRA,LTA,EDNRA,novel,putative
+LTA_LTBR,LTA,LTBR,known,literature supported
+LTA_TNFRSF14,LTA,TNFRSF14,known,literature supported
+LTA_TNFRSF1A,LTA,TNFRSF1A,known,literature supported
+LTA_TNFRSF1B,LTA,TNFRSF1B,known,literature supported
+LTBP1_ITGB5,LTBP1,ITGB5,novel,literature supported
+LTBP3_ITGB5,LTBP3,ITGB5,novel,literature supported
+LTB_CD40,LTB,CD40,known,literature supported
+LTB_LTBR,LTB,LTBR,known,literature supported
+LTB_TNFRSF1A,LTB,TNFRSF1A,novel,literature supported
+LTF_GP9,LTF,GP9,novel,putative
+LTF_GPR162,LTF,GPR162,novel,putative
+LTF_LRP1,LTF,LRP1,known,literature supported
+LTF_LRP11,LTF,LRP11,known,literature supported
+LTF_TFRC,LTF,TFRC,novel,putative
+LY6G5C_TMEM8A,LY6G5C,TMEM8A,novel,putative
+LY86_CD180,LY86,CD180,novel,literature supported
+LYPD3_AGR2,LYPD3,AGR2,novel,putative
+LYZ_ITGAL,LYZ,ITGAL,novel,putative
+MADCAM1_CD44,MADCAM1,CD44,novel,literature supported
+MADCAM1_ITGA4,MADCAM1,ITGA4,known,literature supported
+MADCAM1_ITGB7,MADCAM1,ITGB7,known,literature supported
+MATN1_ITGA1,MATN1,ITGA1,novel,literature supported
+MATN1_ITGB1,MATN1,ITGB1,novel,literature supported
+MATN1_PTPRD,MATN1,PTPRD,novel,putative
+MBL2_CALCR,MBL2,CALCR,novel,literature supported
+MBL2_CD93,MBL2,CD93,novel,literature supported
+MDK_ALK,MDK,ALK,known,literature supported
+MDK_GPC2,MDK,GPC2,novel,putative
+MDK_ITGA4,MDK,ITGA4,novel,putative
+MDK_ITGA6,MDK,ITGA6,novel,putative
+MDK_ITGB1,MDK,ITGB1,novel,putative
+MDK_LRP1,MDK,LRP1,novel,literature supported
+MDK_LRP2,MDK,LRP2,novel,literature supported
+MDK_PTPRB,MDK,PTPRB,known,putative
+MDK_PTPRZ1,MDK,PTPRZ1,known,literature supported
+MDK_SDC1,MDK,SDC1,novel,literature supported
+MDK_SDC3,MDK,SDC3,novel,literature supported
+MDK_SDC4,MDK,SDC4,novel,literature supported
+MDK_TSPAN1,MDK,TSPAN1,novel,literature supported
+MEPE_PHEX,MEPE,PHEX,novel,literature supported
+MFAP2_NOTCH1,MFAP2,NOTCH1,novel,literature supported
+MFAP5_NOTCH1,MFAP5,NOTCH1,novel,literature supported
+MFGE8_ITGAV,MFGE8,ITGAV,novel,literature supported
+MFGE8_ITGB3,MFGE8,ITGB3,novel,literature supported
+MFGE8_PDGFRB,MFGE8,PDGFRB,novel,literature supported
+MFI2_TFRC,MFI2,TFRC,novel,putative
+MFNG_NOTCH1,MFNG,NOTCH1,novel,literature supported
+MFNG_NOTCH2,MFNG,NOTCH2,novel,literature supported
+MIA_CDH19,MIA,CDH19,novel,putative
+MIA_CDH7,MIA,CDH7,novel,literature supported
+MLLT4_EPHA7,MLLT4,EPHA7,novel,literature supported
+MLLT4_EPHB2,MLLT4,EPHB2,novel,literature supported
+MLLT4_EPHB3,MLLT4,EPHB3,novel,literature supported
+MLLT4_EPHB6,MLLT4,EPHB6,novel,literature supported
+MLLT4_F11R,MLLT4,F11R,novel,literature supported
+MLLT4_NRXN2,MLLT4,NRXN2,novel,literature supported
+MLLT4_NRXN3,MLLT4,NRXN3,novel,literature supported
+MLLT4_PVRL1,MLLT4,PVRL1,novel,literature supported
+MLLT4_PVRL2,MLLT4,PVRL2,novel,literature supported
+MLLT4_PVRL3,MLLT4,PVRL3,novel,literature supported
+MLLT4_PVRL4,MLLT4,PVRL4,novel,literature supported
+MLN_MLNR,MLN,MLNR,known,literature supported
+MMP12_PLAUR,MMP12,PLAUR,novel,literature supported
+MMP13_LRP1,MMP13,LRP1,known,literature supported
+MMP1_CD44,MMP1,CD44,novel,literature supported
+MMP1_ITGA2,MMP1,ITGA2,novel,literature supported
+MMP2_SDC2,MMP2,SDC2,novel,literature supported
+MMP7_CD151,MMP7,CD151,novel,literature supported
+MMP7_CD44,MMP7,CD44,novel,literature supported
+MMP7_CDH6,MMP7,CDH6,novel,putative
+MMP7_ERBB4,MMP7,ERBB4,novel,literature supported
+MMP9_CD44,MMP9,CD44,novel,literature supported
+MMP9_EPHB2,MMP9,EPHB2,novel,literature supported
+MMP9_ITGAM,MMP9,ITGAM,novel,putative
+MMP9_ITGB2,MMP9,ITGB2,novel,putative
+MMP9_LRP1,MMP9,LRP1,known,literature supported
+MST1_MST1R,MST1,MST1R,known,literature supported
+MSTN_ACVR2B,MSTN,ACVR2B,novel,literature supported
+MUC2_AGR2,MUC2,AGR2,novel,literature supported
+MUC7_SELL,MUC7,SELL,novel,literature supported
+MYOC_FZD1,MYOC,FZD1,novel,literature supported
+MYOC_FZD10,MYOC,FZD10,novel,literature supported
+MYOC_FZD3,MYOC,FZD3,novel,literature supported
+MYOC_FZD4,MYOC,FZD4,novel,literature supported
+MYOC_FZD7,MYOC,FZD7,novel,literature supported
+NAMPT_INSR,NAMPT,INSR,known,literature supported
+NCAM1_CACNA1C,NCAM1,CACNA1C,novel,putative
+NCAM1_FGFR1,NCAM1,FGFR1,novel,literature supported
+NCAM1_FGFR2,NCAM1,FGFR2,novel,putative
+NCAM1_GFRA1,NCAM1,GFRA1,novel,literature supported
+NCAM1_PTPRA,NCAM1,PTPRA,novel,putative
+NCAM1_ROBO1,NCAM1,ROBO1,known,literature supported
+NCAM1_ROBO3,NCAM1,ROBO3,known,literature supported
+NCAN_CDH2,NCAN,CDH2,novel,putative
+NCAN_SDC3,NCAN,SDC3,novel,putative
+NDP_FZD4,NDP,FZD4,known,literature supported
+NDP_LGR4,NDP,LGR4,known,literature supported
+NGF_KIDINS220,NGF,KIDINS220,novel,putative
+NGF_MAGED1,NGF,MAGED1,novel,putative
+NGF_NGFR,NGF,NGFR,known,literature supported
+NGF_NGFRAP1,NGF,NGFRAP1,novel,putative
+NGF_NTRK1,NGF,NTRK1,known,literature supported
+NGF_SORCS3,NGF,SORCS3,novel,literature supported
+NGF_SORT1,NGF,SORT1,known,literature supported
+NID1_COL13A1,NID1,COL13A1,novel,literature supported
+NID1_ITGA3,NID1,ITGA3,novel,putative
+NID1_ITGAV,NID1,ITGAV,novel,literature supported
+NID1_ITGB1,NID1,ITGB1,novel,putative
+NID1_ITGB3,NID1,ITGB3,novel,literature supported
+NID1_PTPRF,NID1,PTPRF,known,literature supported
+NID2_COL13A1,NID2,COL13A1,novel,literature supported
+NLGN1_NRXN1,NLGN1,NRXN1,known,literature supported
+NLGN1_NRXN2,NLGN1,NRXN2,novel,literature supported
+NLGN1_NRXN3,NLGN1,NRXN3,known,literature supported
+NLGN2_NRXN1,NLGN2,NRXN1,known,literature supported
+NLGN2_NRXN2,NLGN2,NRXN2,known,literature supported
+NLGN2_NRXN3,NLGN2,NRXN3,known,literature supported
+NLGN3_NRXN1,NLGN3,NRXN1,known,literature supported
+NLGN3_NRXN2,NLGN3,NRXN2,known,literature supported
+NLGN3_NRXN3,NLGN3,NRXN3,known,literature supported
+NMB_BRS3,NMB,BRS3,novel,literature supported
+NMB_GRPR,NMB,GRPR,known,literature supported
+NMB_NMBR,NMB,NMBR,known,literature supported
+NMS_NMUR1,NMS,NMUR1,known,literature supported
+NMS_NMUR2,NMS,NMUR2,known,literature supported
+NMU_NMUR1,NMU,NMUR1,known,literature supported
+NMU_NMUR2,NMU,NMUR2,known,literature supported
+NODAL_ACVR1B,NODAL,ACVR1B,known,literature supported
+NODAL_ACVR1C,NODAL,ACVR1C,known,literature supported
+NODAL_ACVR2A,NODAL,ACVR2A,known,literature supported
+NODAL_ACVR2B,NODAL,ACVR2B,known,literature supported
+NOV_NOTCH1,NOV,NOTCH1,known,literature supported
+NOV_PLXNA1,NOV,PLXNA1,novel,putative
+NPB_NPBWR1,NPB,NPBWR1,known,literature supported
+NPB_NPBWR2,NPB,NPBWR2,known,literature supported
+NPFF_NPFFR1,NPFF,NPFFR1,known,literature supported
+NPFF_NPFFR2,NPFF,NPFFR2,known,literature supported
+NPNT_ITGA8,NPNT,ITGA8,known,literature supported
+NPNT_ITGB1,NPNT,ITGB1,known,literature supported
+NPPA_NPR1,NPPA,NPR1,known,literature supported
+NPPA_NPR3,NPPA,NPR3,known,literature supported
+NPPB_NPR1,NPPB,NPR1,known,literature supported
+NPPB_NPR2,NPPB,NPR2,known,literature supported
+NPPB_NPR3,NPPB,NPR3,known,literature supported
+NPPC_NPR2,NPPC,NPR2,known,literature supported
+NPPC_NPR3,NPPC,NPR3,novel,literature supported
+NPS_NPSR1,NPS,NPSR1,known,literature supported
+NPVF_NPFFR1,NPVF,NPFFR1,known,literature supported
+NPVF_NPFFR2,NPVF,NPFFR2,known,literature supported
+NPW_NPBWR1,NPW,NPBWR1,known,literature supported
+NPW_NPBWR2,NPW,NPBWR2,known,literature supported
+NPY_FAP,NPY,FAP,novel,literature supported
+NPY_MC4R,NPY,MC4R,novel,literature supported
+NPY_NPFFR2,NPY,NPFFR2,novel,literature supported
+NPY_NPY1R,NPY,NPY1R,known,literature supported
+NPY_NPY2R,NPY,NPY2R,known,literature supported
+NPY_NPY4R,NPY,NPY4R,known,literature supported
+NPY_NPY5R,NPY,NPY5R,known,literature supported
+NPY_PRLHR,NPY,PRLHR,known,literature supported
+NRG1_ERBB2,NRG1,ERBB2,known,literature supported
+NRG1_ERBB3,NRG1,ERBB3,known,literature supported
+NRG1_ERBB4,NRG1,ERBB4,known,literature supported
+NRG1_GPC1,NRG1,GPC1,novel,putative
+NRG2_ERBB2,NRG2,ERBB2,novel,putative
+NRG2_ERBB3,NRG2,ERBB3,known,literature supported
+NRG2_ERBB4,NRG2,ERBB4,known,literature supported
+NRG3_ERBB4,NRG3,ERBB4,known,literature supported
+NRG4_EGFR,NRG4,EGFR,novel,putative
+NRG4_ERBB2,NRG4,ERBB2,novel,putative
+NRG4_ERBB4,NRG4,ERBB4,known,literature supported
+NRTN_GFRA1,NRTN,GFRA1,known,literature supported
+NRTN_GFRA2,NRTN,GFRA2,known,literature supported
+NRTN_RET,NRTN,RET,known,literature supported
+NTF3_NGFR,NTF3,NGFR,known,literature supported
+NTF3_NTRK1,NTF3,NTRK1,known,literature supported
+NTF3_NTRK2,NTF3,NTRK2,known,literature supported
+NTF3_NTRK3,NTF3,NTRK3,known,literature supported
+NTF4_NGFR,NTF4,NGFR,known,literature supported
+NTF4_NGFRAP1,NTF4,NGFRAP1,known,literature supported
+NTF4_NTRK1,NTF4,NTRK1,known,literature supported
+NTF4_NTRK2,NTF4,NTRK2,known,literature supported
+NTF4_NTRK3,NTF4,NTRK3,known,putative
+NTN1_ADORA2B,NTN1,ADORA2B,novel,literature supported
+NTN1_DCC,NTN1,DCC,known,literature supported
+NTN1_NEO1,NTN1,NEO1,novel,literature supported
+NTN1_UNC5A,NTN1,UNC5A,novel,literature supported
+NTN1_UNC5B,NTN1,UNC5B,novel,literature supported
+NTN1_UNC5C,NTN1,UNC5C,known,literature supported
+NTN1_UNC5D,NTN1,UNC5D,novel,literature supported
+NTN3_CDON,NTN3,CDON,known,literature supported
+NTN3_NEO1,NTN3,NEO1,known,literature supported
+NTN4_DCC,NTN4,DCC,known,literature supported
+NTN4_UNC5A,NTN4,UNC5A,known,literature supported
+NTNG1_LRRC4C,NTNG1,LRRC4C,known,literature supported
+NTNG2_LRRC4,NTNG2,LRRC4,novel,literature supported
+NTNG2_LRRC4C,NTNG2,LRRC4C,novel,putative
+NTS_NGFR,NTS,NGFR,novel,putative
+NTS_NTSR1,NTS,NTSR1,known,literature supported
+NTS_NTSR2,NTS,NTSR2,known,literature supported
+NTS_SORT1,NTS,SORT1,novel,literature supported
+NUCB2_ERAP1,NUCB2,ERAP1,known,EXCLUDED not receptor
+NXPH1_NRXN1,NXPH1,NRXN1,known,literature supported
+NXPH1_NRXN2,NXPH1,NRXN2,known,literature supported
+NXPH1_NRXN3,NXPH1,NRXN3,known,literature supported
+NXPH2_NRXN1,NXPH2,NRXN1,novel,literature supported
+NXPH3_NRXN1,NXPH3,NRXN1,known,literature supported
+NXPH3_NRXN2,NXPH3,NRXN2,known,literature supported
+NXPH3_NRXN3,NXPH3,NRXN3,known,literature supported
+OBP2A_OR1G1,OBP2A,OR1G1,novel,literature supported
+OLAH_MOG,OLAH,MOG,novel,putative
+OLFM2_ROBO2,OLFM2,ROBO2,novel,literature supported
+OMG_LINGO1,OMG,LINGO1,known,literature supported
+OMG_NGFR,OMG,NGFR,novel,putative
+OMG_RTN4R,OMG,RTN4R,novel,literature supported
+OMG_RTN4RL1,OMG,RTN4RL1,novel,literature supported
+OMG_TNFRSF1B,OMG,TNFRSF1B,known,literature supported
+ORM1_CCR5,ORM1,CCR5,novel,literature supported
+OSM_IL6ST,OSM,IL6ST,known,literature supported
+OSM_LIFR,OSM,LIFR,known,literature supported
+OSM_OSMR,OSM,OSMR,known,literature supported
+OSTN_NPR3,OSTN,NPR3,known,literature supported
+OXT_AVPR1A,OXT,AVPR1A,known,literature supported
+OXT_AVPR1B,OXT,AVPR1B,known,literature supported
+OXT_AVPR2,OXT,AVPR2,known,literature supported
+OXT_OXTR,OXT,OXTR,known,literature supported
+P4HB_GPR162,P4HB,GPR162,novel,putative
+PAPLN_PVRL4,PAPLN,PVRL4,novel,putative
+PAPLN_SIRPA,PAPLN,SIRPA,novel,putative
+PCSK9_VLDLR,PCSK9,VLDLR,novel,literature supported
+PDAP1_PDGFRB,PDAP1,PDGFRB,novel,literature supported
+PDGFA_PDGFRA,PDGFA,PDGFRA,known,literature supported
+PDGFA_PDGFRB,PDGFA,PDGFRB,novel,putative
+PDGFB_ART1,PDGFB,ART1,novel,literature supported
+PDGFB_ITGAV,PDGFB,ITGAV,novel,putative
+PDGFB_LRP1,PDGFB,LRP1,novel,literature supported
+PDGFB_PDGFRA,PDGFB,PDGFRA,known,literature supported
+PDGFB_PDGFRB,PDGFB,PDGFRB,known,literature supported
+PDGFB_S1PR1,PDGFB,S1PR1,novel,putative
+PDGFC_FLT1,PDGFC,FLT1,novel,putative
+PDGFC_FLT4,PDGFC,FLT4,known,literature supported
+PDGFC_KDR,PDGFC,KDR,known,literature supported
+PDGFC_PDGFRA,PDGFC,PDGFRA,known,literature supported
+PDGFC_PDGFRB,PDGFC,PDGFRB,novel,putative
+PDGFD_PDGFRA,PDGFD,PDGFRA,novel,putative
+PDGFD_PDGFRB,PDGFD,PDGFRB,known,literature supported
+PDX1_SLC2A2,PDX1,SLC2A2,novel,EXCLUDED not ligand
+PDYN_OPRD1,PDYN,OPRD1,known,literature supported
+PDYN_OPRK1,PDYN,OPRK1,known,literature supported
+PDYN_OPRM1,PDYN,OPRM1,known,literature supported
+PENK_MRGPRX1,PENK,MRGPRX1,known,literature supported
+PENK_OGFR,PENK,OGFR,known,literature supported
+PENK_OPRD1,PENK,OPRD1,known,literature supported
+PENK_OPRK1,PENK,OPRK1,novel,putative
+PENK_OPRM1,PENK,OPRM1,known,literature supported
+PF4_CXCR3,PF4,CXCR3,novel,literature supported
+PF4_FGFR2,PF4,FGFR2,known,literature supported
+PF4_LDLR,PF4,LDLR,known,literature supported
+PF4_PROCR,PF4,PROCR,known,literature supported
+PF4_SDC2,PF4,SDC2,novel,literature supported
+PF4_THBD,PF4,THBD,known,literature supported
+PGF_FLT1,PGF,FLT1,known,literature supported
+PGF_NRP1,PGF,NRP1,known,literature supported
+PGF_NRP2,PGF,NRP2,novel,literature supported
+PI3_PLD2,PI3,PLD2,novel,putative
+PIGF_FLT1,PIGF,FLT1,novel,literature supported
+PIP_CD4,PIP,CD4,novel,literature supported
+PIP_NPTN,PIP,NPTN,novel,putative
+PKM_CD44,PKM,CD44,novel,putative
+PLA2G10_PLA2R1,PLA2G10,PLA2R1,novel,literature supported
+PLAT_ITGAM,PLAT,ITGAM,novel,putative
+PLAT_ITGB2,PLAT,ITGB2,novel,putative
+PLAT_LRP1,PLAT,LRP1,known,literature supported
+PLAU_IGF2R,PLAU,IGF2R,novel,literature supported
+PLAU_ITGA3,PLAU,ITGA3,novel,putative
+PLAU_ITGA5,PLAU,ITGA5,novel,putative
+PLAU_ITGAM,PLAU,ITGAM,novel,putative
+PLAU_ITGAV,PLAU,ITGAV,novel,putative
+PLAU_ITGB1,PLAU,ITGB1,novel,putative
+PLAU_ITGB2,PLAU,ITGB2,novel,putative
+PLAU_ITGB5,PLAU,ITGB5,novel,putative
+PLAU_LRP1,PLAU,LRP1,known,literature supported
+PLAU_LRP2,PLAU,LRP2,novel,literature supported
+PLAU_MRC2,PLAU,MRC2,novel,putative
+PLAU_PLAUR,PLAU,PLAUR,known,literature supported
+PLAU_ST14,PLAU,ST14,novel,literature supported
+PLAU_VLDLR,PLAU,VLDLR,novel,putative
+PLG_F2R,PLG,F2R,novel,literature supported
+PLG_F2RL1,PLG,F2RL1,novel,literature supported
+PLG_F3,PLG,F3,novel,literature supported
+PLG_FLT1,PLG,FLT1,novel,putative
+PLG_ITGA9,PLG,ITGA9,known,literature supported
+PLG_ITGAM,PLG,ITGAM,novel,putative
+PLG_ITGB1,PLG,ITGB1,known,literature supported
+PLG_ITGB2,PLG,ITGB2,novel,putative
+PLG_PLAUR,PLG,PLAUR,novel,putative
+PLG_PLGRKT,PLG,PLGRKT,novel,literature supported
+PLTP_ABCA1,PLTP,ABCA1,novel,literature supported
+PMCH_MCHR1,PMCH,MCHR1,known,literature supported
+PMCH_MCHR2,PMCH,MCHR2,known,literature supported
+PNOC_OPRL1,PNOC,OPRL1,known,literature supported
+PODXL2_SELL,PODXL2,SELL,known,literature supported
+PODXL_SELL,PODXL,SELL,novel,literature supported
+POMC_MC1R,POMC,MC1R,known,literature supported
+POMC_MC2R,POMC,MC2R,known,literature supported
+POMC_MC3R,POMC,MC3R,known,literature supported
+POMC_MC4R,POMC,MC4R,known,literature supported
+POMC_MC5R,POMC,MC5R,known,literature supported
+POMC_OPRD1,POMC,OPRD1,known,literature supported
+POMC_OPRK1,POMC,OPRK1,known,literature supported
+POMC_OPRM1,POMC,OPRM1,known,literature supported
+PON2_HTR2A,PON2,HTR2A,novel,literature supported
+PPBP_CXCR1,PPBP,CXCR1,known,literature supported
+PPBP_CXCR2,PPBP,CXCR2,known,literature supported
+PPBP_DARC,PPBP,DARC,known,putative
+PPY_NPY1R,PPY,NPY1R,novel,putative
+PPY_NPY2R,PPY,NPY2R,novel,putative
+PPY_NPY4R,PPY,NPY4R,known,literature supported
+PPY_NPY5R,PPY,NPY5R,known,literature supported
+PRLH_PRLHR,PRLH,PRLHR,known,literature supported
+PRL_PRLR,PRL,PRLR,known,literature supported
+PRND_RPSA,PRND,RPSA,known,literature supported
+PROC_ITGAM,PROC,ITGAM,novel,putative
+PROC_ITGB2,PROC,ITGB2,novel,putative
+PROC_PROCR,PROC,PROCR,known,literature supported
+PROC_THBD,PROC,THBD,novel,literature supported
+PROK1_PROKR1,PROK1,PROKR1,known,literature supported
+PROK1_PROKR2,PROK1,PROKR2,known,literature supported
+PROK2_PROKR1,PROK2,PROKR1,known,literature supported
+PROK2_PROKR2,PROK2,PROKR2,known,literature supported
+PROS1_AXL,PROS1,AXL,known,literature supported
+PROS1_TYRO3,PROS1,TYRO3,known,literature supported
+PRSS23_TMEM222,PRSS23,TMEM222,novel,literature supported
+PSAP_CD1B,PSAP,CD1B,novel,literature supported
+PSAP_CELSR1,PSAP,CELSR1,novel,literature supported
+PSAP_GPR37,PSAP,GPR37,known,literature supported
+PSAP_GPR37L1,PSAP,GPR37L1,known,literature supported
+PSAP_LRP1,PSAP,LRP1,known,literature supported
+PSAP_SORT1,PSAP,SORT1,novel,putative
+PSEN1_CD44,PSEN1,CD44,novel,putative
+PSEN1_NCSTN,PSEN1,NCSTN,known,literature supported
+PSEN1_NOTCH1,PSEN1,NOTCH1,novel,literature supported
+PSEN1_NOTCH2,PSEN1,NOTCH2,novel,literature supported
+PSEN1_NOTCH3,PSEN1,NOTCH3,novel,literature supported
+PSEN1_NOTCH4,PSEN1,NOTCH4,novel,literature supported
+PSPN_GFRA1,PSPN,GFRA1,novel,literature supported
+PSPN_GFRA4,PSPN,GFRA4,known,literature supported
+PSPN_RET,PSPN,RET,known,literature supported
+PSPN_SDC3,PSPN,SDC3,novel,putative
+PTDSS1_JMJD6,PTDSS1,JMJD6,known,literature supported
+PTDSS1_SCARB1,PTDSS1,SCARB1,known,literature supported
+PTGS2_ALOX5,PTGS2,ALOX5,novel,EXCLUDED not receptor
+PTGS2_CAV1,PTGS2,CAV1,novel,literature supported
+PTGS2_PTGDR2,PTGS2,PTGDR2,known,literature supported
+PTH2_PTH1R,PTH2,PTH1R,known,literature supported
+PTH2_PTH2R,PTH2,PTH2R,known,literature supported
+PTHLH_PRLHR,PTHLH,PRLHR,known,literature supported
+PTHLH_PTH1R,PTHLH,PTH1R,known,literature supported
+PTHLH_PTH2R,PTHLH,PTH2R,known,literature supported
+PTH_PTH1R,PTH,PTH1R,known,literature supported
+PTH_PTH2R,PTH,PTH2R,known,literature supported
+PTMA_VIPR1,PTMA,VIPR1,novel,literature supported
+PTN_ALK,PTN,ALK,novel,literature supported
+PTN_CDH10,PTN,CDH10,novel,literature supported
+PTN_PLXNB2,PTN,PLXNB2,novel,literature supported
+PTN_PTPRB,PTN,PTPRB,known,literature supported
+PTN_PTPRS,PTN,PTPRS,novel,literature supported
+PTN_PTPRZ1,PTN,PTPRZ1,known,literature supported
+PTN_SDC1,PTN,SDC1,novel,literature supported
+PTN_SDC3,PTN,SDC3,novel,literature supported
+PYY_FAP,PYY,FAP,novel,literature supported
+PYY_NPY1R,PYY,NPY1R,known,literature supported
+PYY_NPY2R,PYY,NPY2R,known,literature supported
+PYY_NPY4R,PYY,NPY4R,known,literature supported
+PYY_NPY5R,PYY,NPY5R,known,literature supported
+QDPR_DYSF,QDPR,DYSF,novel,putative
+QRFP_P2RY14,QRFP,P2RY14,known,literature supported
+QRFP_QRFPR,QRFP,QRFPR,known,literature supported
+RAET1E_KLRK1,RAET1E,KLRK1,novel,literature supported
+RARRES2_CCRL2,RARRES2,CCRL2,novel,literature supported
+RARRES2_CMKLR1,RARRES2,CMKLR1,known,literature supported
+RARRES2_GPR1,RARRES2,GPR1,known,literature supported
+RBP3_NOTCH1,RBP3,NOTCH1,novel,literature supported
+RBP4_STRA6,RBP4,STRA6,novel,literature supported
+RELN_ITGA3,RELN,ITGA3,known,literature supported
+RELN_ITGB1,RELN,ITGB1,known,literature supported
+RELN_LRP8,RELN,LRP8,known,literature supported
+RELN_VLDLR,RELN,VLDLR,known,literature supported
+REN_ASIC3,REN,ASIC3,novel,putative
+REN_ATP6AP2,REN,ATP6AP2,known,literature supported
+RGMA_BMPR1B,RGMA,BMPR1B,novel,putative
+RGMA_BMPR2,RGMA,BMPR2,novel,putative
+RGMA_HFE2,RGMA,HFE2,novel,putative
+RGMA_NEO1,RGMA,NEO1,known,literature supported
+RGMB_BMPR1B,RGMB,BMPR1B,novel,putative
+RGMB_BMPR2,RGMB,BMPR2,novel,putative
+RGMB_HFE2,RGMB,HFE2,novel,putative
+RGMB_NEO1,RGMB,NEO1,novel,literature supported
+RIMS1_CACNA1C,RIMS1,CACNA1C,novel,literature supported
+RIMS1_SLC17A7,RIMS1,SLC17A7,novel,putative
+RIMS1_SLC18A2,RIMS1,SLC18A2,novel,putative
+RIMS1_SLC18A3,RIMS1,SLC18A3,novel,putative
+RIMS2_ABCA1,RIMS2,ABCA1,novel,literature supported
+RLN1_RXFP1,RLN1,RXFP1,known,literature supported
+RLN1_RXFP2,RLN1,RXFP2,known,literature supported
+RLN2_RXFP1,RLN2,RXFP1,known,literature supported
+RLN2_RXFP2,RLN2,RXFP2,known,literature supported
+RLN3_RXFP1,RLN3,RXFP1,known,literature supported
+RLN3_RXFP2,RLN3,RXFP2,known,literature supported
+RLN3_RXFP3,RLN3,RXFP3,known,literature supported
+RLN3_RXFP4,RLN3,RXFP4,known,literature supported
+RNASE2_TLR2,RNASE2,TLR2,novel,literature supported
+RPH3A_NRXN1,RPH3A,NRXN1,novel,literature supported
+RPS19_C5AR1,RPS19,C5AR1,known,literature supported
+RSPO1_FZD8,RSPO1,FZD8,novel,putative
+RSPO1_LGR4,RSPO1,LGR4,known,literature supported
+RSPO1_LGR5,RSPO1,LGR5,known,literature supported
+RSPO1_LGR6,RSPO1,LGR6,known,literature supported
+RSPO1_LRP6,RSPO1,LRP6,known,literature supported
+RSPO1_ZNRF3,RSPO1,ZNRF3,novel,literature supported
+RSPO2_LGR4,RSPO2,LGR4,known,literature supported
+RSPO2_LGR5,RSPO2,LGR5,known,literature supported
+RSPO2_LGR6,RSPO2,LGR6,known,literature supported
+RSPO3_FZD8,RSPO3,FZD8,novel,literature supported
+RSPO3_LGR4,RSPO3,LGR4,known,literature supported
+RSPO3_LGR5,RSPO3,LGR5,known,literature supported
+RSPO3_LGR6,RSPO3,LGR6,known,literature supported
+RSPO3_LRP6,RSPO3,LRP6,novel,literature supported
+RSPO3_SDC4,RSPO3,SDC4,novel,literature supported
+RSPO4_LGR4,RSPO4,LGR4,known,literature supported
+RSPO4_LGR5,RSPO4,LGR5,known,literature supported
+RSPO4_LGR6,RSPO4,LGR6,known,literature supported
+RTN4_CNTNAP1,RTN4,CNTNAP1,novel,literature supported
+RTN4_GJB2,RTN4,GJB2,novel,putative
+RTN4_LINGO1,RTN4,LINGO1,known,literature supported
+RTN4_NGFR,RTN4,NGFR,novel,putative
+RTN4_RTN4R,RTN4,RTN4R,known,literature supported
+RTN4_RTN4RL1,RTN4,RTN4RL1,novel,putative
+RTN4_TNFRSF19,RTN4,TNFRSF19,known,literature supported
+S100A8_TLR4,S100A8,TLR4,novel,literature supported
+S100A9_TLR4,S100A9,TLR4,novel,literature supported
+SAA1_FPR1,SAA1,FPR1,novel,literature supported
+SAA1_FPR2,SAA1,FPR2,known,literature supported
+SAA1_SCARB1,SAA1,SCARB1,novel,putative
+SCGB1A1_LMBR1L,SCGB1A1,LMBR1L,novel,literature supported
+SCGB1A1_LRP2,SCGB1A1,LRP2,novel,literature supported
+SCGB3A1_MARCO,SCGB3A1,MARCO,novel,literature supported
+SCGB3A2_MARCO,SCGB3A2,MARCO,novel,literature supported
+SCT_SCTR,SCT,SCTR,known,literature supported
+SCT_VIPR1,SCT,VIPR1,novel,literature supported
+SCT_VIPR2,SCT,VIPR2,novel,literature supported
+SELPLG_ESAM,SELPLG,ESAM,novel,putative
+SELPLG_ITGAM,SELPLG,ITGAM,novel,putative
+SELPLG_ITGB2,SELPLG,ITGB2,novel,putative
+SELPLG_SELE,SELPLG,SELE,known,literature supported
+SELPLG_SELL,SELPLG,SELL,novel,literature supported
+SELPLG_SELP,SELPLG,SELP,known,literature supported
+SEMA3A_NRP1,SEMA3A,NRP1,known,literature supported
+SEMA3A_NRP2,SEMA3A,NRP2,novel,literature supported
+SEMA3A_PLXNA1,SEMA3A,PLXNA1,known,literature supported
+SEMA3A_PLXNA2,SEMA3A,PLXNA2,known,literature supported
+SEMA3A_PLXNA3,SEMA3A,PLXNA3,novel,putative
+SEMA3A_PLXNA4,SEMA3A,PLXNA4,known,literature supported
+SEMA3B_NRP1,SEMA3B,NRP1,known,literature supported
+SEMA3B_NRP2,SEMA3B,NRP2,novel,literature supported
+SEMA3C_NRP1,SEMA3C,NRP1,novel,literature supported
+SEMA3C_NRP2,SEMA3C,NRP2,known,literature supported
+SEMA3C_PLXND1,SEMA3C,PLXND1,novel,literature supported
+SEMA3D_NRP1,SEMA3D,NRP1,novel,literature supported
+SEMA3E_NRP1,SEMA3E,NRP1,novel,putative
+SEMA3E_PLXND1,SEMA3E,PLXND1,known,literature supported
+SEMA3F_NRP1,SEMA3F,NRP1,novel,literature supported
+SEMA3F_NRP2,SEMA3F,NRP2,known,literature supported
+SEMA3F_PLXNA1,SEMA3F,PLXNA1,novel,putative
+SEMA3F_PLXNA3,SEMA3F,PLXNA3,known,literature supported
+SEMA3G_NRP2,SEMA3G,NRP2,novel,literature supported
+SEMA4A_PLXND1,SEMA4A,PLXND1,novel,literature supported
+SEMA4B_DCBLD2,SEMA4B,DCBLD2,novel,literature supported
+SEMA4C_PLXNB2,SEMA4C,PLXNB2,novel,literature supported
+SEMA4D_CD72,SEMA4D,CD72,novel,literature supported
+SEMA4D_ERBB2,SEMA4D,ERBB2,novel,literature supported
+SEMA4D_MET,SEMA4D,MET,known,literature supported
+SEMA4D_PLXNB1,SEMA4D,PLXNB1,known,literature supported
+SEMA4D_PLXNB2,SEMA4D,PLXNB2,known,literature supported
+SEMA4F_NRP2,SEMA4F,NRP2,novel,literature supported
+SEMA4G_PLXNB2,SEMA4G,PLXNB2,novel,literature supported
+SEMA5A_MET,SEMA5A,MET,known,literature supported
+SEMA5A_PLXNB3,SEMA5A,PLXNB3,known,literature supported
+SEMA6A_PLXNA2,SEMA6A,PLXNA2,novel,literature supported
+SEMA6A_PLXNA4,SEMA6A,PLXNA4,novel,literature supported
+SEMA6D_KDR,SEMA6D,KDR,known,literature supported
+SEMA6D_PLXNA1,SEMA6D,PLXNA1,known,literature supported
+SEMA6D_TREM2,SEMA6D,TREM2,novel,literature supported
+SEMA6D_TYROBP,SEMA6D,TYROBP,novel,literature supported
+SEMA7A_ITGA1,SEMA7A,ITGA1,novel,literature supported
+SEMA7A_ITGB1,SEMA7A,ITGB1,novel,literature supported
+SEMA7A_PLXNC1,SEMA7A,PLXNC1,known,literature supported
+SERPINA1_LRP1,SERPINA1,LRP1,known,literature supported
+SERPINA7_SLC16A2,SERPINA7,SLC16A2,novel,literature supported
+SERPINC1_GPC1,SERPINC1,GPC1,novel,putative
+SERPINC1_LRP1,SERPINC1,LRP1,known,literature supported
+SERPINC1_SDC2,SERPINC1,SDC2,novel,literature supported
+SERPINE1_ITGAV,SERPINE1,ITGAV,novel,putative
+SERPINE1_ITGB5,SERPINE1,ITGB5,novel,putative
+SERPINE1_LRP1,SERPINE1,LRP1,known,literature supported
+SERPINE1_LRP2,SERPINE1,LRP2,novel,literature supported
+SERPINE1_PLAUR,SERPINE1,PLAUR,novel,putative
+SERPINE2_LRP1,SERPINE2,LRP1,known,literature supported
+SERPING1_LRP1,SERPING1,LRP1,known,literature supported
+SERPING1_SELE,SERPING1,SELE,novel,literature supported
+SERPING1_SELP,SERPING1,SELP,novel,literature supported
+SFRP1_FZD2,SFRP1,FZD2,novel,literature supported
+SFRP1_FZD6,SFRP1,FZD6,novel,literature supported
+SFTPA1_TLR2,SFTPA1,TLR2,novel,literature supported
+SFTPA2_CD93,SFTPA2,CD93,novel,literature supported
+SFTPD_LY96,SFTPD,LY96,novel,putative
+SFTPD_TLR4,SFTPD,TLR4,novel,putative
+SHANK1_ABCA1,SHANK1,ABCA1,novel,literature supported
+SHANK1_BAI2,SHANK1,BAI2,novel,literature supported
+SHANK1_LPHN1,SHANK1,LPHN1,known,literature supported
+SHANK1_LPHN2,SHANK1,LPHN2,novel,literature supported
+SHANK1_SSTR2,SHANK1,SSTR2,novel,literature supported
+SHBG_CD177,SHBG,CD177,novel,literature supported
+SHBG_CLDN4,SHBG,CLDN4,novel,literature supported
+SHBG_SLC37A1,SHBG,SLC37A1,novel,literature supported
+SHH_BOC,SHH,BOC,known,literature supported
+SHH_CDON,SHH,CDON,known,literature supported
+SHH_GPC5,SHH,GPC5,novel,literature supported
+SHH_HHIP,SHH,HHIP,known,literature supported
+SHH_LRP2,SHH,LRP2,novel,literature supported
+SHH_PTCH1,SHH,PTCH1,known,literature supported
+SHH_PTCH2,SHH,PTCH2,novel,literature supported
+SHH_SMO,SHH,SMO,known,literature supported
+SLIT1_GPC1,SLIT1,GPC1,known,literature supported
+SLIT1_ROBO1,SLIT1,ROBO1,known,literature supported
+SLIT1_SDC1,SLIT1,SDC1,known,literature supported
+SLIT2_DCC,SLIT2,DCC,novel,putative
+SLIT2_GPC1,SLIT2,GPC1,known,literature supported
+SLIT2_ROBO1,SLIT2,ROBO1,known,literature supported
+SLIT2_ROBO2,SLIT2,ROBO2,known,literature supported
+SLIT2_ROBO4,SLIT2,ROBO4,known,literature supported
+SLIT2_SDC1,SLIT2,SDC1,known,literature supported
+SLIT3_ROBO2,SLIT3,ROBO2,novel,literature supported
+SLPI_CD4,SLPI,CD4,novel,putative
+SORBS1_INSR,SORBS1,INSR,novel,literature supported
+SORBS1_ITGA1,SORBS1,ITGA1,novel,putative
+SORBS1_ITGB5,SORBS1,ITGB5,novel,putative
+SOST_LRP5,SOST,LRP5,known,literature supported
+SOST_LRP6,SOST,LRP6,known,literature supported
+SPINK1_EGFR,SPINK1,EGFR,novel,literature supported
+SPINK1_NRSN1,SPINK1,NRSN1,novel,literature supported
+SPINT1_ST14,SPINT1,ST14,novel,literature supported
+SPON2_ITGAM,SPON2,ITGAM,novel,putative
+SPON2_ITGB2,SPON2,ITGB2,novel,putative
+SPP1_CD44,SPP1,CD44,known,literature supported
+SPP1_ITGA4,SPP1,ITGA4,novel,literature supported
+SPP1_ITGA5,SPP1,ITGA5,novel,literature supported
+SPP1_ITGA9,SPP1,ITGA9,novel,literature supported
+SPP1_ITGAV,SPP1,ITGAV,known,literature supported
+SPP1_ITGB1,SPP1,ITGB1,novel,literature supported
+SPP1_S1PR1,SPP1,S1PR1,novel,literature supported
+SST_SSTR1,SST,SSTR1,known,literature supported
+SST_SSTR2,SST,SSTR2,known,literature supported
+SST_SSTR3,SST,SSTR3,known,literature supported
+SST_SSTR4,SST,SSTR4,known,literature supported
+SST_SSTR5,SST,SSTR5,known,literature supported
+SYTL3_NRXN1,SYTL3,NRXN1,novel,literature supported
+TAC1_TACR1,TAC1,TACR1,known,literature supported
+TAC1_TACR2,TAC1,TACR2,known,literature supported
+TAC1_TACR3,TAC1,TACR3,known,literature supported
+TAC3_TACR1,TAC3,TACR1,known,literature supported
+TAC3_TACR2,TAC3,TACR2,known,literature supported
+TAC3_TACR3,TAC3,TACR3,known,literature supported
+TAC4_TACR1,TAC4,TACR1,known,literature supported
+TAC4_TACR2,TAC4,TACR2,novel,literature supported
+TAC4_TACR3,TAC4,TACR3,known,literature supported
+TCN2_CNR1,TCN2,CNR1,novel,putative
+TCN2_LRP2,TCN2,LRP2,novel,putative
+TCTN1_TMEM67,TCTN1,TMEM67,novel,literature supported
+TDGF1_ACVR1B,TDGF1,ACVR1B,novel,literature supported
+TDGF1_ACVR1C,TDGF1,ACVR1C,novel,literature supported
+TDGF1_ACVR2A,TDGF1,ACVR2A,known,literature supported
+TDGF1_ACVR2B,TDGF1,ACVR2B,novel,putative
+TDGF1_GPC1,TDGF1,GPC1,novel,putative
+TFPI_F3,TFPI,F3,novel,putative
+TFPI_LRP1,TFPI,LRP1,known,literature supported
+TFPI_SDC4,TFPI,SDC4,novel,putative
+TFPI_VLDLR,TFPI,VLDLR,known,literature supported
+TF_GPR162,TF,GPR162,novel,putative
+TF_TFR2,TF,TFR2,novel,literature supported
+TF_TFRC,TF,TFRC,known,literature supported
+TGFA_EGFR,TGFA,EGFR,known,literature supported
+TGFA_ERBB2,TGFA,ERBB2,novel,literature supported
+TGFA_ERBB3,TGFA,ERBB3,novel,putative
+TGFA_ERBB4,TGFA,ERBB4,novel,literature supported
+TGFB1_ACVRL1,TGFB1,ACVRL1,known,literature supported
+TGFB1_CAV1,TGFB1,CAV1,novel,putative
+TGFB1_CD109,TGFB1,CD109,novel,putative
+TGFB1_CXCR4,TGFB1,CXCR4,novel,putative
+TGFB1_ENG,TGFB1,ENG,novel,literature supported
+TGFB1_ITGAV,TGFB1,ITGAV,novel,literature supported
+TGFB1_ITGB6,TGFB1,ITGB6,novel,literature supported
+TGFB1_ITGB8,TGFB1,ITGB8,novel,literature supported
+TGFB1_SDC2,TGFB1,SDC2,novel,literature supported
+TGFB1_TGFBR1,TGFB1,TGFBR1,known,literature supported
+TGFB1_TGFBR2,TGFB1,TGFBR2,known,literature supported
+TGFB1_TGFBR3,TGFB1,TGFBR3,known,literature supported
+TGFB2_ACVR1,TGFB2,ACVR1,novel,putative
+TGFB2_ENG,TGFB2,ENG,novel,literature supported
+TGFB2_TGFBR1,TGFB2,TGFBR1,known,literature supported
+TGFB2_TGFBR2,TGFB2,TGFBR2,known,literature supported
+TGFB2_TGFBR3,TGFB2,TGFBR3,known,literature supported
+TGFB3_ACVRL1,TGFB3,ACVRL1,known,literature supported
+TGFB3_ENG,TGFB3,ENG,novel,literature supported
+TGFB3_TGFBR1,TGFB3,TGFBR1,known,literature supported
+TGFB3_TGFBR2,TGFB3,TGFBR2,known,literature supported
+TGFB3_TGFBR3,TGFB3,TGFBR3,known,literature supported
+TGM2_GPR56,TGM2,GPR56,known,literature supported
+TGM2_ITGA4,TGM2,ITGA4,novel,putative
+TGM2_ITGA9,TGM2,ITGA9,novel,putative
+TGM2_ITGB1,TGM2,ITGB1,novel,literature supported
+TGM2_ITGB3,TGM2,ITGB3,novel,literature supported
+TGM2_SDC4,TGM2,SDC4,novel,literature supported
+TGM2_TBXA2R,TGM2,TBXA2R,novel,putative
+TG_ASGR1,TG,ASGR1,novel,literature supported
+TG_LRP2,TG,LRP2,novel,literature supported
+THBS1_CD36,THBS1,CD36,known,literature supported
+THBS1_CD47,THBS1,CD47,known,literature supported
+THBS1_ITGA2B,THBS1,ITGA2B,novel,literature supported
+THBS1_ITGA3,THBS1,ITGA3,novel,literature supported
+THBS1_ITGA4,THBS1,ITGA4,novel,literature supported
+THBS1_ITGA6,THBS1,ITGA6,novel,literature supported
+THBS1_ITGB1,THBS1,ITGB1,novel,literature supported
+THBS1_ITGB3,THBS1,ITGB3,novel,literature supported
+THBS1_LRP1,THBS1,LRP1,novel,literature supported
+THBS1_LRP5,THBS1,LRP5,novel,literature supported
+THBS1_SCARB1,THBS1,SCARB1,novel,putative
+THBS1_SDC1,THBS1,SDC1,known,literature supported
+THBS1_SDC4,THBS1,SDC4,novel,putative
+THBS1_TNFRSF11B,THBS1,TNFRSF11B,novel,literature supported
+THBS2_CD47,THBS2,CD47,known,literature supported
+THBS2_ITGA4,THBS2,ITGA4,novel,literature supported
+THBS2_ITGA6,THBS2,ITGA6,novel,literature supported
+THBS2_ITGB1,THBS2,ITGB1,novel,literature supported
+THBS2_NOTCH3,THBS2,NOTCH3,novel,literature supported
+THBS2_NOTCH4,THBS2,NOTCH4,novel,putative
+THPO_MPL,THPO,MPL,known,literature supported
+THPO_SIRPB1,THPO,SIRPB1,novel,putative
+TIMP1_CD63,TIMP1,CD63,novel,literature supported
+TIMP2_ITGA3,TIMP2,ITGA3,novel,literature supported
+TIMP2_ITGB1,TIMP2,ITGB1,novel,literature supported
+TIMP3_AGTR2,TIMP3,AGTR2,novel,literature supported
+TIMP3_KDR,TIMP3,KDR,novel,literature supported
+TNC_CNTN1,TNC,CNTN1,novel,literature supported
+TNC_EGFR,TNC,EGFR,novel,literature supported
+TNC_ITGA2,TNC,ITGA2,novel,putative
+TNC_ITGA5,TNC,ITGA5,novel,literature supported
+TNC_ITGA7,TNC,ITGA7,novel,literature supported
+TNC_ITGA8,TNC,ITGA8,novel,putative
+TNC_ITGA9,TNC,ITGA9,novel,putative
+TNC_ITGAV,TNC,ITGAV,novel,putative
+TNC_ITGB1,TNC,ITGB1,novel,literature supported
+TNC_NT5E,TNC,NT5E,novel,putative
+TNC_PTPRB,TNC,PTPRB,novel,literature supported
+TNC_PTPRZ1,TNC,PTPRZ1,novel,putative
+TNC_SDC1,TNC,SDC1,novel,putative
+TNC_SDC4,TNC,SDC4,novel,putative
+TNFSF10_TNFRSF10A,TNFSF10,TNFRSF10A,known,literature supported
+TNFSF10_TNFRSF10B,TNFSF10,TNFRSF10B,known,literature supported
+TNFSF10_TNFRSF10C,TNFSF10,TNFRSF10C,known,literature supported
+TNFSF10_TNFRSF10D,TNFSF10,TNFRSF10D,known,literature supported
+TNFSF10_TNFRSF11B,TNFSF10,TNFRSF11B,known,literature supported
+TNFSF11_TNFRSF11A,TNFSF11,TNFRSF11A,known,literature supported
+TNFSF11_TNFRSF11B,TNFSF11,TNFRSF11B,known,literature supported
+TNFSF12_TNFRSF12A,TNFSF12,TNFRSF12A,known,literature supported
+TNFSF12_TNFRSF25,TNFSF12,TNFRSF25,known,literature supported
+TNFSF13B_TNFRSF13B,TNFSF13B,TNFRSF13B,known,literature supported
+TNFSF13B_TNFRSF13C,TNFSF13B,TNFRSF13C,known,literature supported
+TNFSF13B_TNFRSF17,TNFSF13B,TNFRSF17,known,literature supported
+TNFSF13_FAS,TNFSF13,FAS,novel,literature supported
+TNFSF13_SDC2,TNFSF13,SDC2,novel,literature supported
+TNFSF13_TNFRSF11B,TNFSF13,TNFRSF11B,novel,literature supported
+TNFSF13_TNFRSF13B,TNFSF13,TNFRSF13B,known,literature supported
+TNFSF13_TNFRSF14,TNFSF13,TNFRSF14,novel,literature supported
+TNFSF13_TNFRSF17,TNFSF13,TNFRSF17,known,literature supported
+TNFSF13_TNFRSF1A,TNFSF13,TNFRSF1A,novel,literature supported
+TNFSF14_LTBR,TNFSF14,LTBR,known,literature supported
+TNFSF14_TNFRSF14,TNFSF14,TNFRSF14,known,literature supported
+TNFSF14_TNFRSF6B,TNFSF14,TNFRSF6B,known,literature supported
+TNFSF15_TNFRSF25,TNFSF15,TNFRSF25,known,literature supported
+TNFSF15_TNFRSF6B,TNFSF15,TNFRSF6B,novel,literature supported
+TNFSF18_TNFRSF18,TNFSF18,TNFRSF18,known,literature supported
+TNFSF4_TNFRSF4,TNFSF4,TNFRSF4,known,literature supported
+TNFSF4_TRAF2,TNFSF4,TRAF2,novel,literature supported
+TNFSF8_TNFRSF8,TNFSF8,TNFRSF8,known,literature supported
+TNFSF9_TNFRSF9,TNFSF9,TNFRSF9,known,literature supported
+TNFSF9_TRAF2,TNFSF9,TRAF2,novel,literature supported
+TNF_LTBR,TNF,LTBR,known,putative
+TNF_SLC5A11,TNF,SLC5A11,novel,putative
+TNF_TNFRSF1A,TNF,TNFRSF1A,known,literature supported
+TNF_TNFRSF1B,TNF,TNFRSF1B,known,literature supported
+TNF_TNFRSF21,TNF,TNFRSF21,known,literature supported
+TNF_TRAF2,TNF,TRAF2,novel,literature supported
+TPH1_HTR1A,TPH1,HTR1A,known,EXCLUDED not ligand
+TPH1_HTR1B,TPH1,HTR1B,known,EXCLUDED not ligand
+TPH1_HTR1D,TPH1,HTR1D,known,EXCLUDED not ligand
+TPH1_HTR1E,TPH1,HTR1E,known,EXCLUDED not ligand
+TPH1_HTR1F,TPH1,HTR1F,known,EXCLUDED not ligand
+TPH1_HTR2A,TPH1,HTR2A,known,EXCLUDED not ligand
+TPH1_HTR2B,TPH1,HTR2B,known,EXCLUDED not ligand
+TPH1_HTR2C,TPH1,HTR2C,known,EXCLUDED not ligand
+TPH1_HTR4,TPH1,HTR4,known,EXCLUDED not ligand
+TPH1_HTR5A,TPH1,HTR5A,known,EXCLUDED not ligand
+TPH1_HTR6,TPH1,HTR6,known,EXCLUDED not ligand
+TPH1_HTR7,TPH1,HTR7,known,EXCLUDED not ligand
+TRH_TRHR,TRH,TRHR,known,literature supported
+TSHB_TSHR,TSHB,TSHR,known,literature supported
+TSLP_IL7R,TSLP,IL7R,novel,literature supported
+UBA52_ACVR1,UBA52,ACVR1,novel,EXCLUDED not ligand
+UBA52_AGTR1,UBA52,AGTR1,novel,EXCLUDED not ligand
+UBA52_BMPR1B,UBA52,BMPR1B,novel,EXCLUDED not ligand
+UBA52_EGFR,UBA52,EGFR,novel,EXCLUDED not ligand
+UBA52_ERBB2,UBA52,ERBB2,novel,EXCLUDED not ligand
+UBA52_FSHR,UBA52,FSHR,novel,EXCLUDED not ligand
+UBA52_NOTCH1,UBA52,NOTCH1,novel,EXCLUDED not ligand
+UBA52_TGFBR1,UBA52,TGFBR1,novel,EXCLUDED not ligand
+UBA52_TGFBR2,UBA52,TGFBR2,novel,EXCLUDED not ligand
+UCN2_CRHR1,UCN2,CRHR1,known,literature supported
+UCN2_CRHR2,UCN2,CRHR2,known,literature supported
+UCN2_IL10RB,UCN2,IL10RB,novel,literature supported
+UCN3_CRHR1,UCN3,CRHR1,novel,literature supported
+UCN3_CRHR2,UCN3,CRHR2,known,literature supported
+UCN3_IL10RB,UCN3,IL10RB,novel,literature supported
+UCN_CRHR1,UCN,CRHR1,known,literature supported
+UCN_CRHR2,UCN,CRHR2,known,literature supported
+ULBP2_KLRK1,ULBP2,KLRK1,known,literature supported
+UTS2B_UTS2R,UTS2B,UTS2R,known,literature supported
+UTS2_UTS2R,UTS2,UTS2R,known,literature supported
+VASP_CXCR2,VASP,CXCR2,novel,literature supported
+VCAM1_ITGA4,VCAM1,ITGA4,known,literature supported
+VCAM1_ITGA9,VCAM1,ITGA9,novel,putative
+VCAM1_ITGAD,VCAM1,ITGAD,known,literature supported
+VCAM1_ITGB1,VCAM1,ITGB1,known,literature supported
+VCAM1_ITGB2,VCAM1,ITGB2,known,literature supported
+VCAM1_ITGB7,VCAM1,ITGB7,novel,literature supported
+VCAN_CD44,VCAN,CD44,novel,literature supported
+VCAN_EGFR,VCAN,EGFR,novel,literature supported
+VCAN_ITGA4,VCAN,ITGA4,novel,literature supported
+VCAN_ITGB1,VCAN,ITGB1,novel,literature supported
+VCAN_SELL,VCAN,SELL,novel,putative
+VCAN_SELP,VCAN,SELP,novel,literature supported
+VCAN_TLR1,VCAN,TLR1,novel,putative
+VCAN_TLR2,VCAN,TLR2,novel,literature supported
+VEGFA_EGFR,VEGFA,EGFR,novel,putative
+VEGFA_EPHB2,VEGFA,EPHB2,novel,literature supported
+VEGFA_FLT1,VEGFA,FLT1,known,literature supported
+VEGFA_GPC1,VEGFA,GPC1,novel,literature supported
+VEGFA_ITGA9,VEGFA,ITGA9,novel,putative
+VEGFA_ITGAV,VEGFA,ITGAV,novel,putative
+VEGFA_ITGB1,VEGFA,ITGB1,novel,putative
+VEGFA_KDR,VEGFA,KDR,known,literature supported
+VEGFA_NRP1,VEGFA,NRP1,known,literature supported
+VEGFA_NRP2,VEGFA,NRP2,known,literature supported
+VEGFA_RET,VEGFA,RET,novel,putative
+VEGFA_SIRPA,VEGFA,SIRPA,novel,putative
+VEGFA_TYRO3,VEGFA,TYRO3,novel,putative
+VEGFB_FLT1,VEGFB,FLT1,known,literature supported
+VEGFB_NRP1,VEGFB,NRP1,known,literature supported
+VEGFB_RET,VEGFB,RET,novel,putative
+VEGFB_TYRO3,VEGFB,TYRO3,novel,putative
+VEGFC_FLT1,VEGFC,FLT1,novel,putative
+VEGFC_FLT4,VEGFC,FLT4,known,literature supported
+VEGFC_ITGA9,VEGFC,ITGA9,novel,putative
+VEGFC_ITGB1,VEGFC,ITGB1,novel,putative
+VEGFC_KDR,VEGFC,KDR,known,literature supported
+VEGFC_LYVE1,VEGFC,LYVE1,novel,putative
+VEGFC_NRP2,VEGFC,NRP2,known,literature supported
+VEGFC_VIPR2,VEGFC,VIPR2,known,literature supported
+VIM_CD44,VIM,CD44,novel,literature supported
+VIP_ADCYAP1R1,VIP,ADCYAP1R1,known,literature supported
+VIP_NPR3,VIP,NPR3,novel,putative
+VIP_SCTR,VIP,SCTR,known,literature supported
+VIP_VIPR1,VIP,VIPR1,known,literature supported
+VIP_VIPR2,VIP,VIPR2,known,literature supported
+VTN_CD47,VTN,CD47,novel,putative
+VTN_ITGA2B,VTN,ITGA2B,novel,putative
+VTN_ITGA3,VTN,ITGA3,novel,putative
+VTN_ITGA5,VTN,ITGA5,known,literature supported
+VTN_ITGA8,VTN,ITGA8,novel,literature supported
+VTN_ITGAV,VTN,ITGAV,novel,literature supported
+VTN_ITGB1,VTN,ITGB1,novel,putative
+VTN_ITGB3,VTN,ITGB3,known,literature supported
+VTN_ITGB5,VTN,ITGB5,novel,putative
+VTN_ITGB6,VTN,ITGB6,novel,literature supported
+VTN_ITGB8,VTN,ITGB8,novel,literature supported
+VTN_KDR,VTN,KDR,novel,putative
+VTN_PLAUR,VTN,PLAUR,novel,literature supported
+VTN_PVR,VTN,PVR,novel,literature supported
+VTN_TNFRSF11B,VTN,TNFRSF11B,novel,literature supported
+VWF_GP1BA,VWF,GP1BA,novel,literature supported
+VWF_ITGA2B,VWF,ITGA2B,novel,literature supported
+VWF_SELP,VWF,SELP,novel,putative
+VWF_SIRPA,VWF,SIRPA,novel,putative
+VWF_TNFRSF11B,VWF,TNFRSF11B,novel,literature supported
+WNT11_FZD7,WNT11,FZD7,known,literature supported
+WNT16_FZD6,WNT16,FZD6,novel,putative
+WNT1_FZD1,WNT1,FZD1,novel,putative
+WNT1_FZD3,WNT1,FZD3,known,literature supported
+WNT1_FZD5,WNT1,FZD5,novel,putative
+WNT1_FZD7,WNT1,FZD7,novel,putative
+WNT1_FZD8,WNT1,FZD8,known,literature supported
+WNT1_FZD9,WNT1,FZD9,known,literature supported
+WNT1_LRP5,WNT1,LRP5,novel,literature supported
+WNT1_LRP6,WNT1,LRP6,novel,literature supported
+WNT1_RYK,WNT1,RYK,known,literature supported
+WNT2_FZD1,WNT2,FZD1,novel,literature supported
+WNT2_FZD5,WNT2,FZD5,novel,literature supported
+WNT2_FZD7,WNT2,FZD7,novel,literature supported
+WNT2_FZD8,WNT2,FZD8,novel,literature supported
+WNT2_FZD9,WNT2,FZD9,novel,literature supported
+WNT2_LRP6,WNT2,LRP6,novel,putative
+WNT3A_APCDD1,WNT3A,APCDD1,novel,literature supported
+WNT3A_ATP6AP2,WNT3A,ATP6AP2,novel,putative
+WNT3A_FZD1,WNT3A,FZD1,novel,literature supported
+WNT3A_FZD2,WNT3A,FZD2,novel,literature supported
+WNT3A_FZD5,WNT3A,FZD5,novel,literature supported
+WNT3A_FZD6,WNT3A,FZD6,known,literature supported
+WNT3A_FZD7,WNT3A,FZD7,novel,literature supported
+WNT3A_FZD8,WNT3A,FZD8,novel,literature supported
+WNT3A_LRP1,WNT3A,LRP1,novel,literature supported
+WNT3A_LRP6,WNT3A,LRP6,novel,literature supported
+WNT3A_RYK,WNT3A,RYK,novel,literature supported
+WNT3_FZD1,WNT3,FZD1,novel,literature supported
+WNT3_FZD5,WNT3,FZD5,novel,putative
+WNT3_FZD7,WNT3,FZD7,novel,literature supported
+WNT3_FZD8,WNT3,FZD8,known,literature supported
+WNT3_LRP6,WNT3,LRP6,known,literature supported
+WNT3_RYK,WNT3,RYK,known,literature supported
+WNT4_FZD2,WNT4,FZD2,known,literature supported
+WNT4_FZD6,WNT4,FZD6,known,literature supported
+WNT5A_FZD1,WNT5A,FZD1,novel,literature supported
+WNT5A_FZD2,WNT5A,FZD2,known,literature supported
+WNT5A_FZD4,WNT5A,FZD4,known,literature supported
+WNT5A_FZD5,WNT5A,FZD5,novel,literature supported
+WNT5A_FZD6,WNT5A,FZD6,known,literature supported
+WNT5A_FZD7,WNT5A,FZD7,known,literature supported
+WNT5A_FZD8,WNT5A,FZD8,novel,literature supported
+WNT5A_LRP5,WNT5A,LRP5,novel,literature supported
+WNT5A_MCAM,WNT5A,MCAM,novel,literature supported
+WNT5A_ROR1,WNT5A,ROR1,novel,literature supported
+WNT5A_ROR2,WNT5A,ROR2,novel,literature supported
+WNT5A_RYK,WNT5A,RYK,known,literature supported
+WNT7A_FZD10,WNT7A,FZD10,novel,literature supported
+WNT7A_FZD5,WNT7A,FZD5,known,literature supported
+WNT7A_FZD9,WNT7A,FZD9,novel,literature supported
+WNT7A_LRP6,WNT7A,LRP6,novel,putative
+WNT7B_FZD1,WNT7B,FZD1,known,literature supported
+WNT7B_FZD10,WNT7B,FZD10,known,literature supported
+WNT7B_LRP5,WNT7B,LRP5,known,literature supported
+XCL1_XCR1,XCL1,XCR1,known,literature supported
+XCL2_XCR1,XCL2,XCR1,known,literature supported
+YARS_CXCR1,YARS,CXCR1,known,literature supported
+ZG16B_CXCR4,ZG16B,CXCR4,novel,literature supported
+ZG16B_TLR2,ZG16B,TLR2,novel,literature supported
+ZG16B_TLR4,ZG16B,TLR4,novel,literature supported
+ZG16B_TLR5,ZG16B,TLR5,novel,literature supported
+ZG16B_TLR6,ZG16B,TLR6,novel,literature supported
+ZP3_EGFR,ZP3,EGFR,novel,putative
+ZP3_MERTK,ZP3,MERTK,known,literature supported
