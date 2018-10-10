@@ -10,7 +10,7 @@ SeuratViewer reads in the expression data, sample data, feature annotation, dime
 ## Requirements
 - R
 - RStudio Server
-- Shiny Server
+- Shiny Server (if you need to host it online)
 
 If you need help installing the above or getting started, refer to [this](https://deanattali.com/2015/05/09/setup-rstudio-shiny-server-digital-ocean/#install-r)
 
