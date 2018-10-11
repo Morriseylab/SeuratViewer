@@ -27,7 +27,7 @@ Run the following commands in R to install all required packages
 ```
 install.packages(c("devtools","shiny","shinydashboard","shinyjs","shinyBS","shinyBS","RColorBrewer","reshape2","ggplot2",
                    "dplyr","tidyr","openssl","httr","plotly","htmlwidgets","DT","shinyRGL","rgl","rglwidget","Seurat","cowplot",
-                    "data.table","NMF","tibble","network","igraph","d3heatmap","visNetwork"))
+                    "data.table","NMF","tibble","network","igraph","visNetwork"))
 
 ## try http:// if https:// URLs are not supported
 source("https://bioconductor.org/biocLite.R")
