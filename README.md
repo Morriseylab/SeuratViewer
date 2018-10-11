@@ -23,6 +23,7 @@ sudo apt-get install xorg libx11-dev mesa-common-dev libglu1-mesa-dev
 sudo apt-get install libxml2-dev
 sudo apt-get install libftgl2 freetype2-demos libfreetype6-dev
 sudo apt-get install libhdf5-dev
+sudo apt-get install r-cran-rcppeigen
 ```
 Run the following commands in R to install all required packages
 ```
