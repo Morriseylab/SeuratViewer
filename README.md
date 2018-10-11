@@ -18,7 +18,6 @@ If you need help installing the above or getting started, refer to [this](https:
 For Linux, run the following commands in terminal 
 ```
 sudo apt-get install libcurl4-openssl-dev lib-ssl dev
-sudo apt-get install xorg
 sudo apt-get install xorg libx11-dev mesa-common-dev libglu1-mesa-dev
 sudo apt-get install libxml2-dev
 sudo apt-get install libftgl2 freetype2-demos libfreetype6-dev
