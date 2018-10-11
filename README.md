@@ -8,23 +8,36 @@ Seurat is also hosted on GitHub. You can view the repository at
 SeuratViewer reads in the expression data, sample data, feature annotation, dimensionality reduction/ clustering, and marker gene information as an RData object and enables users to view and interact with their single cell RNAseq data
 
 ## Requirements
-- R
+- R (version > 3.4)
 - RStudio Server
-- Shiny Server
+- Shiny Server (if you need to host it online)
 
 If you need help installing the above or getting started, refer to [this](https://deanattali.com/2015/05/09/setup-rstudio-shiny-server-digital-ocean/#install-r)
 
 ## Installation
-Run the following command to install all required packages
+For Linux, run the following commands in terminal 
 ```
-install.packages(c("shiny","shinydashboard","shinyjs","shinyBS","shinyBS","RColorBrewer","reshape2","ggplot2",
-                   "dplyr","tidyr","plotly","htmlwidgets","DT","shinyRGL","rgl","rglwidget","Seurat","cowplot",
-                    "data.table","NMF","tibble","network","igraph","d3heatmap","visNetwork"))
-                    
+sudo apt-get install libcurl4-openssl-dev lib-ssl dev
+sudo apt-get install xorg libx11-dev mesa-common-dev libglu1-mesa-dev
+sudo apt-get install libxml2-dev
+sudo apt-get install libftgl2 freetype2-demos libfreetype6-dev
+sudo apt-get install libhdf5-dev
+sudo apt-get install r-cran-rcppeigen
+```
+Run the following commands in R to install all required packages
+```
+install.packages(c("devtools","shiny","shinydashboard","shinyjs","shinyBS","shinyBS","RColorBrewer","reshape2","ggplot2",
+                   "dplyr","tidyr","openssl","httr","plotly","htmlwidgets","DT","shinyRGL","rgl","rglwidget","Seurat","cowplot",
+                    "data.table","NMF","tibble","network","igraph","visNetwork"))
+
 ## try http:// if https:// URLs are not supported
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("biomaRt","Biobase"))
 ```
+For linux users, other R dependencies include
+- RcppEigen
+- lme4
+- flexmix
 
 ## Input Data format
 ### Creating your dataset 
