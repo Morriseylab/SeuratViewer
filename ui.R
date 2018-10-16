@@ -315,8 +315,8 @@ ui <- dashboardPage(
                   uiOutput("clust2.1")
                 ),
                 fluidRow(
-                  column(6,checkboxInput("checksource", label = "Check to select by source", value = FALSE)),
-                  column(6,checkboxInput("checkevi", label = "Check to select by evidence", value = FALSE)),
+                  column(6,checkboxInput("checksource", label = "Check to select by source", value = TRUE)),
+                  column(6,checkboxInput("checkevi", label = "Check to select by evidence", value = TRUE)),
                   conditionalPanel(
                     condition = "input.checksource ==true",
                     column(6,uiOutput('source'))
@@ -328,7 +328,7 @@ ui <- dashboardPage(
                 ),
                 uiOutput("bigene_rangea2"),
                 uiOutput("bigene_rangeb2"),
-                sliderInput("perc_cells", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 20,step=10),
+                sliderInput("perc_cells", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10),
                 sliderInput("bigene_pointsize2", "Point Size:",min = 0, max = 5, value = 1,step=.25)
             ),
             box(
@@ -346,11 +346,11 @@ ui <- dashboardPage(
                 column(6,uiOutput("pairbynet")),
                 column(6,h1(""))),
                 fluidRow(
-                  column(6,sliderInput("perc_cells2", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 20,step=10)),
+                  column(6,sliderInput("perc_cells2", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10)),
                   column(6,uiOutput("filternet"))),
                 fluidRow(
-                  column(6,checkboxInput("checksource2", label = "Check to select by source", value = FALSE)),
-                  column(6,checkboxInput("checkevi2", label = "Check to select by evidence", value = FALSE)),
+                  column(6,checkboxInput("checksource2", label = "Check to select by source", value = TRUE)),
+                  column(6,checkboxInput("checkevi2", label = "Check to select by evidence", value = TRUE)),
                   conditionalPanel(
                     condition = "input.checksource2 ==true",
                     column(6,uiOutput('source2'))
@@ -364,13 +364,13 @@ ui <- dashboardPage(
               column(6,downloadButton('dwldnet', 'Download Network plot')),
               column(6,br())
                      )),#End box
-            box(title= 'GO Analysis', solidHeader = T, width=12, status = 'primary',
-               uiOutput('grp1')
-                ),
             box(title = "Network",solidHeader = TRUE,width=12,status='primary',
                 #visNetworkOutput("lrnetwork", height = 800)
                 plotOutput("lrnetwork", height = 800)
             ),#End box
+            box(title= 'GO Analysis', solidHeader = T, width=12, status = 'primary',
+                uiOutput('grp1')
+            ),
             box(title = "GO Terms",solidHeader = TRUE,width=12,status='primary',
                 DT::dataTableOutput('gotable')
             ),
@@ -384,8 +384,8 @@ ui <- dashboardPage(
             ),
             box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
                 uiOutput("pairbyheatnet"),
-                checkboxInput("checksourceheat", label = "Check to select by source", value = FALSE),
-                checkboxInput("checkeviheat", label = "Check to select by evidence", value = FALSE),
+                checkboxInput("checksourceheat", label = "Check to select by source", value = TRUE),
+                checkboxInput("checkeviheat", label = "Check to select by evidence", value = TRUE),
                   conditionalPanel(
                     condition = "input.checksourceheat ==true",
                     uiOutput('source3')
@@ -394,7 +394,7 @@ ui <- dashboardPage(
                     condition = "input.checkeviheat ==true",
                     uiOutput('evidence3')
                   ),
-                sliderInput("perc_cells3", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 20,step=10),
+                sliderInput("perc_cells3", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10),
                 selectInput("hmpcolnet", "Select Heatmap Color Palette",c('YlGnBu' = "YlGnBu",'RdBu' = "RdBu",'YlOrRd' = "YlOrRd",'PRGn'="PRGn", 'Blues' = "Blues")),
                 selectInput("clusterby", "Cluster By",c('Both'="both",'Receptor Genes' = "column",'Ligand Genes' = "row",'None' = "none")),
                 checkboxInput("checkbox", label = "Reverse Colors", value = FALSE),

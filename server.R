@@ -1219,7 +1219,7 @@ server <- function(input, output,session) {
      org=as.character(file$organism[file$projects==input$projects])
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Evidence))
-     checkboxGroupInput('evidence',label='Select Evidence(s)',choices=options,selected=options[2:3])
+     checkboxGroupInput('evidence',label='Select Evidence(s)',choices=options,selected=options[2])
    })
    
    
@@ -1340,9 +1340,10 @@ server <- function(input, output,session) {
        colnames(edges)=c("from","to")
        e2=as.data.frame(table(edges[,1:2]))
        min=min(e2$Freq)
+       n=ifelse(min<4,4,min)
        max=max(e2$Freq)
        sliderInput("filternet", "Frequency of occurence of ligand-receptor pairs",
-                   min = min, max = max, value = c(min,max),step=2)
+                   min = min, max = max, value = c(n,max),step=2)
      })
    })
    
@@ -1361,7 +1362,7 @@ server <- function(input, output,session) {
      org=as.character(file$organism[file$projects==input$projects])
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Evidence))
-     checkboxGroupInput('evidence2',label='Select Evidence(s)',choices=options,selected=options[2:3])
+     checkboxGroupInput('evidence2',label='Select Evidence(s)',choices=options,selected=options[2])
    })
    
    #For selected project and grouping variable, generate all possible ligand receptor pairs and filter based on user input
@@ -1531,7 +1532,7 @@ server <- function(input, output,session) {
      org=as.character(file$organism[file$projects==input$projects])
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Evidence))
-     checkboxGroupInput('evidence3',label='Select Evidence(s)',choices=options,selected=options[2:3])
+     checkboxGroupInput('evidence3',label='Select Evidence(s)',choices=options,selected=options[2])
    })
    
    #Generate lig-receptor pairs table
@@ -1602,7 +1603,7 @@ server <- function(input, output,session) {
      },
      content = function(file){
        pdf(file, width = 13, height = 8,useDingbats=FALSE)
-       plot(netheatmap())
+       netheatmap()
        dev.off()
      })
    ######################################################################################################
