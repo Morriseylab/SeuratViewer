@@ -329,7 +329,8 @@ ui <- dashboardPage(
                 uiOutput("bigene_rangea2"),
                 uiOutput("bigene_rangeb2"),
                 sliderInput("perc_cells", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10),
-                sliderInput("bigene_pointsize2", "Point Size:",min = 0, max = 5, value = 1,step=.25)
+                sliderInput("bigene_pointsize2", "Point Size:",min = 0, max = 5, value = 1,step=.25),
+                actionButton("lrpgo", "Change Parameters and Run")
             ),
             box(
               width = 12, status = "primary",solidHeader = TRUE,
@@ -361,8 +362,8 @@ ui <- dashboardPage(
                   )
                 ),
             fluidRow(
-              column(6,downloadButton('dwldnet', 'Download Network plot')),
-              column(6,br())
+              column(6,actionButton("lrngo", "Change Parameters and Run")),
+              column(6,downloadButton('dwldnet', 'Download Network plot'))
                      )),#End box
             box(title = "Network",solidHeader = TRUE,width=12,status='primary',
                 #visNetworkOutput("lrnetwork", height = 800)
@@ -398,6 +399,7 @@ ui <- dashboardPage(
                 selectInput("hmpcolnet", "Select Heatmap Color Palette",c('YlGnBu' = "YlGnBu",'RdBu' = "RdBu",'YlOrRd' = "YlOrRd",'PRGn'="PRGn", 'Blues' = "Blues")),
                 selectInput("clusterby", "Cluster By",c('Both'="both",'Receptor Genes' = "column",'Ligand Genes' = "row",'None' = "none")),
                 checkboxInput("checkbox", label = "Reverse Colors", value = FALSE),
+                actionButton("lrhgo", "Change Parameters and Run"),br(),br(),
                 downloadButton('downloadlrheatmap', 'Download Heatmap')
                 ),
             box(title = "Ligand Receptor Pairs",solidHeader = TRUE,width=12,status='primary',

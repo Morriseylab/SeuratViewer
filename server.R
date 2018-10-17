@@ -183,14 +183,15 @@ server <- function(input, output,session) {
    pdesc=prj$desc
    porg=prj$organism
    scrna=fileload()
+   numcells.nf=dim(scrna@raw.data)[2]
    tcells=dim(scrna@data)[2]
    tgenes=dim(scrna@data)[1]
    if(is.null(scrna@dr$pca)){
    maxdim=dim(scrna@dr$cca.aligned@cell.embeddings)[2]
    }else{maxdim=length(scrna@dr$pca@sdev)}
    c.cnt=as.data.frame(table(scrna@ident))
-   df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),tcells,tgenes,maxdim,"","",c.cnt$Freq))
-   rownames(df)=c("Project name","Project Description","Organism","Total nummber of cells","Total number of genes","Dimension","","Cluster-wise number of genes",as.character(c.cnt$Var1))
+   df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),numcells.nf,tcells,tgenes,maxdim,"","",c.cnt$Freq))
+   rownames(df)=c("Project name","Project Description","Organism","Total number of cells before filtration","Total nummber of cells after filtering","Total number of genes","Dimension","","Cluster-wise number of genes",as.character(c.cnt$Var1))
    colnames(df)<- NULL
    return(df)
   })
@@ -1233,9 +1234,13 @@ server <- function(input, output,session) {
    datasetInput = reactive({
      results=ligrec(fileload(),pair=input$pairby,prj=input$projects,input$perc_cells)
    })
-   
-   #Subselect lig-rec pairs based on user input
+
+      #Subselect lig-rec pairs based on user input
    finalres= reactive({
+     validate(need(input$lrpgo != 0,"Make your selections and click the Run button"))
+     if(input$lrpgo == 0)
+       return()
+     isolate({
      result=datasetInput()
      if(input$clust=="clust" & input$gene=="allgene"){
        #clusters=c(input$clust1,input$clust2)
@@ -1274,6 +1279,7 @@ server <- function(input, output,session) {
      if(input$checksource==T){result=result[result$Pair.Source %in% input$source,]}
      if(input$checkevi==T){result=result[result$Pair.Evidence %in% input$evidence,]}
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
+     })
      return(result)
    })
    
@@ -1334,6 +1340,11 @@ server <- function(input, output,session) {
    
    #Generate slider to filter ligand receptor pairs by frequency of occurence
    output$filternet <- renderUI({
+     validate(need(input$lrngo != 0,"Make your selections and click the Run button"))
+     
+     if(input$lrngo == 0)
+       return()
+     isolate({
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
        result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2)
        edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
@@ -1344,7 +1355,7 @@ server <- function(input, output,session) {
        max=max(e2$Freq)
        sliderInput("filternet", "Frequency of occurence of ligand-receptor pairs",
                    min = min, max = max, value = c(n,max),step=2)
-     })
+     })})
    })
    
    #Check if the data is from mouse/human and use the approprite file to list the options for source
@@ -1368,6 +1379,11 @@ server <- function(input, output,session) {
    #For selected project and grouping variable, generate all possible ligand receptor pairs and filter based on user input
    datasetInputnet = reactive({
      #result=NA
+     validate(need(input$lrngo != 0,"Make your selections and click the Run button"))
+     
+     if(input$lrngo == 0)
+       return()
+     isolate({
      result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2)
      validate(need(is.na(result)==F,"Invalid Cell group. Pick a different option"))
      edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
@@ -1379,7 +1395,7 @@ server <- function(input, output,session) {
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
      if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
      if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
-     #})
+     })
      return(result)
    })
    
@@ -1535,12 +1551,19 @@ server <- function(input, output,session) {
      checkboxGroupInput('evidence3',label='Select Evidence(s)',choices=options,selected=options[2])
    })
    
+   
    #Generate lig-receptor pairs table
    ligrecheat = reactive({
+     validate(need(input$lrhgo != 0,"Make your selections and click the Run button"))
+     
+     if(input$lrhgo == 0)
+       return()
+     isolate({
      result=ligrec(fileload(),pair=input$pairbyheatnet,prj=input$projects,input$perc_cells3)
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
      if(input$checksourceheat==T){result=result[result$Pair.Source %in% input$source3,]}
      if(input$checkeviheat==T){result=result[result$Pair.Evidence %in% input$evidence3,]}
+     })
      return(result)
    })
    
