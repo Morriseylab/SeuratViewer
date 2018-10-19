@@ -333,7 +333,7 @@ ui <- dashboardPage(
                 ),
                 uiOutput("bigene_rangea2"),
                 uiOutput("bigene_rangeb2"),
-                sliderInput("perc_cells", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10),
+                sliderInput("perc_cells", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=5),
                 sliderInput("bigene_pointsize2", "Point Size:",min = 0, max = 5, value = 1,step=.25),
                 actionButton("lrpgo", "Change Parameters and Run")
             ),

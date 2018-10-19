@@ -1360,7 +1360,7 @@ server <- function(input, output,session) {
        n=ifelse(min<4,4,min)
        max=max(e2$Freq)
        sliderInput("filternet", "Filter by number of interactions",
-                   min = min, max = max, value = c(n,max),step=2)
+                   min = min, max = max, value = c(n,max),step=1)
      })
    })})
    
