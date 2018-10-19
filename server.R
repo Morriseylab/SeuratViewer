@@ -373,7 +373,7 @@ server <- function(input, output,session) {
     tsne=names(met[met==FALSE])
     
     if(input$categorya2 =="clust" & input$subsa==F){
-      plot1=DimPlot(object = scrna,reduction.use=input$umapa,group.by = "ident",no.legend = FALSE,do.label = TRUE,vector.friendly = T, do.return=T, pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
+      plot1=DimPlot(object = scrna,reduction.use=input$umapa,group.by = "ident",no.legend = FALSE,do.label = input$checklabel1,vector.friendly = T, do.return=T, pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
     }else if(input$categorya2 =="clust" & input$subsa==TRUE){
       cells=names(scrna@ident[scrna@ident==input$selclust])
       plot1=DimPlot(object = scrna,reduction.use=input$umapa,cells.highlight=cells,group.by = "ident",vector.friendly = T,no.legend = FALSE,do.label = F, do.return=T, pt.size = input$pointa2, cols.use=cpallette)
@@ -382,7 +382,7 @@ server <- function(input, output,session) {
       plot1=FeaturePlot(object = scrna,reduction.use=input$umapa,vector.friendly = T, features.plot = input$gene1a, cols.use = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2,no.legend = FALSE)
       plot1=eval(parse(text=paste("plot1$",input$gene1a,sep="")))
     }else if(input$categorya2 =="var" & input$tsnea2 %in% tsne & input$subsa==FALSE){
-      plot1=DimPlot(object = scrna,reduction.use=input$umapa,group.by = tsnea,no.legend = FALSE,do.label = TRUE,vector.friendly = T, do.return=T,pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
+      plot1=DimPlot(object = scrna,reduction.use=input$umapa,group.by = tsnea,no.legend = FALSE,do.label = input$checklabel1,vector.friendly = T, do.return=T,pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
     }else if(input$categorya2 =="var" & input$tsnea2 %in% tsne & input$subsa==TRUE){
       t=paste("rownames(scrna@meta.data[scrna@meta.data$",input$tsnea2,"==\"",input$selclust2,"\",])",sep="")
       cells=eval(parse(text=t))
@@ -398,7 +398,7 @@ server <- function(input, output,session) {
     }
     
     if(input$categoryb2 =="clust" & input$subsb==F){
-      plot2=DimPlot(object = scrna,reduction.use=input$umapb,group.by = "ident",no.legend = FALSE,vector.friendly = T,do.label = TRUE, do.return=T,pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
+      plot2=DimPlot(object = scrna,reduction.use=input$umapb,group.by = "ident",no.legend = FALSE,vector.friendly = T,do.label = input$checklabel2, do.return=T,pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
     }else if(input$categoryb2 =="clust" & input$subsb==TRUE){
       cells=names(scrna@ident[scrna@ident==input$selclustb])
       plot2=DimPlot(object = scrna,reduction.use=input$umapb,cells.highlight=cells,group.by = "ident",vector.friendly = T,no.legend = FALSE,do.label = F, do.return=T, pt.size = input$pointa2, cols.use=cpallette)
@@ -407,7 +407,7 @@ server <- function(input, output,session) {
       plot2=FeaturePlot(object = scrna,reduction.use=input$umapb,vector.friendly = T, features.plot = input$gene2a, cols.use = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2,no.legend = FALSE)
       plot2=eval(parse(text=paste("plot2$",input$gene2a,sep="")))
     }else if(input$categoryb2 =="var" & input$tsneb2 %in% tsne & input$subsb==F){
-      plot2=DimPlot(object = scrna,reduction.use=input$umapb,group.by = tsneb,no.legend = FALSE,vector.friendly = T,do.label = TRUE, do.return=T,pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
+      plot2=DimPlot(object = scrna,reduction.use=input$umapb,group.by = tsneb,no.legend = FALSE,vector.friendly = T,do.label = input$checklabel2, do.return=T,pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
     }else if(input$categoryb2 =="var" & input$tsneb2 %in% tsne & input$subsb==TRUE){
       t=paste("rownames(scrna@meta.data[scrna@meta.data$",input$tsneb2,"==\"",input$selclustb2,"\",])",sep="")
       cells=eval(parse(text=t))
@@ -758,9 +758,9 @@ server <- function(input, output,session) {
     tsne=names(met[met==FALSE])
     
     if(input$tsnea =="Cell.group"){
-      plot1=DimPlot(object = scrna,reduction.use=input$umapdeg,group.by = "ident",no.legend = FALSE,do.label = TRUE, do.return=T, pt.size = input$pointa,label.size = 7,cols.use=cpallette,vector.friendly=TRUE) + theme(legend.position="bottom")
+      plot1=DimPlot(object = scrna,reduction.use=input$umapdeg,group.by = "ident",no.legend = FALSE,do.label = input$checklabel3, do.return=T, pt.size = input$pointa,label.size = 7,cols.use=cpallette,vector.friendly=TRUE) + theme(legend.position="bottom")
     }else if(input$tsnea %in% tsne){
-      plot1=DimPlot(object = scrna,reduction.use=input$umapdeg,group.by = tsnea,no.legend = FALSE,do.label = TRUE,vector.friendly=TRUE, do.return=T,pt.size = input$pointa,label.size = 7,cols.use=cpallette) + theme(legend.position="bottom")
+      plot1=DimPlot(object = scrna,reduction.use=input$umapdeg,group.by = tsnea,no.legend = FALSE,do.label = input$checklabel3,vector.friendly=TRUE, do.return=T,pt.size = input$pointa,label.size = 7,cols.use=cpallette) + theme(legend.position="bottom")
     }else if(input$tsnea %in% feature){
       plot1=FeaturePlot(object = scrna, features.plot = tsnea, cols.use = c("grey", "blue"),vector.friendly = T,reduction.use = input$umapdeg,do.return=T,pt.size = input$pointa)
       plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
@@ -1041,7 +1041,7 @@ server <- function(input, output,session) {
     tab=tab[s, ,drop=FALSE]
     gene=rownames(tab)
     #cells <- WhichCells(object = scrna, ident = input$selectcluster)
-    plot1=DimPlot(object = scrna,reduction.use=input$umapclust,group.by = input$setvar,no.legend = FALSE,do.label = TRUE,vector.friendly = T, do.return=T, pt.size = input$pointclust,label.size = 7, cols.use=cpallette)
+    plot1=DimPlot(object = scrna,reduction.use=input$umapclust,group.by = input$setvar,no.legend = FALSE,do.label = input$checklabel4,vector.friendly = T, do.return=T, pt.size = input$pointclust,label.size = 7, cols.use=cpallette)
     plot2=FeaturePlot(object = scrna,reduction.use=input$umapclust, features.plot = gene, cols.use = c("grey", "blue"),vector.friendly = T,do.return=T,pt.size = input$pointclust,no.legend = FALSE)
     plot2=eval(parse(text=paste("plot2$`",gene,"`",sep="")))
     plot_grid(plot1,plot2)
@@ -1216,10 +1216,11 @@ server <- function(input, output,session) {
    
    #Check if the data is from mouse/human and use the approprite file to list the options for evidence
    output$evidence <- renderUI({
-     file = read.csv("data/param.csv")
-     org=as.character(file$organism[file$projects==input$projects])
-     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
-     options=as.character(unique(rl$Pair.Evidence))
+     # file = read.csv("data/param.csv")
+     # org=as.character(file$organism[file$projects==input$projects])
+     # if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
+     # options=as.character(unique(rl$Pair.Evidence))
+     options=c("EXCLUDED not ligand","literature supported","putative","EXCLUDED not receptor","EXCLUDED")
      checkboxGroupInput('evidence',label='Select Evidence(s)',choices=options,selected=options[2])
    })
    
@@ -1340,23 +1341,28 @@ server <- function(input, output,session) {
    
    #Generate slider to filter ligand receptor pairs by frequency of occurence
    output$filternet <- renderUI({
-     validate(need(input$lrngo != 0,"Make your selections and click the Run button"))
-     
-     if(input$lrngo == 0)
-       return()
-     isolate({
      withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+       validate(need(input$lrnset != 0,"Make your selections and click the Set filters button"))
+       
+       if(input$lrnset == 0)
+         return()
+       isolate({
        result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2)
+       if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
+       if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
+       if(input$checkgrp==T){result=result[result$Lig_cluster %in% input$checkgrp2,]
+       result=result[result$Receptor_cluster %in% input$checkgrp2,]}
+       validate(need(is.na(result)==F,"No pairs found. Change Filtering options"))
        edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
        colnames(edges)=c("from","to")
        e2=as.data.frame(table(edges[,1:2]))
        min=min(e2$Freq)
        n=ifelse(min<4,4,min)
        max=max(e2$Freq)
-       sliderInput("filternet", "Frequency of occurence of ligand-receptor pairs",
+       sliderInput("filternet", "Filter by number of interactions",
                    min = min, max = max, value = c(n,max),step=2)
-     })})
-   })
+     })
+   })})
    
    #Check if the data is from mouse/human and use the approprite file to list the options for source
    output$source2 <- renderUI({
@@ -1364,28 +1370,39 @@ server <- function(input, output,session) {
      org=as.character(file$organism[file$projects==input$projects])
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Source))
-     checkboxGroupInput('source2', label='Select source(s)',choices=options,selected=options[1])
+     #checkboxGroupInput('source2', label='Select source(s)',choices=options,selected=options[1])
+     selectInput('source2', label='Select source(s)',options,multiple=TRUE, selectize=TRUE,selected=options[1])
    })
    
    #Check if the data is from mouse/human and use the approprite file to list the options for evidence
    output$evidence2 <- renderUI({
-     file = read.csv("data/param.csv")
-     org=as.character(file$organism[file$projects==input$projects])
-     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
-     options=as.character(unique(rl$Pair.Evidence))
-     checkboxGroupInput('evidence2',label='Select Evidence(s)',choices=options,selected=options[2])
+     options=c("EXCLUDED not ligand","literature supported","putative","EXCLUDED not receptor","EXCLUDED")
+     #checkboxGroupInput('evidence2',label='Select Evidence(s)',choices=options,selected=options[2])
+     selectInput('evidence2',label='Select Evidence(s)',options,multiple=TRUE, selectize=TRUE,selected=options[2])
+   })
+
+   #Select groups to view in lig-rec pairs
+   output$checkgrp <- renderUI({
+     scrna=fileload()
+     groups=unique(eval(parse(text=paste("scrna@meta.data$",input$pairbynet,sep=""))))
+     selectInput('checkgrp2', 'Group options',groups, multiple=TRUE, selectize=TRUE)
    })
    
    #For selected project and grouping variable, generate all possible ligand receptor pairs and filter based on user input
    datasetInputnet = reactive({
      #result=NA
+     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
      validate(need(input$lrngo != 0,"Make your selections and click the Run button"))
      
      if(input$lrngo == 0)
        return()
      isolate({
      result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2)
-     validate(need(is.na(result)==F,"Invalid Cell group. Pick a different option"))
+     #validate(need(is.na(result)==F,"Invalid Cell group. Pick a different option"))
+     if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
+     if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
+     if(input$checkgrp==T){result=result[result$Lig_cluster %in% input$checkgrp2,]
+     result=result[result$Receptor_cluster %in% input$checkgrp2,]}
      edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
      e2=as.data.frame(table(edges[,1:2]))
      e2=e2[e2$Freq>= input$filternet[1] & e2$Freq<= input$filternet[2],]
@@ -1393,10 +1410,9 @@ server <- function(input, output,session) {
      result$pair=paste(result$Receptor_cluster,"_",result$Lig_cluster,sep="")
      result=result[result$pair %in% e2$pair,]
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
-     if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
-     if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
      })
      return(result)
+     })
    })
    
    #Render the same lig-rec pairs data table again to create network
@@ -1438,13 +1454,13 @@ server <- function(input, output,session) {
        edge.col=edges$color
        edge.lab=as.character(edges$freq)
        OldRange = (max(edges$freq) - min(edges$freq))  
-       NewRange = 4.5-1.5  
+       NewRange = 8-2  
        edges$width = (((edges$freq - min(edges$freq)) * NewRange) / OldRange) + 1.5
        width=edges$width
        #network <- network(edges, vertex.attr = nodes, matrix.type = "edgelist", ignore.eval = FALSE)
        
        routes_igraph <- graph_from_data_frame(d = edges, vertices = nodes, directed = TRUE)
-       plot(routes_igraph, edge.arrow.size = 0.2,vertex.label.color="black",edge.label.color="black",vertex.color=col,edge.color=edge.col,edge.width=width,edge.arrow.width=3,edge.label=edge.lab)
+       plot(routes_igraph, edge.arrow.size = 0.2,vertex.label.color="black",edge.label.color="black",vertex.color=col,edge.color=edge.col,edge.width=width,edge.arrow.width=3)
      })
    })
    
@@ -1544,10 +1560,11 @@ server <- function(input, output,session) {
    
    #Check if the data is from mouse/human and use the approprite file to list the options for evidence
    output$evidence3 <- renderUI({
-     file = read.csv("data/param.csv")
-     org=as.character(file$organism[file$projects==input$projects])
-     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
-     options=as.character(unique(rl$Pair.Evidence))
+     # file = read.csv("data/param.csv")
+     # org=as.character(file$organism[file$projects==input$projects])
+     # if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
+     # options=as.character(unique(rl$Pair.Evidence))
+     options=c("EXCLUDED not ligand","literature supported","putative","EXCLUDED not receptor","EXCLUDED")
      checkboxGroupInput('evidence3',label='Select Evidence(s)',choices=options,selected=options[2])
    })
    

@@ -81,22 +81,26 @@ ligrec <- function(scrna,pair,prj,perc){
   #Read ligrec file based on organism
   file = read.csv("data/param.csv")
   org=as.character(file$organism[file$projects==prj])
-  genes=fread("data/ligrecgenes.txt",header = TRUE)
-  if(org=="human"){
-    genes$genes=toupper(genes$genes)
-  }
-  genes2=tt[tt %in% genes$genes]
+  #genes=fread("data/ligrecgenes.txt",header = TRUE)
+  if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
+  genes=unique(c(as.character(rl$ligand),as.character(rl$receptor)))
+  # if(org=="human"){
+  #   genes$genes=toupper(genes$genes)
+  # }
+  genes2=tt[tt %in% genes]
   #For all unique genes in the ligrec list, get their expression value for all cells and the groups the cells belong to
   my.data=FetchData(scrna,c(var,"nGene",genes2))
   colnames(my.data)[1]= "clust"
   #my.data$clust=factor(my.data$clust,levels=unique(my.data$clust))
   perc=perc/100
-  if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
+  #if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
   result=data.frame()
   res=data.frame()
   #loop over each cluster to find pairs
   for(i in 1:(length(levels(my.data$clust)))){
     for(j in 1:(length(levels(my.data$clust)))){
+      # for(i in levels(my.data$clust)){
+      #   for(j in levels(my.data$clust)){
       #if(i!=j){
         #from the large martix, subselect receptor and lig subgoups (if i=1 and j=2, keep cells in grps 1 and 2)
         test=my.data[my.data$clust==levels(my.data$clust)[i] | my.data$clust==levels(my.data$clust)[j],]
@@ -106,8 +110,8 @@ ligrec <- function(scrna,pair,prj,perc){
         L_c2=test[test$clust==levels(my.data$clust)[j] , (colnames(test) %in% rl$ligand)]
         if(nrow(R_c1)!=0 &nrow(L_c2)!=0){
           #keep genes that are expressed in more than user-input percent of the cells
-          keep1 = colSums(R_c1>1)>=perc*dim(R_c1)[1]
-          keep2 = colSums(L_c2>1)>=perc*dim(L_c2)[1]
+          keep1 = colSums(R_c1>0)>=perc*dim(R_c1)[1]
+          keep2 = colSums(L_c2>0)>=perc*dim(L_c2)[1]
           R_c1=R_c1[,keep1]
           L_c2=L_c2[,keep2]
           #get list of lig-rec pairs
@@ -124,6 +128,6 @@ ligrec <- function(scrna,pair,prj,perc){
     }
   }
   # get final list of all lig-rec pairs
-  result=result[result$Receptor_cluster!=result$Lig_cluster,]
+  #result=result[result$Receptor_cluster!=result$Lig_cluster,]
   return(result)
 }

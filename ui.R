@@ -139,7 +139,10 @@ ui <- dashboardPage(
                   column(6,checkboxInput("subsa", label = "Check to subselect cells", value = FALSE)),
                   column(6,checkboxInput("subsb", label = "Check to subselect cells", value = FALSE))
                 ),
-                
+                fluidRow(
+                  column(6,checkboxInput("checklabel1", label = "Check for cell  group labelling", value = TRUE)),
+                  column(6,checkboxInput("checklabel2", label = "Check for cell  group labelling", value = TRUE))
+                ),
                 fluidRow(
                   column(6,conditionalPanel(
                     condition = "input.subsa ==true",uiOutput("subsaui") #generate ident list for left plot
@@ -211,6 +214,7 @@ ui <- dashboardPage(
                 uiOutput("tsnea"),
                
                 sliderInput("pointa", "Point Size:",min = 0, max = 5, value = 1,step=.25),
+                checkboxInput("checklabel3", label = "Check for cell  group labelling", value = TRUE),
                 checkboxInput("checkviolin", label = "Check to remove points from violin plot", value = TRUE),
                 hr(),
                 uiOutput("identdef"),
@@ -267,6 +271,7 @@ ui <- dashboardPage(
                   sliderInput("pctslider", "Percent Expressed:",min =0, max = 1, value =c(0.1,1)),
                   uiOutput("avgexpslider"),
                   sliderInput("pointclust", "Point Size:",min = 0, max = 5, value = 1,step=.25),
+                  checkboxInput("checklabel4", label = "Check for cell  group labelling", value = TRUE),
                   downloadButton('downloadclustplot', 'Download Plot'),
                   downloadButton('downloadclustertab', 'Download Table'))
             ),
@@ -342,13 +347,13 @@ ui <- dashboardPage(
     ),#end of tabitem
     ######################################################################################################################################
     tabItem(tabName = "network",
-            box(title = "Controls",solidHeader = TRUE,width=12,status='primary',
-                fluidRow(
-                column(6,uiOutput("pairbynet")),
-                column(6,h1(""))),
-                fluidRow(
-                  column(6,sliderInput("perc_cells2", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10)),
-                  column(6,uiOutput("filternet"))),
+            box(title = "Network",solidHeader = TRUE,width=8,status='primary',
+                #visNetworkOutput("lrnetwork", height = 800)
+                plotOutput("lrnetwork", height = 700)
+            ),#End box
+            box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
+                uiOutput("pairbynet"),
+                sliderInput("perc_cells2", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10),
                 fluidRow(
                   column(6,checkboxInput("checksource2", label = "Check to select by source", value = TRUE)),
                   column(6,checkboxInput("checkevi2", label = "Check to select by evidence", value = TRUE)),
@@ -361,14 +366,16 @@ ui <- dashboardPage(
                     column(6,uiOutput('evidence2'))
                   )
                 ),
-            fluidRow(
-              column(6,actionButton("lrngo", "Change Parameters and Run")),
-              column(6,downloadButton('dwldnet', 'Download Network plot'))
-                     )),#End box
-            box(title = "Network",solidHeader = TRUE,width=12,status='primary',
-                #visNetworkOutput("lrnetwork", height = 800)
-                plotOutput("lrnetwork", height = 800)
-            ),#End box
+                checkboxInput("checkgrp", label = "Check to select Group(s)", value = FALSE),
+                  conditionalPanel(
+                    condition = "input.checkgrp ==true",
+                    uiOutput('checkgrp')
+                  ),
+              actionButton("lrnset", "Set filters"),
+              uiOutput("filternet"),
+              actionButton("lrngo", "Run")
+              #column(6,downloadButton('dwldnet', 'Download Network plot'))
+                     ),#End box
             box(title= 'GO Analysis', solidHeader = T, width=12, status = 'primary',
                 uiOutput('grp1')
             ),
