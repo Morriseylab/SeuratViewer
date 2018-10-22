@@ -607,7 +607,7 @@ server <- function(input, output,session) {
                        c(input$bigene_genea,input$bigene_geneb),
                        limita=input$bigene_rangea,
                        limitb=input$bigene_rangeb,
-                       marker_size = input$bigene_pointsize,type=input$bigenedimr))
+                       marker_size = input$bigene_pointsize,type=input$bigenedim))
       dev.off()
     })
   
