@@ -753,7 +753,6 @@ server <- function(input, output,session) {
     validate(need(is.null(scrna@meta.data$var_cluster)==F,"var_cluster not found in meta data"))
     scrna@meta.data$var_cluster=as.numeric(as.character(scrna@meta.data$var_cluster))
     tsnea=input$tsnea
-    tsneb=input$tsneb
     feature=names(met[met==TRUE])
     tsne=names(met[met==FALSE])
     
@@ -765,6 +764,11 @@ server <- function(input, output,session) {
       plot1=FeaturePlot(object = scrna, features.plot = tsnea, cols.use = c("grey", "blue"),vector.friendly = T,reduction.use = input$umapdeg,do.return=T,pt.size = input$pointa)
       plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
     }
+    if(input$setident==T){
+      setident=input$setidentlist
+    }else{
+      setident="ident"
+    }
    
     markers=markergenes()
       s=input$markergenes_rows_selected # get  index of selected row from table
@@ -773,9 +777,9 @@ server <- function(input, output,session) {
                         no.legend = FALSE,pt.size = input$pointa,do.return = T)
       plot2=eval(parse(text=paste("plot2$`",rownames(markers),"`",sep="")))
       if(input$checkviolin ==T){
-      plot3=VlnPlot(object = scrna, features.plot = rownames(markers),group.by = input$setidentlist,do.return = T,x.lab.rot=TRUE,point.size.use=0,cols.use=cpallette)
-      }else{plot3=VlnPlot(object = scrna, features.plot = rownames(markers),group.by = input$setidentlist,do.return = T,x.lab.rot=TRUE,cols.use=cpallette)}
-      plot4=RidgePlot(object = scrna, features.plot = rownames(markers),group.by = input$setidentlist,do.return = T,x.lab.rot=TRUE,cols.use=cpallette)
+      plot3=VlnPlot(object = scrna, features.plot = rownames(markers),group.by = setident,do.return = T,x.lab.rot=TRUE,point.size.use=0,cols.use=cpallette)
+      }else{plot3=VlnPlot(object = scrna, features.plot = rownames(markers),group.by = setident,do.return = T,x.lab.rot=TRUE,cols.use=cpallette)}
+      plot4=RidgePlot(object = scrna, features.plot = rownames(markers),group.by = setident,do.return = T,x.lab.rot=TRUE,cols.use=cpallette)
       
     
       row1=plot_grid(plot1,plot2,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
