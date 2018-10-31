@@ -54,7 +54,7 @@ bigene_plot <- function (scrna, gene_probes, x=1,y=2, limita=c(1,100), limitb=c(
   
   p <- ggplot(proj_gene, aes(Component.1, Component.2)) +
     geom_point(aes(colour = value), size = marker_size) +
-    scale_color_manual(values=c("#E41A1C","#377EB8","#4DAF4A", 'grey90'),drop=F) +
+    scale_color_manual(values=c("#E41A1C","#377EB8","#4DAF4A", 'grey75'),drop=F) +
     theme(legend.key.size = unit(10,"point")) + xlab(paste("Component", x)) +
     ylab(paste("Component", y))
   
