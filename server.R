@@ -1109,7 +1109,6 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       dotplot()
     })
-    dev.off()
   })
   
    ###################################################
