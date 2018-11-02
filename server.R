@@ -361,6 +361,21 @@ server <- function(input, output,session) {
     selectInput("umapb","Dimensionality Reduction",dimr,selected = "tsne")})
   })
   
+  #Genelist for tsne plot A
+  output$gene1aui = renderUI({
+    scrna=fileload()
+    options=rownames(scrna@data)
+    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
+      selectInput('gene1a', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
+  })
+  
+  #Genelist for tsne plot B
+  output$gene2aui = renderUI({
+    scrna=fileload()
+    options=rownames(scrna@data)
+    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
+      selectInput('gene2a', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
+  }) 
   
   #Based on all use input, generate plots using the right category and dimensionality reduction methods
   comptsne2 = reactive({
@@ -477,6 +492,14 @@ server <- function(input, output,session) {
     selectInput("umapint","Dimensionality Reduction",dimr,selected = "tsne")})
   })
   
+  #Genelist for tsne plot 
+  output$geneinterui = renderUI({
+    scrna=fileload()
+    options=rownames(scrna@data)
+    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
+      selectInput('geneinter', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
+  })
+  
  #Render the tsne plot using plotly
   output$intertsne = renderPlotly({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
@@ -550,6 +573,22 @@ server <- function(input, output,session) {
     dimr=names(scrna@dr)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       selectInput("bigenedim","Dimensionality Reduction",dimr,selected = "tsne")})
+  })
+  
+  #Genelist A for bigene plot 
+  output$bigene_geneaui = renderUI({
+    scrna=fileload()
+    options=rownames(scrna@data)
+    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
+      selectInput('bigene_genea', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
+  })
+  
+  #Genelist B for bigene plot 
+  output$bigene_genebui = renderUI({
+    scrna=fileload()
+    options=rownames(scrna@data)
+    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
+      selectInput('bigene_geneb', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[2])})
   })
   
 #plot the bi-gene plot
@@ -902,6 +941,14 @@ server <- function(input, output,session) {
       selectInput("umapge","Dimensionality Reduction",dimr,selected = "tsne")})
   })
   
+  #Genelist for Gene Expression Plot
+  output$geneidui = renderUI({
+    scrna=fileload()
+    options=rownames(scrna@data)
+    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
+      selectInput('geneid', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
+  })
+  
   #For any gene entered, generate a feature plot, violin plot and a ridge plot
   geplots = reactive({
     scrna=fileload()
@@ -1091,15 +1138,31 @@ server <- function(input, output,session) {
     selectInput("setdotvar","Choose category",var,"pick one")
   })
   
+  #Genelist for Dot plot
+  output$enterchoice = renderUI({
+    scrna=fileload()
+    options=rownames(scrna@data)
+    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
+      selectInput('genelistfile2', label='Gene Name',options,multiple=TRUE, selectize=TRUE,selected=options[1])})
+  })
+  
   #read in user-defined list of genes and generate the dot plot
   dotplot= reactive({
     scrna=fileload()
-    validate(
-      need(input$genelistfile, "Please Upload Genelist")
-    )
+    
+    if(input$radiofileup=="upload"){
+      validate(
+        need(input$genelistfile, "Please Upload Genelist")
+      )
     file=input$genelistfile
     df=fread(file$datapath,header = FALSE) #get complete gene list as string
     genes=as.vector(df$V1)
+    }else if(input$radiofileup=="enter"){
+      validate(
+        need(input$genelistfile2, "Please Select Genes")
+      )
+      genes=input$genelistfile2
+    }
     g1=DotPlot(object = scrna, genes.plot = genes, plot.legend = TRUE,group.by=input$setdotvar,do.return=TRUE) 
     return(g1) 
   })
@@ -1214,7 +1277,7 @@ server <- function(input, output,session) {
      org=as.character(file$organism[file$projects==input$projects])
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Source))
-     checkboxGroupInput('source', label='Select source(s)',choices=options,selected=options[1])
+     checkboxGroupInput('source', label='Select source(s)',choices=options,selected=options[2])
    })
    
    #Check if the data is from mouse/human and use the approprite file to list the options for evidence
@@ -1374,7 +1437,7 @@ server <- function(input, output,session) {
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Source))
      #checkboxGroupInput('source2', label='Select source(s)',choices=options,selected=options[1])
-     selectInput('source2', label='Select source(s)',options,multiple=TRUE, selectize=TRUE,selected=options[1])
+     selectInput('source2', label='Select source(s)',options,multiple=TRUE, selectize=TRUE,selected=options[2])
    })
    
    #Check if the data is from mouse/human and use the approprite file to list the options for evidence
@@ -1463,7 +1526,8 @@ server <- function(input, output,session) {
        #network <- network(edges, vertex.attr = nodes, matrix.type = "edgelist", ignore.eval = FALSE)
        
        routes_igraph <- graph_from_data_frame(d = edges, vertices = nodes, directed = TRUE)
-       plot(routes_igraph, edge.arrow.size = 0.2,vertex.label.color="black",edge.label.color="black",vertex.color=col,edge.color=edge.col,edge.width=width,edge.arrow.width=3)
+       curves <-autocurve.edges2(routes_igraph)
+       plot(routes_igraph, edge.arrow.size = 0.2,vertex.label.color="black",edge.label.color="black",vertex.color=col,edge.color=edge.col,edge.width=width,edge.arrow.width=9.5,edge.arrow.size=9.5,edge.curved=curves)
      })
    })
    
@@ -1558,7 +1622,7 @@ server <- function(input, output,session) {
      org=as.character(file$organism[file$projects==input$projects])
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Source))
-     checkboxGroupInput('source3', label='Select source(s)',choices=options,selected=options[1])
+     checkboxGroupInput('source3', label='Select source(s)',choices=options,selected=options[2])
    })
    
    #Check if the data is from mouse/human and use the approprite file to list the options for evidence

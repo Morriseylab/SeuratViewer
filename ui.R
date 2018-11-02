@@ -124,7 +124,7 @@ ui <- dashboardPage(
                     uiOutput("tsnea2") # Generate list of variables for left plot
                   ),
                   conditionalPanel(
-                    condition = "input.categorya2 == 'geneexp'",textInput("gene1a", label = "Gene Name",value = "Axin2")
+                    condition = "input.categorya2 == 'geneexp'",uiOutput("gene1aui")
                   )
                   ),
                   column(6,conditionalPanel(
@@ -132,7 +132,7 @@ ui <- dashboardPage(
                     uiOutput("tsneb2")  # Generate list of variables for right plot
                   ),
                   conditionalPanel(
-                    condition = "input.categoryb2 == 'geneexp'",textInput("gene2a", label = "Gene Name",value = "Axin2")
+                    condition = "input.categoryb2 == 'geneexp'",uiOutput("gene2aui")
                   )
                   )),
                 fluidRow(
@@ -171,7 +171,7 @@ ui <- dashboardPage(
                     uiOutput("intervar")
                   ),
                   conditionalPanel(
-                    condition = "input.intercat == 'geneexp'",textInput("geneinter", label = "Gene Name",value = "Axin2")
+                    condition = "input.intercat == 'geneexp'",uiOutput("geneinterui")
                   )
                   )),
                 sliderInput("umap_pointsize", "Point Size:",min = 0, max = 5, value = 1,step=.25)
@@ -190,11 +190,9 @@ ui <- dashboardPage(
               box(
                 title = "Controls",solidHeader = TRUE,width=4,status='primary',
                 uiOutput("bigenedim"),
-                textInput("bigene_genea", label = "Gene A",value = "Sox2"),
-                #sliderInput("bigene_rangea", "Expression Limits Gene A(log2(UMI))",min = 0, max = 10, value = 0.5,step=.25),
+                uiOutput("bigene_geneaui"),
                 uiOutput("bigene_rangea"),
-                textInput("bigene_geneb", label = "Gene B",value = "Sox9"),
-                #sliderInput("bigene_rangeb", "Expression Limits Gene B(log2(UMI))",min = 0, max = 10, value = 1.5,step=.25),
+                uiOutput("bigene_genebui"),
                 uiOutput("bigene_rangeb"),
                 sliderInput("bigene_pointsize", "Point Size:",min = 0, max = 5, value = 1,step=.25),
                 downloadButton('downloadbiplot', 'Download Bigene plot')
@@ -253,7 +251,7 @@ ui <- dashboardPage(
             fluidRow(
               box(title = "Controls",solidHeader = TRUE,width=3,status='primary',
                   uiOutput("umapge"),
-                  textInput("geneid", label = "Enter Gene",value = ""),
+                  uiOutput("geneidui"),
                   sliderInput("genenid_pointsize", "Point Size:",min = 0, max = 5, value = 1,step=.25),
                   downloadButton('downloadplotge', 'Download Plot'))
             )#End FluidRow
@@ -282,8 +280,15 @@ ui <- dashboardPage(
     ######################################################################################################################################
     tabItem(tabName = "dotplot",
             box(title = "Controls",solidHeader = TRUE,width=12,status='primary',
+                radioButtons("radiofileup", label = "File input type",choices = list("Enter gene names" = "enter", "Upload List" = "upload"),selected = "upload"),
                 fluidRow(
-                  column(6,fileInput('genelistfile', 'Upload Text File',accept=c('text/csv','text/comma-separated-values,text/plain','.txt'))),
+                  column(6,
+                         conditionalPanel(
+                           condition = "input.radiofileup =='upload'",fileInput('genelistfile', 'Upload Text File',accept=c('text/csv','text/comma-separated-values,text/plain','.txt'))),
+                         conditionalPanel(
+                           condition = "input.radiofileup =='enter'",uiOutput("enterchoice"))
+                         ),
+                
                   column(6,uiOutput("setdotvar"))
                 )
             ),
