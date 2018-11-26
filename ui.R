@@ -22,9 +22,17 @@ ui <- dashboardPage(
                                         )),
                    sidebarMenu(
                      menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-                     uiOutput("projects"),
-                     #actionButton('load',"Load Project", icon = NULL),
+                     radioButtons("filetype", label = h4("Select file input type"),inline=F,choices = list( "Select from list" = 'list',"Upload RData" = 'upload'),selected = 'list'),
+                     conditionalPanel(
+                       condition = "input.filetype == 'list'",
+                       uiOutput("projects")
+                     ),
+                     conditionalPanel(
+                       condition = "input.filetype == 'upload'",
+                       fileInput('rdatafileupload', 'Upload RDS File')
+                     ),
                      menuItem('Project Summary', tabName = 'summ', icon = icon('hand-o-right')),
+                     menuItem('Parameters Calculated', tabName = 'calcparams', icon = icon('hand-o-right')),
                      menuItem('Variable Genes', tabName = 'vargenes', icon = icon('hand-o-right')),
                      menuItem('Principle component Analysis', tabName = 'pca', icon = icon('hand-o-right')),
                      menuItem('tSNE Plots', tabName = 'tplot', icon = icon('hand-o-right'),
@@ -86,6 +94,14 @@ ui <- dashboardPage(
                 verbatimTextOutput("prjsumm")
               )
       ),
+    ######################################################################################################################################
+    tabItem(tabName = "calcparams",
+            box(
+              width = 12, status = "primary",solidHeader = TRUE,
+              title = "Parameters calculated",
+              uiOutput("plotsubtab")
+            )
+    ),
       
     ######################################################################################################################################
     tabItem(tabName = "vargenes",
@@ -252,6 +268,7 @@ ui <- dashboardPage(
               box(title = "Controls",solidHeader = TRUE,width=3,status='primary',
                   uiOutput("umapge"),
                   uiOutput("geneidui"),
+                  checkboxInput("checkviolin2", label = "Check to remove points from violin plot", value = TRUE),
                   sliderInput("genenid_pointsize", "Point Size:",min = 0, max = 5, value = 1,step=.25),
                   downloadButton('downloadplotge', 'Download Plot'))
             )#End FluidRow

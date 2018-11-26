@@ -149,19 +149,25 @@ server <- function(input, output,session) {
   
   #Load Rdata
   fileload <- reactive({
-    # validate(need(input$load != 0,"Load dataset"))
-    # 
-    # if(input$load == 0)
-    #   return()
-    # isolate({
+    if(input$filetype == 'list'){
     inFile = paste('data/',as.character(input$projects),'.RData',sep = '')
-    load(inFile)
-    #loaddata=scrna
+    load(inFile)}
+    else{
+      file=input$rdatafileupload
+      readRDS(file$datapath)
+    }
     return(scrna)
-    # scrna <<- scrna
-    # })
   })
-
+  
+  #Create variable for project name
+  project = reactive({
+    if(input$filetype == 'list'){
+      project= input$rdatafileupload
+    }else if(input.filetype == 'upload'){
+      project= input$project
+    }
+      return(project)
+  })
   ###################################################
   ###################################################
   ################## Project Summary  ###############
@@ -203,6 +209,76 @@ server <- function(input, output,session) {
     })
   })
   
+  ######################################################################################################
+  ######################################################################################################
+  ###################### CALC PARAMETERS TAB ############################################################
+  ######################################################################################################
+  ######################################################################################################
+  #Create subtabs for the QC plots
+  output$plotsubtab <- renderUI({
+    tabsetPanel(id = "subTabPanel1",
+                tabPanel("Create Seurat Object",tableOutput("seurobj")),
+                tabPanel("Filter Cells and Scale Data",tableOutput('filtobj')),
+                tabPanel("Dimension Reduction",tableOutput('dimred')),
+                tabPanel("Find Clusters",DT::dataTableOutput('vargenes'))
+    )
+    
+  })
+  
+  #Seuarat Object
+  seurobj= reactive({
+    scrna=fileload()
+    ulist=scrna@calc.params$CreateSeuratObject
+    ulist=ulist[1:11]
+    dd  <-  as.data.frame(matrix(unlist(ulist), nrow=length(unlist(ulist[1]))))
+    t=unlist(ulist)
+    colnames(dd)=names(t)
+    return(dd)
+  })
+  
+  output$seurobj <- renderTable({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      seurobj()
+    })
+  })
+  
+  #Filter criteria
+  filtobj= reactive({
+    scrna=fileload()
+    ulist=scrna@calc.params$FilterCells
+    t=unlist(ulist)
+    vars=scrna@calc.params$ScaleData$vars.to.regress
+    vars=paste(vars,sep="",collapse=",")
+    vars=as.data.frame(vars)
+    rownames(vars)="variables regressed"
+    colnames(vars)="t"
+    t=as.data.frame(t)
+    t=rbind(t,vars)
+    return(t)
+  })
+  
+  output$filtobj = renderTable({
+    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+      filtobj()    })
+  })
+  
+  #Dimension reduction
+  dimred= reactive({
+    scrna=fileload()
+    pca=scrna@calc.params$RunPCA$pcs.compute
+    tsne=length(scrna@calc.params$RunTSNE$dims.use)
+    umap=length(scrna@calc.params$RunUMAP$dims.use)
+    umap.nei=scrna@calc.params$RunUMAP$n_neighbors
+    df=as.data.frame(c(pca,tsne,umap,umap.nei))
+    rownames(df)=c("No.PCs.computed","tSNE.dims.used","UMAP.dims.used","UMAP.n_neighbors")
+    colnames(df)="values"
+    return(df)
+  })
+  
+  output$dimred = renderTable({
+    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+      dimred()    })
+  })
   ######################################################################################################
   ######################################################################################################
   ###################### VARIABLE GENES TAB ############################################################
@@ -364,7 +440,7 @@ server <- function(input, output,session) {
   #Genelist for tsne plot A
   output$gene1aui = renderUI({
     scrna=fileload()
-    options=rownames(scrna@data)
+    options=sort(rownames(scrna@data))
     withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
       selectInput('gene1a', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
   })
@@ -372,7 +448,7 @@ server <- function(input, output,session) {
   #Genelist for tsne plot B
   output$gene2aui = renderUI({
     scrna=fileload()
-    options=rownames(scrna@data)
+    options=sort(rownames(scrna@data))
     withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
       selectInput('gene2a', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
   }) 
@@ -395,7 +471,7 @@ server <- function(input, output,session) {
     }else if(input$categorya2=="geneexp"){
       validate(need(input$gene1a %in% rownames(scrna@data),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
       plot1=FeaturePlot(object = scrna,reduction.use=input$umapa,vector.friendly = T, features.plot = input$gene1a, cols.use = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2,no.legend = FALSE)
-      plot1=eval(parse(text=paste("plot1$",input$gene1a,sep="")))
+      plot1=eval(parse(text=paste("plot1$`",input$gene1a,"`",sep="")))
     }else if(input$categorya2 =="var" & input$tsnea2 %in% tsne & input$subsa==FALSE){
       plot1=DimPlot(object = scrna,reduction.use=input$umapa,group.by = tsnea,no.legend = FALSE,do.label = input$checklabel1,vector.friendly = T, do.return=T,pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
     }else if(input$categorya2 =="var" & input$tsnea2 %in% tsne & input$subsa==TRUE){
@@ -404,12 +480,12 @@ server <- function(input, output,session) {
       plot1=DimPlot(object = scrna,reduction.use=input$umapa,group.by = tsnea,cells.highlight=cells,vector.friendly = T,no.legend = FALSE,do.label =F, do.return=T,pt.size = input$pointa2, cols.use=cpallette)
     }else if(input$categorya2 =="var" & input$tsnea2 %in% feature & input$subsa==FALSE){
       plot1=FeaturePlot(object = scrna,reduction.use=input$umapa,vector.friendly = T, features.plot = tsnea, cols.use = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2,no.legend = FALSE)
-      plot1=eval(parse(text=paste("plot1$",tsnea,sep="")))
+      plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
     }else if(input$categorya2 =="var" & input$tsnea2 %in% feature & input$subsa==TRUE){
       t=paste('rownames(scrna@meta.data[scrna@meta.data$',input$tsnea2, '>',input$tsnea2lim[1], ' & metadata$',input$tsnea2, '<', input$tsnea2lim[2],',])',sep="")
       cells=eval(parse(text=t))
       plot1=FeaturePlot(object = scrna,reduction.use=input$umapa, features.plot = tsnea,cells.use = cells,vector.friendly = T, cols.use = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2,no.legend = FALSE)
-      plot1=eval(parse(text=paste("plot1$",tsnea,sep="")))
+      plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
     }
     
     if(input$categoryb2 =="clust" & input$subsb==F){
@@ -420,7 +496,7 @@ server <- function(input, output,session) {
     }else if(input$categoryb2=="geneexp"){
       validate(need(input$gene2a %in% rownames(scrna@data),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
       plot2=FeaturePlot(object = scrna,reduction.use=input$umapb,vector.friendly = T, features.plot = input$gene2a, cols.use = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2,no.legend = FALSE)
-      plot2=eval(parse(text=paste("plot2$",input$gene2a,sep="")))
+      plot2=eval(parse(text=paste("plot2$`",input$gene2a,"`",sep="")))
     }else if(input$categoryb2 =="var" & input$tsneb2 %in% tsne & input$subsb==F){
       plot2=DimPlot(object = scrna,reduction.use=input$umapb,group.by = tsneb,no.legend = FALSE,vector.friendly = T,do.label = input$checklabel2, do.return=T,pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
     }else if(input$categoryb2 =="var" & input$tsneb2 %in% tsne & input$subsb==TRUE){
@@ -429,12 +505,12 @@ server <- function(input, output,session) {
       plot2=DimPlot(object = scrna,reduction.use=input$umapb,group.by = tsneb,cells.highlight=cells,vector.friendly = T,no.legend = FALSE,do.label = F, do.return=T,pt.size = input$pointa2, cols.use=cpallette)
     }else if(input$categoryb2 =="var" & input$tsneb2 %in% feature & input$subsb==F){
       plot2=FeaturePlot(object = scrna,reduction.use=input$umapb, features.plot = tsneb,vector.friendly = T, cols.use = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2,no.legend = FALSE)
-      plot2=eval(parse(text=paste("plot2$",tsneb,sep="")))
+      plot2=eval(parse(text=paste("plot2$`",tsneb,"`",sep="")))
     }else if(input$categoryb2 =="var" & input$tsneb2 %in% feature & input$subsb==TRUE){
       t=paste('rownames(scrna@meta.data[scrna@meta.data$',input$tsneb2, '>',input$tsneb2lim[1], ' & metadata$',input$tsneb2, '<', input$tsneb2lim[2],',])',sep="")
       cells=eval(parse(text=t))
       plot2=FeaturePlot(object = scrna,reduction.use=input$umapb, features.plot = tsneb,vector.friendly = T,cells.use = cells, cols.use = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2,no.legend = FALSE)
-      plot2=eval(parse(text=paste("plot2$",tsneb,sep="")))
+      plot2=eval(parse(text=paste("plot2$`",tsneb,"`",sep="")))
     }
     
     p=plot_grid(plot1,plot2)
@@ -495,7 +571,7 @@ server <- function(input, output,session) {
   #Genelist for tsne plot 
   output$geneinterui = renderUI({
     scrna=fileload()
-    options=rownames(scrna@data)
+    options=sort(rownames(scrna@data))
     withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
       selectInput('geneinter', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
   })
@@ -528,12 +604,12 @@ server <- function(input, output,session) {
       if(input$intercat=="geneexp"){
         validate(need(input$geneinter %in% rownames(scrna@data),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
         plot1=FeaturePlot(object = scrna,reduction.use=input$umapint, features.plot = input$geneinter,vector.friendly = T, cols.use = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
-        plot1=eval(parse(text=paste("plot1$",input$geneinter,sep="")))
+        plot1=eval(parse(text=paste("plot1$`",input$geneinter,"`",sep="")))
       }else if(input$intercat =="var" & tsnea %in% tsne){
         plot1=DimPlot(object = scrna,reduction.use=input$umapint,group.by = tsnea,no.legend = FALSE,do.label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 7, cols.use=cpallette,vector.friendly = T)
       }else if(input$intercat =="var" & tsnea %in% feature){
         plot1=FeaturePlot(object = scrna,reduction.use=input$umapint, features.plot = tsnea,vector.friendly = T, cols.use = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
-        plot1=eval(parse(text=paste("plot1$",tsnea,sep="")))
+        plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
       }
       plot=ggplotly(plot1)
       dev.off()
@@ -578,7 +654,7 @@ server <- function(input, output,session) {
   #Genelist A for bigene plot 
   output$bigene_geneaui = renderUI({
     scrna=fileload()
-    options=rownames(scrna@data)
+    options=sort(rownames(scrna@data))
     withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
       selectInput('bigene_genea', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
   })
@@ -586,7 +662,7 @@ server <- function(input, output,session) {
   #Genelist B for bigene plot 
   output$bigene_genebui = renderUI({
     scrna=fileload()
-    options=rownames(scrna@data)
+    options=sort(rownames(scrna@data))
     withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
       selectInput('bigene_geneb', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[2])})
   })
@@ -614,8 +690,8 @@ server <- function(input, output,session) {
     genes=c(input$bigene_genea,input$bigene_geneb)
     my.data=FetchData(scrna,c("ident",genes))
     colnames(my.data)=c("ident","gene1","gene2")
-    my.data= my.data %>% group_by(ident) %>% summarize(Gene1_ct=sum(gene1>0), Gene2_ct=sum(gene2 > 0)) 
-    colnames(my.data)=c("Cell Group",genes[1],genes[2])
+    my.data= my.data %>% group_by(ident) %>% summarize(Gene1_ct=sum(gene1>0), Gene2_ct=sum(gene2 > 0),Both_ct=sum(gene2 > 0 & gene1>0)) 
+    colnames(my.data)=c("Cell Group",genes[1],genes[2],"both")
     return(my.data)
     })
   })
@@ -676,7 +752,7 @@ server <- function(input, output,session) {
   output$identdef = renderUI({
     scrna=fileload()
     options=names(scrna@misc)
-    selectInput("identdef", "First cluster/variable of comparison",options)
+    selectInput("identdef", "First cluster/variable of comparison (Cell Group 1)",options)
   })
   
   #Generate drop down menu for the categories starting with "var" that can be set as the new ident/variable of comparison
@@ -749,6 +825,8 @@ server <- function(input, output,session) {
         markers$Link=paste0("<a href='",url,"'target='_blank'>",rownames(markers),"</a>")
       }
     })
+    colnames(markers)[4]="Percentage expressed in Cell Group 1"
+    colnames(markers)[5]="Percentage expressed in Cell Group 2"
     return(markers)
   })
   
@@ -944,7 +1022,7 @@ server <- function(input, output,session) {
   #Genelist for Gene Expression Plot
   output$geneidui = renderUI({
     scrna=fileload()
-    options=rownames(scrna@data)
+    options=sort(rownames(scrna@data))
     withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
       selectInput('geneid', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
   })
@@ -957,7 +1035,9 @@ server <- function(input, output,session) {
     plot2=FeaturePlot(object = scrna, features.plot = input$geneid, cols.use = c("grey","blue"),reduction.use = input$umapge,vector.friendly = T,
                       no.legend = FALSE,pt.size = input$genenid_pointsize,do.return = T)
     plot2=eval(parse(text=paste("plot2$`",input$geneid,"`",sep="")))
-    plot3=VlnPlot(object = scrna, features.plot = input$geneid,group.by = "ident",do.return = T,x.lab.rot=TRUE,cols.use=cpallette)
+    if(input$checkviolin2 ==T){
+      plot3=VlnPlot(object = scrna, features.plot = input$geneid,group.by = "ident",do.return = T,x.lab.rot=TRUE,point.size.use=0,cols.use=cpallette)
+    }else{plot3=VlnPlot(object = scrna, features.plot = input$geneid,group.by = "ident",do.return = T,x.lab.rot=TRUE,cols.use=cpallette)}
     plot4=RidgePlot(object = scrna, features.plot = input$geneid,group.by = "ident",do.return = T,x.lab.rot=TRUE,cols.use=cpallette)
     row1=plot_grid(plot2,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
     row2=plot_grid(plot3,plot4,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
@@ -1141,7 +1221,7 @@ server <- function(input, output,session) {
   #Genelist for Dot plot
   output$enterchoice = renderUI({
     scrna=fileload()
-    options=rownames(scrna@data)
+    options=sort(rownames(scrna@data))
     withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
       selectInput('genelistfile2', label='Gene Name',options,multiple=TRUE, selectize=TRUE,selected=options[1])})
   })
@@ -1678,6 +1758,7 @@ server <- function(input, output,session) {
      tab = tab %>% spread(Receptor_cluster,Freq)
      rownames(tab)=tab$Lig_cluster
      tab= tab %>% dplyr::select(-Lig_cluster)
+     tab=Filter(var, tab)
      if(input$clusterby=="both"){
        row=TRUE
        column=TRUE
