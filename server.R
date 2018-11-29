@@ -94,7 +94,7 @@ server <- function(input, output,session) {
   ###################################################
   output$userloggedin = renderMenu({
     msg= paste("Logged in as ",input$username,sep="")
-    prj= paste("Data: ",input$projects,sep="")
+    prj= paste("Data: ",projectname(),sep="")
     dropdownMenu(type = "notifications", badgeStatus = "info",
                  notificationItem(icon = icon("user"), status = "info",msg),
                  notificationItem(icon = icon("book"), status = "info",prj))
@@ -116,7 +116,7 @@ server <- function(input, output,session) {
   })
   
   #Get Project list and populate drop-down
-  output$projects = renderUI({
+  output$projectlist = renderUI({
     excel=readexcel()
     prj=as.character(excel$projects)
     selectInput("projects","Select a project",as.list(sort(as.character(prj))))
@@ -154,17 +154,20 @@ server <- function(input, output,session) {
     load(inFile)}
     else{
       file=input$rdatafileupload
-      readRDS(file$datapath)
+      scrna=readRDS(file$datapath)
     }
     return(scrna)
   })
   
   #Create variable for project name
-  project = reactive({
+  projectname = reactive({
     if(input$filetype == 'list'){
+      project= input$projects
+    }else if(input$filetype == 'upload'){
       project= input$rdatafileupload
-    }else if(input.filetype == 'upload'){
-      project= input$project
+      project=project$name
+      project=strsplit(project,".RDS")
+      project=sapply(project,"[",1)
     }
       return(project)
   })
@@ -184,10 +187,15 @@ server <- function(input, output,session) {
    }else{
      prj=prj[prj$user==user,] 
    }
-   prj=prj[prj$projects==input$projects,]
-   pname=prj$projects
+   prj=prj[prj$projects==projectname(),]
+   pname=projectname()
+   if(input$filetype == 'list'){
    pdesc=prj$desc
-   porg=prj$organism
+   porg=prj$organism}
+   else{
+     pdesc=""
+     porg="prj$organism"
+   }
    scrna=fileload()
    numcells.nf=dim(scrna@raw.data)[2]
    tcells=dim(scrna@data)[2]
@@ -514,7 +522,9 @@ server <- function(input, output,session) {
     }
     
     p=plot_grid(plot1,plot2)
-    p2 <- add_sub(p, paste(input$projects,"_CompareTsne",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
+    #p2 <- add_sub(p, paste(input$projects,"_CompareTsne",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
+    p2 <- add_sub(p, paste(projectname(),"_CompareTsne",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
+    ggdraw(p2)
     ggdraw(p2)
   })
   
@@ -529,7 +539,7 @@ server <- function(input, output,session) {
   #Handler to download plot
   output$downloadtsneplot <- downloadHandler(
     filename = function() {
-      paste0(input$projects,"_CompareTsne.pdf",sep="")
+      paste0(projectname(),"_CompareTsne.pdf",sep="")
     },
     content = function(file){
       pdf(file,width=14,height = 8,useDingbats=FALSE)
@@ -676,7 +686,7 @@ server <- function(input, output,session) {
                     limitb=input$bigene_rangeb,
                     marker_size = input$bigene_pointsize,
                     type=input$bigenedim)
-      p2 <- add_sub(p, paste(input$projects,"_Bigeneplot",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
+      p2 <- add_sub(p, paste(projectname(),"_Bigeneplot",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
       ggdraw(p2)
     })
   })
@@ -714,7 +724,7 @@ server <- function(input, output,session) {
   #Download bi-gene plot
   output$downloadbiplot <- downloadHandler(
     filename = function() {
-      paste0(input$projects,"_",input$bigene_genea,"_",input$bigene_geneb,"_Bigene.pdf",sep="")
+      paste0(projectname(),"_",input$bigene_genea,"_",input$bigene_geneb,"_Bigene.pdf",sep="")
     },
     content = function(file){
       pdf(file,width=9,height = 9,useDingbats=FALSE)
@@ -847,7 +857,7 @@ server <- function(input, output,session) {
   
   #Download function to download the table of marker genes
   output$downloaddeg <- downloadHandler(
-    filename = function() { paste(input$projects, '.csv', sep='') },
+    filename = function() { paste(projectname(), '.csv', sep='') },
     content = function(file) {
       write.csv(markergenes(), file)
     })
@@ -902,7 +912,7 @@ server <- function(input, output,session) {
       row1=plot_grid(plot1,plot2,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
       row2=plot_grid(plot3,plot4,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
     p=plot_grid(row1,row2,align = 'v', rel_heights = c(1.7, 1),axis="tb",ncol=1)
-    p2 <- add_sub(p, paste(input$projects,"_Differential_Exp",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
+    p2 <- add_sub(p, paste(projectname(),"_Differential_Exp",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
     ggdraw(p2)
   })
   
@@ -916,7 +926,10 @@ server <- function(input, output,session) {
   #Download plot function
   output$downloadplot <- downloadHandler(
     filename = function() {
-      paste0("Plot.pdf")
+      markers=markergenes()
+      s=input$markergenes_rows_selected # get  index of selected row from table
+      markers=markers[s, ,drop=FALSE]
+      paste0(projectname(),"_",rownames(markers),"_DEG.pdf",sep="")
     },
     content = function(file){
       pdf(file, width = 12, height = 11,useDingbats=FALSE)
@@ -982,7 +995,7 @@ server <- function(input, output,session) {
         highcol="blue"}
       p=DoHeatmap(object = scrna, genes.use = rownames(markers)[1:input$heatmapgenes],group.by = input$hmpgrp, draw.line= T,
                   group.label.rot= T, col.low=lowcol, col.mid =midcol ,col.high = highcol,slim.col.label=TRUE)
-      p2 <- add_sub(p, paste(input$projects,"_Heatmap",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
+      p2 <- add_sub(p, paste(projectname(),"_Heatmap",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
       ggdraw(p2)
     })
   })
@@ -997,7 +1010,7 @@ server <- function(input, output,session) {
   #Download function for the heatmap
   output$downloadheatmap <- downloadHandler(
     filename = function() {
-      paste0("Heatmap.pdf")
+      paste0(projectname(),"_Heatmap",sep="")
     },
     content = function(file){
       pdf(file, width = 13, height = 8,useDingbats=FALSE)
@@ -1354,7 +1367,13 @@ server <- function(input, output,session) {
    #Check if the data is from mouse/human and use the approprite file to list the options for source
    output$source <- renderUI({
      file = read.csv("data/param.csv")
-     org=as.character(file$organism[file$projects==input$projects])
+     if (input$filetype=="list"){
+     org=as.character(file$organism[file$projects==input$projects])}
+     else if(input$filetype == "upload"){
+       scrna=fileload()
+       validate(need(scrna@meta.data$org,"Organism not found in meta data. Cannot proceed"))
+       org = unique(scrna@meta.data$org)
+     }
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Source))
      checkboxGroupInput('source', label='Select source(s)',choices=options,selected=options[2])
@@ -1379,7 +1398,7 @@ server <- function(input, output,session) {
    
    #For selected project and grouping variable, generate all possible ligand receptor pairs
    datasetInput = reactive({
-     results=ligrec(fileload(),pair=input$pairby,prj=input$projects,input$perc_cells)
+     results=ligrec(fileload(),pair=input$pairby,prj=projectname(),input$perc_cells,filetype=input$filetype)
    })
 
       #Subselect lig-rec pairs based on user input
@@ -1464,7 +1483,7 @@ server <- function(input, output,session) {
                      limita=input$bigene_rangea,
                      limitb=input$bigene_rangeb,
                      marker_size = input$bigene_pointsize2,type=input$bigenedimr)
-       p2 <- add_sub(p, paste(input$projects,"_Bigeneplot",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
+       p2 <- add_sub(p, paste(projectname(),"_Bigeneplot",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
        ggdraw(p2)
      })
    })
@@ -1493,7 +1512,7 @@ server <- function(input, output,session) {
        if(input$lrnset == 0)
          return()
        isolate({
-       result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2)
+       result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2,filetype=input$filetype)
        if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
        if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
        if(input$checkgrp==T){result=result[result$Lig_cluster %in% input$checkgrp2,]
@@ -1513,7 +1532,13 @@ server <- function(input, output,session) {
    #Check if the data is from mouse/human and use the approprite file to list the options for source
    output$source2 <- renderUI({
      file = read.csv("data/param.csv")
-     org=as.character(file$organism[file$projects==input$projects])
+     if (input$filetype=="list"){
+       org=as.character(file$organism[file$projects==input$projects])}
+     else if(input$filetype == "upload"){
+       scrna=fileload()
+       validate(need(scrna@meta.data$org,"Organism not found in meta data. Cannot proceed"))
+       org = unique(scrna@meta.data$org)
+     }
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Source))
      #checkboxGroupInput('source2', label='Select source(s)',choices=options,selected=options[1])
@@ -1543,7 +1568,7 @@ server <- function(input, output,session) {
      if(input$lrngo == 0)
        return()
      isolate({
-     result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2)
+     result=ligrec(fileload(),pair=input$pairbynet,prj=projectname(),input$perc_cells2,filetype=input$filetype)
      #validate(need(is.na(result)==F,"Invalid Cell group. Pick a different option"))
      if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
      if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
@@ -1649,7 +1674,13 @@ server <- function(input, output,session) {
      result=datasetInputnet()
      genes= as.character(result$ligand[result$Receptor_cluster==input$grp1 & result$Lig_cluster==input$grp2])
      file = read.csv("data/param.csv")
-     org=as.character(file$organism[file$projects==input$projects])
+     if (input$filetype=="list"){
+       org=as.character(file$organism[file$projects==input$projects])}
+     else if(input$filetype == "upload"){
+       scrna=fileload()
+       validate(need(scrna@meta.data$org,"Organism not found in meta data. Cannot proceed"))
+       org = unique(scrna@meta.data$org)
+     }
      if(org=="human"){
        dataset="hsapiens_gene_ensembl"
      }
@@ -1699,7 +1730,13 @@ server <- function(input, output,session) {
    #Check if the data is from mouse/human and use the approprite file to list the options for source
    output$source3 <- renderUI({
      file = read.csv("data/param.csv")
-     org=as.character(file$organism[file$projects==input$projects])
+     if (input$filetype=="list"){
+       org=as.character(file$organism[file$projects==input$projects])}
+     else if(input$filetype == "upload"){
+       scrna=fileload()
+       validate(need(scrna@meta.data$org,"Organism not found in meta data. Cannot proceed"))
+       org = unique(scrna@meta.data$org)
+     }
      if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
      options=as.character(unique(rl$Pair.Source))
      checkboxGroupInput('source3', label='Select source(s)',choices=options,selected=options[2])
@@ -1723,7 +1760,7 @@ server <- function(input, output,session) {
      if(input$lrhgo == 0)
        return()
      isolate({
-     result=ligrec(fileload(),pair=input$pairbyheatnet,prj=input$projects,input$perc_cells3)
+     result=ligrec(fileload(),pair=input$pairbyheatnet,prj=projectname(),input$perc_cells3,filetype=input$filetype)
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
      if(input$checksourceheat==T){result=result[result$Pair.Source %in% input$source3,]}
      if(input$checkeviheat==T){result=result[result$Pair.Evidence %in% input$evidence3,]}

@@ -74,13 +74,17 @@ bigene_plot <- function (scrna, gene_probes, x=1,y=2, limita=c(1,100), limitb=c(
 
 
 #given scrna data, variable/ ident and project name, find all lig rec pairs
-ligrec <- function(scrna,pair,prj,perc){
+ligrec <- function(scrna,pair,prj,perc,filetype){
   #get grouping variable
   var=as.character(pair)
   tt=rownames(scrna@raw.data)
   #Read ligrec file based on organism
   file = read.csv("data/param.csv")
-  org=as.character(file$organism[file$projects==prj])
+  if (filetype=="list"){
+    org=as.character(file$organism[file$projects==input$projects])}
+  else if(filetype == "upload"){
+    org = unique(scrna@meta.data$org)
+  }
   #genes=fread("data/ligrecgenes.txt",header = TRUE)
   if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
   genes=unique(c(as.character(rl$ligand),as.character(rl$receptor)))

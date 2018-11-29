@@ -8,6 +8,7 @@ library(reshape2)
 library(visNetwork)
 library(shinyBS)
 options(shiny.sanitize.errors = FALSE)
+options(shiny.maxRequestSize=600*1024^2) 
 ui <- dashboardPage(
   dashboardHeader(title = "sEuRaT",titleWidth = 350,dropdownMenuOutput("userloggedin")),
   dashboardSidebar(width = 350,
@@ -25,7 +26,7 @@ ui <- dashboardPage(
                      radioButtons("filetype", label = h4("Select file input type"),inline=F,choices = list( "Select from list" = 'list',"Upload RData" = 'upload'),selected = 'list'),
                      conditionalPanel(
                        condition = "input.filetype == 'list'",
-                       uiOutput("projects")
+                       uiOutput("projectlist")
                      ),
                      conditionalPanel(
                        condition = "input.filetype == 'upload'",
