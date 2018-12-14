@@ -81,7 +81,7 @@ ligrec <- function(scrna,pair,prj,perc,filetype){
   #Read ligrec file based on organism
   file = read.csv("data/param.csv")
   if (filetype=="list"){
-    org=as.character(file$organism[file$projects==input$projects])}
+    org=as.character(file$organism[file$projects==prj])}
   else if(filetype == "upload"){
     org = unique(scrna@meta.data$org)
   }

@@ -976,7 +976,14 @@ server <- function(input, output,session) {
   heatmap <- reactive({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       scrna=fileload()
+      if(input$shmptype =="deggene"){
       markers=markergenes()
+      markergenes=rownames(markers)[1:input$heatmapgenes]
+      }else if(input$shmptype =="topgene"){
+        markers <- FindAllMarkers(object = scrna, only.pos = TRUE, min.pct = 0.25,thresh.use = 0.25)
+        markers %>% group_by(cluster) %>% top_n(input$topn, avg_logFC)
+        markergenes=markers$gene
+      }
       if(input$hmpcol=="PuYl"){
         lowcol="darkmagenta"
         midcol="black"
@@ -993,7 +1000,7 @@ server <- function(input, output,session) {
         lowcol="red"
         midcol="white"
         highcol="blue"}
-      p=DoHeatmap(object = scrna, genes.use = rownames(markers)[1:input$heatmapgenes],group.by = input$hmpgrp, draw.line= T,
+      p=DoHeatmap(object = scrna, genes.use = markergenes,group.by = input$hmpgrp, draw.line= T,
                   group.label.rot= T, col.low=lowcol, col.mid =midcol ,col.high = highcol,slim.col.label=TRUE)
       p2 <- add_sub(p, paste(projectname(),"_Heatmap",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
       ggdraw(p2)

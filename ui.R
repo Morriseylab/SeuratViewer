@@ -252,7 +252,11 @@ ui <- dashboardPage(
     tabItem(tabName = "heatmap",
             box(
               title = "Controls",solidHeader = TRUE,width=12,status='primary',
-              uiOutput("heatmapgenes"),
+              radioButtons("shmptype", label = "Genes to use as input",choices = list("Top genes across all clusters" = "topgene", "Differentially Expressed genes" = "deggene"),selected = "topgene"),
+              conditionalPanel(
+                condition = "input.shmptype =='topgene'",sliderInput("topn", "Top n genes",min = 5, max = 15, value = 5,step=1)),
+              conditionalPanel(
+                condition = "input.shmptype =='deggene'",uiOutput("heatmapgenes")),
               uiOutput("hmpgrp"),
               selectInput("hmpcol", "Select one",c('PurpleYellow' = "PuYl",'BlueGreen' = "BuGn", 'RedYellow' = "RdYl", 'RedBlue'="RdBu"),selected = "geneexp"),
               downloadButton('downloadheatmap', 'Download Heatmap')
@@ -396,8 +400,9 @@ ui <- dashboardPage(
                   ),
               actionButton("lrnset", "Set filters"),
               uiOutput("filternet"),
-              actionButton("lrngo", "Run")
-              #column(6,downloadButton('dwldnet', 'Download Network plot'))
+              fluidRow(
+              column(6,actionButton("lrngo", "Run")),
+              column(6,downloadButton('dwldnet', 'Download Network plot')))
                      ),#End box
             box(title= 'GO Analysis', solidHeader = T, width=12, status = 'primary',
                 uiOutput('grp1')
