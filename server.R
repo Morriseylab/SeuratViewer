@@ -205,7 +205,7 @@ server <- function(input, output,session) {
    if(is.null(scrna@dr$pca)){
    maxdim=dim(scrna@dr$cca.aligned@cell.embeddings)[2]
    }else{maxdim=length(scrna@dr$pca@sdev)}
-   c.cnt=as.data.frame(table(scrna@ident))
+   c.cnt=as.data.frame(table(Idents(scrna)))
    df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),numcells.nf,tcells,tgenes,maxdim,"","",c.cnt$Freq))
    rownames(df)=c("Project name","Project Description","Organism","Total number of cells before filtration","Total nummber of cells after filtering","Total number of genes","Dimension","","Cluster-wise number of genes",as.character(c.cnt$Var1))
    colnames(df)<- NULL
@@ -383,7 +383,7 @@ server <- function(input, output,session) {
   # category is 'geneexp', display error that says cannot subselect
   output$subsaui = renderUI({
     scrna=fileload()
-    clusts=levels(scrna@ident)
+    clusts=levels(Idents(scrna))
     if(input$categorya2=="clust"){
       selectInput("selclust","Select a Cluster",clusts)
     }else if(input$categorya2=="var"){
@@ -410,7 +410,7 @@ server <- function(input, output,session) {
   # category is 'geneexp', display error that says cannot subselect
   output$subsbui = renderUI({
     scrna=fileload()
-    clusts=levels(scrna@ident)
+    clusts=levels(Idents(scrna))
     if(input$categoryb2=="clust"){
       selectInput("selclustb","Select a Cluster",clusts)
     }else if(input$categoryb2=="var"){
@@ -451,7 +451,7 @@ server <- function(input, output,session) {
   #Genelist for tsne plot A
   output$gene1aui = renderUI({
     scrna=fileload()
-    options=sort(rownames(scrna@data))
+    options=sort(rownames(GetAssayData(object = scrna)))
     withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
       selectInput('gene1a', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
   })
@@ -459,7 +459,7 @@ server <- function(input, output,session) {
   #Genelist for tsne plot B
   output$gene2aui = renderUI({
     scrna=fileload()
-    options=sort(rownames(scrna@data))
+    options=sort(rownames(GetAssayData(scrna)))
     withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
       selectInput('gene2a', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
   }) 
@@ -477,7 +477,7 @@ server <- function(input, output,session) {
     if(input$categorya2 =="clust" & input$subsa==F){
       plot1=DimPlot(object = scrna,reduction.use=input$umapa,group.by = "ident",no.legend = FALSE,do.label = input$checklabel1,vector.friendly = T, do.return=T, pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
     }else if(input$categorya2 =="clust" & input$subsa==TRUE){
-      cells=names(scrna@ident[scrna@ident==input$selclust])
+      cells=names(Idents(scrna)[Idents(scrna)==input$selclust])
       plot1=DimPlot(object = scrna,reduction.use=input$umapa,cells.highlight=cells,group.by = "ident",vector.friendly = T,no.legend = FALSE,do.label = F, do.return=T, pt.size = input$pointa2, cols.use=cpallette)
     }else if(input$categorya2=="geneexp"){
       validate(need(input$gene1a %in% rownames(scrna@data),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
@@ -502,7 +502,7 @@ server <- function(input, output,session) {
     if(input$categoryb2 =="clust" & input$subsb==F){
       plot2=DimPlot(object = scrna,reduction.use=input$umapb,group.by = "ident",no.legend = FALSE,vector.friendly = T,do.label = input$checklabel2, do.return=T,pt.size = input$pointa2,label.size = 7, cols.use=cpallette)
     }else if(input$categoryb2 =="clust" & input$subsb==TRUE){
-      cells=names(scrna@ident[scrna@ident==input$selclustb])
+      cells=names(Idents(scrna)[Idents(scrna)==input$selclustb])
       plot2=DimPlot(object = scrna,reduction.use=input$umapb,cells.highlight=cells,group.by = "ident",vector.friendly = T,no.legend = FALSE,do.label = F, do.return=T, pt.size = input$pointa2, cols.use=cpallette)
     }else if(input$categoryb2=="geneexp"){
       validate(need(input$gene2a %in% rownames(scrna@data),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
@@ -783,9 +783,9 @@ server <- function(input, output,session) {
     scrna=fileload()
     if(input$setident==T){
       scrna <- SetAllIdent(object = scrna, id = input$setidentlist)
-      options=unique(scrna@ident)
+      options=unique(Idents(scrna))
     }else{
-      options=levels(scrna@ident)
+      options=levels(Idents(scrna))
     }
     selectInput("identa", "First Cell group to compare",options)
   })
@@ -795,9 +795,9 @@ server <- function(input, output,session) {
     scrna=fileload()
     if(input$setident==T){
       scrna <- SetAllIdent(object = scrna, id = input$setidentlist)
-      options=unique(scrna@ident)
+      options=unique(Idents(scrna))
     }else{
-      options=levels(scrna@ident)
+      options=levels(Idents(scrna))
     }
     checkboxGroupInput("identb", label="Second Cell group to compare",choices=options)
   })
@@ -1318,7 +1318,7 @@ server <- function(input, output,session) {
      scrna=fileload()
      t=paste("scrna@meta.data$",input$pairby,sep="")
      options=unique(eval(parse(text=t)))
-     if(input$pairby=="ident"){options=levels(scrna@ident)}
+     if(input$pairby=="ident"){options=levels(Idents(scrna))}
      selectInput("clust1","Pick cellgroup for Receptor",options,selected=options[1])
      })
    })
@@ -1329,7 +1329,7 @@ server <- function(input, output,session) {
      scrna=fileload()
      t=paste("scrna@meta.data$",input$pairby,sep="")
      options=unique(eval(parse(text=t)))
-     if(input$pairby=="ident"){options=levels(scrna@ident)}
+     if(input$pairby=="ident"){options=levels(Idents(scrna))}
      selectInput("clust2","Pick cellgroup for Ligand",options, selected=options[2])
      })
    })
