@@ -15,7 +15,9 @@ library(shinyRGL)
 library(rgl)
 library(rglwidget)
 library(Seurat)
+#library(Seurat, lib.loc="~/R_lib")
 library(cowplot)
+#library(cowplot,lib.loc = "~/R_lib")
 library(data.table)
 library(NMF)
 library(tibble)
@@ -24,7 +26,7 @@ library(igraph)
 library(shinyBS)
 source("functions.R")
 
-#Specify color palette for the tSNE and UMAP plots
+#Specify color palette for the tSNE and UMAP plsots
 cpallette=c("#64B2CE", "#DA5724", "#74D944", "#CE50CA", "#C0717C", "#CBD588", "#5F7FC7",
             "#8B4484", "#D3D93E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD",
             "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#C84248", "#8569D5", "#5E738F", "#D1A33D",
@@ -296,9 +298,10 @@ server <- function(input, output,session) {
   #Load the scrna input RData file and extract the variable genes and its stats
   vargenes= reactive({
     scrna=fileload()
-    var=as.data.frame(scrna@var.genes)
+    var=as.data.frame(VariableFeatures(object = scrna))
+    #var=as.data.frame(scrna@var.genes)
     colnames(var)="Gene"
-    stat=scrna@hvg.info
+    stat=HVFInfo(object = scrna)
     stat$Gene=rownames(stat)
     var=left_join(var,stat,by="Gene")
   })
@@ -327,7 +330,7 @@ server <- function(input, output,session) {
   output$ndim = renderUI({
     scrna=fileload()
     maxdim="NA"
-    maxdim=length(scrna@dr$pca@sdev)
+    maxdim=length(scrna[['pca']]@stdev)
     validate(need(is.na(maxdim)==F,"PCA dimensional Reduction has not been computed"))
     var=1:maxdim
     selectInput("ndim","Choose number of dimensions",var,selected = 1)
@@ -339,7 +342,7 @@ server <- function(input, output,session) {
     dim=input$ndim
     validate(need(dim,"PCA dimensional Reduction has not been computed"))
     par(mar=c(4,5,3,3))
-    g1=VizPCA(object = scrna, pcs.use = dim:dim,nCol=1,font.size = 1,num.genes = input$ngenes)
+    g1=VizDimLoadings(object = scrna, dims = dim:dim,nCol=1,nfeatures = input$ngenes)
     return(g1) 
   })
   
@@ -432,7 +435,7 @@ server <- function(input, output,session) {
   #Dimensionality reduction options for left plot
   output$umapa = renderUI({
     scrna=fileload()
-    dimr=names(scrna@dr)
+    dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
     selectInput("umapa","Dimensionality Reduction",dimr,selected = "tsne")})
   })
@@ -440,7 +443,7 @@ server <- function(input, output,session) {
   #Dimensionality reduction options for right plot
   output$umapb = renderUI({
     scrna=fileload()
-    dimr=names(scrna@dr)
+    dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
     selectInput("umapb","Dimensionality Reduction",dimr,selected = "tsne")})
   })
@@ -1274,6 +1277,16 @@ server <- function(input, output,session) {
     })
   })
   
+  #Download plot
+  output$downloaddotplot <- downloadHandler(
+    filename = function() {
+      paste0(input$project,"_Dotplot.pdf",sep="")
+    },
+    content = function(file){
+      pdf(file,width=10,height = 9,useDingbats=FALSE)
+      plot(dotplot())
+      dev.off()
+    })
    ###################################################
    ###################################################
    ##### CONTROL PANEL FOR LIGAND-RECEPTOR PAIRS #####

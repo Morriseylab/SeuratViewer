@@ -315,7 +315,8 @@ ui <- dashboardPage(
                 )
             ),
             box(title = "Dot Plot",solidHeader = TRUE,width=12,status='primary',
-                plotOutput("dotplot", height = 500)
+                plotOutput("dotplot", height = 500),
+                downloadButton('downloaddotplot', 'Download Plot')
             )
     ),#end of dotplot
     ######################################################################################################################################
