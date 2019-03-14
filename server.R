@@ -577,7 +577,7 @@ server <- function(input, output,session) {
   output$umapint = renderUI({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
     scrna=fileload()
-    dimr=names(scrna@dr)
+    dimr=names(scrna@reductions)
     selectInput("umapint","Dimensionality Reduction",dimr,selected = "tsne")})
   })
   
@@ -659,7 +659,7 @@ server <- function(input, output,session) {
   #Generate dropdown to pick dimensionality reduction method for bigeneplot
   output$bigenedim = renderUI({
     scrna=fileload()
-    dimr=names(scrna@dr)
+    dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       selectInput("bigenedim","Dimensionality Reduction",dimr,selected = "tsne")})
   })
@@ -747,7 +747,7 @@ server <- function(input, output,session) {
   #Generate drop down for dimensionality reduction in DEG tab
   output$umapdeg = renderUI({
     scrna=fileload()
-    dimr=names(scrna@dr)
+    dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       selectInput("umapdeg","Dimensionality Reduction",dimr,selected = "tsne")})
   })
@@ -1037,7 +1037,7 @@ server <- function(input, output,session) {
   #Generate drop down for dimensionality reduction in GeneExpression Plots tab
   output$umapge = renderUI({
     scrna=fileload()
-    dimr=names(scrna@dr)
+    dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       selectInput("umapge","Dimensionality Reduction",dimr,selected = "tsne")})
   })
@@ -1094,7 +1094,7 @@ server <- function(input, output,session) {
   #Generate drop down for dimensionality reduction in Cluster-wise gene expression
   output$umapclust = renderUI({
     scrna=fileload()
-    dimr=names(scrna@dr)
+    dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       selectInput("umapclust","Dimensionality Reduction",dimr,selected = "tsne")})
   })
@@ -1295,7 +1295,7 @@ server <- function(input, output,session) {
    #Generate drop down for dimensionality reduction for bi-gene plot
    output$bigenedimr = renderUI({
      scrna=fileload()
-     dimr=names(scrna@dr)
+     dimr=names(scrna@reductions)
      withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
        selectInput("bigenedimr","Dimensionality Reduction",dimr,selected = "tsne")})
    })
