@@ -258,7 +258,7 @@ ui <- dashboardPage(
               conditionalPanel(
                 condition = "input.shmptype =='deggene'",uiOutput("heatmapgenes")),
               uiOutput("hmpgrp"),
-              selectInput("hmpcol", "Select one",c('PurpleYellow' = "PuYl",'BlueGreen' = "BuGn", 'RedYellow' = "RdYl", 'RedBlue'="RdBu"),selected = "geneexp"),
+              #selectInput("hmpcol", "Select one",c('PurpleYellow' = "PuYl",'BlueGreen' = "BuGn", 'RedYellow' = "RdYl", 'RedBlue'="RdBu"),selected = "geneexp"),
               downloadButton('downloadheatmap', 'Download Heatmap')
             ),
             box(plotOutput("heatmap", height = 900),width=12, status='primary',solidHeader = TRUE,title="Single cell heatmap of gene expression")

@@ -45,7 +45,7 @@ bigene_plot <- function (scrna, gene_probes, x=1,y=2, limita=c(1,100), limitb=c(
 {
   
   gene_values <- bigene_getValues(scrna,gene_probes,limita,limitb)
-  projection=as.data.frame(eval(parse(text=paste("scrna@dr$",type,"@cell.embeddings",sep=""))))
+  projection=as.data.frame(eval(parse(text=paste("Embeddings(scrna, reduction =\"",type,"\")",sep=""))))
   colnames(projection) <- c("Component.1", "Component.2")
   proj_gene <- data.frame(cbind(projection, gene_values))
   #proj_gene$value = factor(proj_gene$value,levels=unique(proj_gene$value))
