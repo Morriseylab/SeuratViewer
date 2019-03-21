@@ -33,7 +33,7 @@ ui <- dashboardPage(
                        fileInput('rdatafileupload', 'Upload RDS File')
                      ),
                      menuItem('Project Summary', tabName = 'summ', icon = icon('hand-o-right')),
-                     menuItem('Parameters Calculated', tabName = 'calcparams', icon = icon('hand-o-right')),
+                     #menuItem('Parameters Calculated', tabName = 'calcparams', icon = icon('hand-o-right')),
                      menuItem('Variable Genes', tabName = 'vargenes', icon = icon('hand-o-right')),
                      menuItem('Principle component Analysis', tabName = 'pca', icon = icon('hand-o-right')),
                      menuItem('tSNE Plots', tabName = 'tplot', icon = icon('hand-o-right'),
