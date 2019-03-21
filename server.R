@@ -199,12 +199,12 @@ server <- function(input, output,session) {
      porg="prj$organism"
    }
    scrna=fileload()
-   numcells.nf=dim(scrna@raw.data)[2]
+   numcells.nf=dim(GetAssayData(object = scrna, slot = "counts"))[2]
    tcells=dim(GetAssayData(object=scrna))[2]
    tgenes=dim(GetAssayData(object=scrna))[1]
-   if(is.null(scrna@dr$pca)){
+   if(is.null(scrna[["pca"]])){
    maxdim=dim(scrna@dr$cca.aligned@cell.embeddings)[2]
-   }else{maxdim=length(scrna@dr$pca@sdev)}
+   }else{maxdim=length(scrna[["pca"]]@stdev)}
    c.cnt=as.data.frame(table(Idents(object=scrna)))
    df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),numcells.nf,tcells,tgenes,maxdim,"","",c.cnt$Freq))
    rownames(df)=c("Project name","Project Description","Organism","Total number of cells before filtration","Total nummber of cells after filtering","Total number of genes","Dimension","","Cluster-wise number of genes",as.character(c.cnt$Var1))
@@ -481,7 +481,7 @@ server <- function(input, output,session) {
       plot1=DimPlot(object = scrna,reduction=input$umapa,cells.highlight=cells,group.by = "ident",vector.friendly = T,no.legend = FALSE,label = F, do.return=T, pt.size = input$pointa2, cols=cpallette)
     }else if(input$categorya2=="geneexp"){
       validate(need(input$gene1a %in% rownames(GetAssayData(object=scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
-      plot1=FeaturePlot(object = scrna,reduction=input$umapa,vector.friendly = T, features = input$gene1a, cols = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2)
+      plot1=FeaturePlot(object = scrna,reduction=input$umapa, features = input$gene1a, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
       plot1=eval(parse(text=paste("plot1$`",input$gene1a,"`",sep="")))
     }else if(input$categorya2 =="var" & input$tsnea2 %in% tsne & input$subsa==FALSE){
       plot1=DimPlot(object = scrna,reduction=input$umapa,group.by = tsnea,no.legend = FALSE,label = input$checklabel1,vector.friendly = T, do.return=T,pt.size = input$pointa2,label.size = 7, cols=cpallette)
@@ -490,12 +490,12 @@ server <- function(input, output,session) {
       cells=eval(parse(text=t))
       plot1=DimPlot(object = scrna,reduction=input$umapa,group.by = tsnea,cells.highlight=cells,vector.friendly = T,no.legend = FALSE,label =F, do.return=T,pt.size = input$pointa2, cols=cpallette)
     }else if(input$categorya2 =="var" & input$tsnea2 %in% feature & input$subsa==FALSE){
-      plot1=FeaturePlot(object = scrna,reduction=input$umapa,vector.friendly = T, features = tsnea, cols = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2)
+      plot1=FeaturePlot(object = scrna,reduction=input$umapa, features = tsnea, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
       plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
     }else if(input$categorya2 =="var" & input$tsnea2 %in% feature & input$subsa==TRUE){
       t=paste('rownames(scrna@meta.data[scrna@meta.data$',input$tsnea2, '>',input$tsnea2lim[1], ' & metadata$',input$tsnea2, '<', input$tsnea2lim[2],',])',sep="")
       cells=eval(parse(text=t))
-      plot1=FeaturePlot(object = scrna,reduction=input$umapa, features = tsnea,cells.use = cells,vector.friendly = T, cols = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2)
+      plot1=FeaturePlot(object = scrna,reduction=input$umapa, features = tsnea,cells.use = cells, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
       plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
     }
     
@@ -515,12 +515,12 @@ server <- function(input, output,session) {
       cells=eval(parse(text=t))
       plot2=DimPlot(object = scrna,reduction=input$umapb,group.by = tsneb,cells.highlight=cells,vector.friendly = T,no.legend = FALSE,label = F, do.return=T,pt.size = input$pointa2, cols=cpallette)
     }else if(input$categoryb2 =="var" & input$tsneb2 %in% feature & input$subsb==F){
-      plot2=FeaturePlot(object = scrna,reduction=input$umapb, features = tsneb,vector.friendly = T, cols = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2)
+      plot2=FeaturePlot(object = scrna,reduction=input$umapb, features = tsneb, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
       plot2=eval(parse(text=paste("plot2$`",tsneb,"`",sep="")))
     }else if(input$categoryb2 =="var" & input$tsneb2 %in% feature & input$subsb==TRUE){
       t=paste('rownames(scrna@meta.data[scrna@meta.data$',input$tsneb2, '>',input$tsneb2lim[1], ' & metadata$',input$tsneb2, '<', input$tsneb2lim[2],',])',sep="")
       cells=eval(parse(text=t))
-      plot2=FeaturePlot(object = scrna,reduction=input$umapb, features = tsneb,vector.friendly = T,cells.use = cells, cols = c(input$genecolor1, input$genecolor2),do.return=T,pt.size = input$pointa2)
+      plot2=FeaturePlot(object = scrna,reduction=input$umapb, features = tsneb,cells.use = cells, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
       plot2=eval(parse(text=paste("plot2$`",tsneb,"`",sep="")))
     }
     
@@ -616,12 +616,12 @@ server <- function(input, output,session) {
       
       if(input$intercat=="geneexp"){
         validate(need(input$geneinter %in% rownames(GetAssayData(object=scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
-        plot1=FeaturePlot(object = scrna,reduction=input$umapint, features = input$geneinter,vector.friendly = T, cols = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
+        plot1=FeaturePlot(object = scrna,reduction=input$umapint, features = input$geneinter, cols = c("grey", "blue"),pt.size = input$umap_pointsize)
         plot1=eval(parse(text=paste("plot1$`",input$geneinter,"`",sep="")))
       }else if(input$intercat =="var" & tsnea %in% tsne){
         plot1=DimPlot(object = scrna,reduction=input$umapint,group.by = tsnea,no.legend = FALSE,label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 7, cols=cpallette,vector.friendly = T)
       }else if(input$intercat =="var" & tsnea %in% feature){
-        plot1=FeaturePlot(object = scrna,reduction=input$umapint, features = tsnea,vector.friendly = T, cols = c("grey", "blue"),do.return=T,pt.size = input$umap_pointsize,no.legend = FALSE)
+        plot1=FeaturePlot(object = scrna,reduction=input$umapint, features = tsnea, cols = c("grey", "blue"),pt.size = input$umap_pointsize)
         plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
       }
       plot=ggplotly(plot1)
@@ -782,10 +782,10 @@ server <- function(input, output,session) {
   output$identa = renderUI({
     scrna=fileload()
     if(input$setident==T){
-      scrna <- SetAllIdent(object = scrna, id = input$setidentlist)
-      options=unique(Idents(object=scrna))
+      Idents(object = scrna) = input$setidentlist
+      options=sort(unique(Idents(object=scrna)))
     }else{
-      options=levels(Idents(object=scrna))
+      options=sort(levels(Idents(object=scrna)))
     }
     selectInput("identa", "First Cell group to compare",options)
   })
@@ -794,10 +794,10 @@ server <- function(input, output,session) {
   output$identb = renderUI({
     scrna=fileload()
     if(input$setident==T){
-      scrna <- SetAllIdent(object = scrna, id = input$setidentlist)
-      options=unique(Idents(object=scrna))
+      Idents(object = scrna) = input$setidentlist
+      options=sort(unique(Idents(object=scrna)))
     }else{
-      options=levels(Idents(object=scrna))
+      options=sort(levels(Idents(object=scrna)))
     }
     checkboxGroupInput("identb", label="Second Cell group to compare",choices=options)
   })
@@ -820,7 +820,7 @@ server <- function(input, output,session) {
         if(input$goButton == 0)
           return()
         isolate({
-          scrna <- SetAllIdent(object = scrna, id = input$setidentlist) #set ident
+          scrna <- Idents(object = scrna, id = input$setidentlist) #set ident
           validate(need(input$identb,"Select at least one option from Second cell group to compare to first cell group. If you want to compare to all, uncheck the 'Check to choose a different category to compare' option"))
           validate(need(input$identb!=input$identa,"First and second cell groups can't be the same"))
             identb=input$identb
@@ -832,7 +832,7 @@ server <- function(input, output,session) {
         })
       }
       if(input$setident==F){
-        markers=eval(parse(text=paste("scrna@misc$`",input$identdef,"`",sep="")))
+        markers=scrna@misc$findallmarkers
         geneid=rownames(markers)
         url= paste("http://www.genecards.org/cgi-bin/carddisp.pl?gene=",geneid,sep = "")
         markers$Link=paste0("<a href='",url,"'target='_blank'>",rownames(markers),"</a>")
@@ -887,30 +887,31 @@ server <- function(input, output,session) {
     tsne=names(met[met==FALSE])
     
     if(input$tsnea =="Cell.group"){
-      plot1=DimPlot(object = scrna,reduction=input$umapdeg,group.by = "ident",no.legend = FALSE,label = input$checklabel3, do.return=T, pt.size = input$pointa,label.size = 7,cols=cpallette,vector.friendly=TRUE) + theme(legend.position="bottom")
+      plot1=DimPlot(object = scrna,reduction=input$umapdeg,no.legend = FALSE,label = input$checklabel3, do.return=T, pt.size = input$pointa,label.size = 7,cols=cpallette,vector.friendly=TRUE) + theme(legend.position="bottom")
     }else if(input$tsnea %in% tsne){
       plot1=DimPlot(object = scrna,reduction=input$umapdeg,group.by = tsnea,no.legend = FALSE,label = input$checklabel3,vector.friendly=TRUE, do.return=T,pt.size = input$pointa,label.size = 7,cols=cpallette) + theme(legend.position="bottom")
     }else if(input$tsnea %in% feature){
-      plot1=FeaturePlot(object = scrna, features = tsnea, cols = c("grey", "blue"),vector.friendly = T,reduction = input$umapdeg,do.return=T,pt.size = input$pointa)
+      plot1=FeaturePlot(object = scrna, features = tsnea, cols = c("grey", "blue"),reduction = input$umapdeg,pt.size = input$pointa)
       plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
-    }
-    if(input$setident==T){
-      setident=input$setidentlist
-    }else{
-      setident="ident"
     }
    
     markers=markergenes()
       s=input$markergenes_rows_selected # get  index of selected row from table
       markers=markers[s, ,drop=FALSE]
-      plot2=FeaturePlot(object = scrna, features = rownames(markers), cols = c("grey","blue"),reduction = input$umapdeg,vector.friendly = T,
-                        no.legend = FALSE,pt.size = input$pointa,do.return = T)
+      plot2=FeaturePlot(object = scrna, features = rownames(markers), cols = c("grey","blue"),reduction = input$umapdeg,pt.size = input$pointa)
       plot2=eval(parse(text=paste("plot2$`",rownames(markers),"`",sep="")))
+  if(input$setident==T){
+        setident=input$setidentlist  
       if(input$checkviolin ==T){
-      plot3=VlnPlot(object = scrna, features = rownames(markers),group.by = setident,do.return = T,x.lab.rot=TRUE,point.size.use=0,cols=cpallette)
-      }else{plot3=VlnPlot(object = scrna, features = rownames(markers),group.by = setident,do.return = T,x.lab.rot=TRUE,cols=cpallette)}
-      plot4=RidgePlot(object = scrna, features = rownames(markers),group.by = setident,do.return = T,x.lab.rot=TRUE,cols=cpallette)
-      
+      plot3=VlnPlot(object = scrna, features = rownames(markers),group.by = setident,pt.size=0,cols=cpallette)
+      }else{plot3=VlnPlot(object = scrna, features = rownames(markers),group.by = setident,cols=cpallette)}
+      plot4=RidgePlot(object = scrna, features = rownames(markers),group.by = setident,cols=cpallette)
+  }else{
+    if(input$checkviolin ==T){
+      plot3=VlnPlot(object = scrna, features = rownames(markers),pt.size=0,cols=cpallette)
+    }else{plot3=VlnPlot(object = scrna, features = rownames(markers),cols=cpallette)}
+    plot4=RidgePlot(object = scrna, features = rownames(markers),cols=cpallette)
+  }
     
       row1=plot_grid(plot1,plot2,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
       row2=plot_grid(plot3,plot4,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
@@ -1054,13 +1055,12 @@ server <- function(input, output,session) {
     scrna=fileload()
     validate(need(input$geneid,"Enter the gene symbol"))
     validate(need(input$geneid %in% rownames(GetAssayData(object=scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
-    plot2=FeaturePlot(object = scrna, features = input$geneid, cols = c("grey","blue"),reduction = input$umapge,vector.friendly = T,
-                      no.legend = FALSE,pt.size = input$genenid_pointsize,do.return = T)
+    plot2=FeaturePlot(object = scrna, features = input$geneid, cols = c("grey","blue"),reduction = input$umapge,pt.size = input$genenid_pointsize)
     plot2=eval(parse(text=paste("plot2$`",input$geneid,"`",sep="")))
     if(input$checkviolin2 ==T){
-      plot3=VlnPlot(object = scrna, features = input$geneid,group.by = "ident",do.return = T,x.lab.rot=TRUE,point.size.use=0,cols=cpallette)
-    }else{plot3=VlnPlot(object = scrna, features = input$geneid,group.by = "ident",do.return = T,x.lab.rot=TRUE,cols=cpallette)}
-    plot4=RidgePlot(object = scrna, features = input$geneid,group.by = "ident",do.return = T,x.lab.rot=TRUE,cols=cpallette)
+      plot3=VlnPlot(object = scrna, features = input$geneid,pt.size=0,cols=cpallette)
+    }else{plot3=VlnPlot(object = scrna, features = input$geneid,cols=cpallette)}
+    plot4=RidgePlot(object = scrna, features = input$geneid,cols=cpallette)
     row1=plot_grid(plot2,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
     row2=plot_grid(plot3,plot4,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
     plot_grid(row1,row2,align = 'v', rel_heights = c(1.7, 1),axis="tb",ncol=1)
@@ -1121,7 +1121,7 @@ server <- function(input, output,session) {
   #they are expressed in
   clusts= reactive({
     scrna=fileload()
-    scrna <- SetAllIdent(object = scrna, id = input$setvar)
+    Idents(object = scrna) = input$setvar
     avgexp=AverageExpression(object = scrna)
     avgexp= avgexp %>% dplyr::select(input$selectcluster)
     genes.use=rownames(avgexp)
@@ -1195,7 +1195,7 @@ server <- function(input, output,session) {
     gene=rownames(tab)
     #cells <- WhichCells(object = scrna, ident = input$selectcluster)
     plot1=DimPlot(object = scrna,reduction=input$umapclust,group.by = input$setvar,no.legend = FALSE,label = input$checklabel4,vector.friendly = T, do.return=T, pt.size = input$pointclust,label.size = 7, cols=cpallette)
-    plot2=FeaturePlot(object = scrna,reduction=input$umapclust, features = gene, cols = c("grey", "blue"),vector.friendly = T,do.return=T,pt.size = input$pointclust,no.legend = FALSE)
+    plot2=FeaturePlot(object = scrna,reduction=input$umapclust, features = gene, cols = c("grey", "blue"),pt.size = input$pointclust)
     plot2=eval(parse(text=paste("plot2$`",gene,"`",sep="")))
     plot_grid(plot1,plot2)
   })
@@ -1265,7 +1265,7 @@ server <- function(input, output,session) {
       )
       genes=input$genelistfile2
     }
-    g1=DotPlot(object = scrna, genes.plot = genes, plot.legend = TRUE,group.by=input$setdotvar,do.return=TRUE) 
+    g1=DotPlot(object = scrna, features                                                          = genes, plot.legend = TRUE,group.by=input$setdotvar,do.return=TRUE) 
     return(g1) 
   })
   

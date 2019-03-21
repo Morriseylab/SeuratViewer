@@ -77,7 +77,7 @@ bigene_plot <- function (scrna, gene_probes, x=1,y=2, limita=c(1,100), limitb=c(
 ligrec <- function(scrna,pair,prj,perc,filetype){
   #get grouping variable
   var=as.character(pair)
-  tt=rownames(scrna@raw.data)
+  tt=rownames(GetAssayData(object = scrna, slot = "counts"))
   #Read ligrec file based on organism
   file = read.csv("data/param.csv")
   if (filetype=="list"){
@@ -93,7 +93,7 @@ ligrec <- function(scrna,pair,prj,perc,filetype){
   # }
   genes2=tt[tt %in% genes]
   #For all unique genes in the ligrec list, get their expression value for all cells and the groups the cells belong to
-  my.data=FetchData(scrna,c(var,"nGene",genes2))
+  my.data=FetchData(scrna,c(var,genes2))
   colnames(my.data)[1]= "clust"
   #my.data$clust=factor(my.data$clust,levels=unique(my.data$clust))
   perc=perc/100
