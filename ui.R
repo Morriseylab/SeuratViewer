@@ -361,7 +361,7 @@ ui <- dashboardPage(
                 ),
                 uiOutput("bigene_rangea2"),
                 uiOutput("bigene_rangeb2"),
-                sliderInput("perc_cells", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=5),
+                #sliderInput("perc_cells", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=5),
                 sliderInput("bigene_pointsize2", "Point Size:",min = 0, max = 5, value = 1,step=.25),
                 actionButton("lrpgo", "Change Parameters and Run")
             ),
@@ -381,7 +381,7 @@ ui <- dashboardPage(
             ),#End box
             box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
                 uiOutput("pairbynet"),
-                sliderInput("perc_cells2", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10),
+                #sliderInput("perc_cells2", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10),
                 fluidRow(
                   column(6,checkboxInput("checksource2", label = "Check to select by source", value = TRUE)),
                   column(6,checkboxInput("checkevi2", label = "Check to select by evidence", value = TRUE)),
@@ -431,7 +431,7 @@ ui <- dashboardPage(
                     condition = "input.checkeviheat ==true",
                     uiOutput('evidence3')
                   ),
-                sliderInput("perc_cells3", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10),
+                #sliderInput("perc_cells3", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=10),
                 selectInput("hmpcolnet", "Select Heatmap Color Palette",c('YlGnBu' = "YlGnBu",'RdBu' = "RdBu",'YlOrRd' = "YlOrRd",'PRGn'="PRGn", 'Blues' = "Blues")),
                 selectInput("clusterby", "Cluster By",c('Both'="both",'Receptor Genes' = "column",'Ligand Genes' = "row",'None' = "none")),
                 checkboxInput("checkbox", label = "Reverse Colors", value = FALSE),

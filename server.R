@@ -1417,7 +1417,9 @@ server <- function(input, output,session) {
    
    #For selected project and grouping variable, generate all possible ligand receptor pairs
    datasetInput = reactive({
-     results=ligrec(fileload(),pair=input$pairby,prj=projectname(),input$perc_cells,filetype=input$filetype)
+#     results=ligrec(fileload(),pair=input$pairby,prj=projectname(),input$perc_cells,filetype=input$filetype)
+     scrna=fileload()
+     results =  scrna@misc$ligrecres
    })
 
       #Subselect lig-rec pairs based on user input
@@ -1531,7 +1533,9 @@ server <- function(input, output,session) {
        if(input$lrnset == 0)
          return()
        isolate({
-       result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2,filetype=input$filetype)
+         scrna=fileload()
+         result=scrna@misc$ligrecres
+       #result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2,filetype=input$filetype)
        if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
        if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
        if(input$checkgrp==T){result=result[result$Lig_cluster %in% input$checkgrp2,]
@@ -1587,7 +1591,9 @@ server <- function(input, output,session) {
      if(input$lrngo == 0)
        return()
      isolate({
-     result=ligrec(fileload(),pair=input$pairbynet,prj=projectname(),input$perc_cells2,filetype=input$filetype)
+       scrna=fileload()
+       result=scrna@misc$ligrecres
+     #result=ligrec(fileload(),pair=input$pairbynet,prj=projectname(),input$perc_cells2,filetype=input$filetype)
      #validate(need(is.na(result)==F,"Invalid Cell group. Pick a different option"))
      if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
      if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
@@ -1779,7 +1785,9 @@ server <- function(input, output,session) {
      if(input$lrhgo == 0)
        return()
      isolate({
-     result=ligrec(fileload(),pair=input$pairbyheatnet,prj=projectname(),input$perc_cells3,filetype=input$filetype)
+       scrna=fileload()
+       result=scrna@misc$ligrecres
+     #result=ligrec(fileload(),pair=input$pairbyheatnet,prj=projectname(),input$perc_cells3,filetype=input$filetype)
      result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
      if(input$checksourceheat==T){result=result[result$Pair.Source %in% input$source3,]}
      if(input$checkeviheat==T){result=result[result$Pair.Evidence %in% input$evidence3,]}
