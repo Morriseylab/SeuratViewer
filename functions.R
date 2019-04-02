@@ -164,3 +164,32 @@ autocurve.edges2 <-function (graph, start = 0.5)
   }
   res
 }
+
+#functions for 3d plot
+map2color<-function(x, limits=NULL){
+  inf_vals = is.infinite(x)
+  
+  if (is.null(limits) == FALSE){
+    x[x < limits[1]] = limits[1]
+    x[x > limits[2]] = limits[2]
+  }
+  x[inf_vals] = median(x) 
+  ii <- cut(x, breaks = seq(min(x, na.rm=T), max(x, na.rm=T), len = 100), 
+            include.lowest = TRUE)
+  #colors <- colorRampPalette(c("darkgray", "purple"))(99)[ii]
+  colors = viridisLite::viridis(99)[ii]
+  colors[inf_vals] = "darkgray"
+  return(colors)
+}
+
+
+
+rgl_init <- function(new.device = FALSE, bg = "white", width = 640) { 
+  if( new.device | rgl.cur() == 0 ) {
+    rgl.open()
+    par3d(windowRect = 50 + c( 0, 0, width, width ) )
+    rgl.bg(color = bg )
+  }
+  rgl.clear(type = c("shapes", "bboxdeco"))
+  rgl.viewpoint(theta = 15, phi = 20, zoom = 0.7)
+}

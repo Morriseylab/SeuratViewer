@@ -11,18 +11,19 @@ library(plotly)
 library(shinyjs)
 library(htmlwidgets)
 library(DT)
+options(rgl.useNULL=TRUE)
 library(shinyRGL)
 library(rgl)
 library(rglwidget)
-library(Seurat)
-#library(Seurat, lib.loc="~/R_lib")
-library(cowplot)
-#library(cowplot,lib.loc = "~/R_lib")
+#library(Seurat)
+library(Seurat, lib.loc="~/R_lib")
+#library(cowplot)
+library(cowplot,lib.loc = "~/R_lib")
 library(data.table)
 library(NMF)
 library(tibble)
 library(network)
-library(igraph)
+library(igraph,lib.loc = "~/R_lib")
 library(shinyBS)
 source("functions.R")
 
@@ -739,6 +740,55 @@ server <- function(input, output,session) {
       dev.off()
     })
   
+  ######################################################################################################
+  ######################################################################################################
+  ######################### Display 3D plot ############################################################
+  ######################################################################################################
+  ######################################################################################################
+  #generate dropdown for variable
+  output$var3d <- renderUI({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+    scrna=fileload()
+    metadata=as.data.frame(scrna@meta.data) 
+    metadata=metadata %>% select(starts_with("var"))
+    var=colnames(metadata)
+    selectInput("var3d","Select a Variable",var,"pick one")
+    })
+  })
+  
+  output$plot3d = renderRglwidget({
+    graphics.off()
+    pdf(NULL)
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+    scrna=fileload()
+    reduction=input$dimr3d
+    groupby=input$var3d
+    dims=1:3
+    dims <- paste0(Key(object = scrna[[reduction]]), dims)
+    data <- FetchData(object = scrna, vars = c(dims,groupby))
+    if(is.numeric(data[,4])){
+      data$color = map2color(data[,4],c(-3, 3))
+    }else{
+      data$color=cpallette[as.numeric(data[,4])]
+    }
+    #try(rgl.close())
+    open3d()
+    # resize window
+    rgl_init()
+    plot3d(data[1:3],
+           type='s',
+           box=FALSE,
+           col=data$color,
+           radius = .001
+    )
+    tmp <- data %>% group_by(var_cluster,color) %>% summarise(dm1=mean(DM_1), dm2=mean(DM_2),dm3=mean(DM_3))# %>%
+    with(tmp,text3d(dm1,dm2,dm3,var_cluster))
+    
+    movie3d(spin3d(axis = c(0, 1, 1)), duration = 10,
+            dir = getwd())
+    rglwidget()
+    })
+  })
   ####################################################
   ###################################################
   ########## Setup Control Panel for DEG ############

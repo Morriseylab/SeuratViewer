@@ -3,6 +3,7 @@ library(shiny)
 library(shinyBS)
 library(plotly)
 library(shinyjs)
+options(rgl.useNULL=TRUE)
 library(rglwidget)
 library(reshape2)
 library(visNetwork)
@@ -41,6 +42,7 @@ ui <- dashboardPage(
                               menuSubItem("Interactive tSNE/uMap Plot", tabName = "intertsne")
                               ),
                      menuItem('Biplot', tabName = 'biplot', icon = icon('hand-o-right')),
+                     menuItem('3D-plot', tabName = '3dplot', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
                      menuItem('Differential Expression', tabName = 'deg', icon = icon('hand-o-right')),
                      menuItem('Seurat Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
                      bsPopover("heatmap",title="Note",content= "Please return to Differential Expression tab to generate marker genes before attemping to view this Heatmap",placement="left",trigger="hover",options=list(container="body")),
@@ -69,7 +71,7 @@ ui <- dashboardPage(
                               menuSubItem('Ligand Receptor Heatmap', tabName = 'netheatmap', icon = icon('hand-o-right'))
                               ),
                      menuItem('Troubleshoot', tabName = 'troubleshoot', icon = icon('hand-o-right')),
-                     menuItem('Help page', tabName = 'help', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green")
+                     menuItem('Help page', tabName = 'help', icon = icon('hand-o-right'))
                    )#end of sidebar menu
   ),#end dashboardSidebar
   
@@ -217,6 +219,18 @@ ui <- dashboardPage(
             ),
             box(DT::dataTableOutput('bigene_genecount'),width=12, status='primary',title = "Gene Count Table",solidHeader = TRUE)
     ),#endbigeneplotTab
+    ###################################################################################################################################### 
+    
+    tabItem(tabName = "3dplot",
+            fluidRow(
+              box(rglwidgetOutput("plot3d",width = "850px", height = "750px"),width=8, status='primary',title = "3D Plot",solidHeader = TRUE),
+              box(
+                title = "Controls",solidHeader = TRUE,width=4,status='primary',
+                column(6,selectInput("dimr3d", "Select one",c('Diffusion Map' = "dm"),selected = "dm")),
+                column(6,uiOutput("var3d")),
+                downloadButton('download3dplot', 'Download 3D-Plot plot'))
+              )
+    ),#end3dplotTab
     ######################################################################################################################################
     tabItem(tabName = "deg",
             box(title = "Differentially expressed Markers",solidHeader = TRUE,width=9,status='primary',
