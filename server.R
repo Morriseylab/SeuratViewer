@@ -25,6 +25,7 @@ library(tibble)
 library(network)
 library(igraph,lib.loc = "~/R_lib")
 library(shinyBS)
+library(slingshot)
 source("functions.R")
 
 #Specify color palette for the tSNE and UMAP plsots
@@ -756,37 +757,37 @@ server <- function(input, output,session) {
     })
   })
   
-  output$plot3d = renderRglwidget({
-    graphics.off()
-    pdf(NULL)
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+  output$plot3d = renderPlotly({
+   withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
     scrna=fileload()
     reduction=input$dimr3d
     groupby=input$var3d
-    dims=1:3
-    dims <- paste0(Key(object = scrna[[reduction]]), dims)
-    data <- FetchData(object = scrna, vars = c(dims,groupby))
-    if(is.numeric(data[,4])){
-      data$color = map2color(data[,4],c(-3, 3))
-    }else{
-      data$color=cpallette[as.numeric(data[,4])]
-    }
-    #try(rgl.close())
-    open3d()
-    # resize window
-    rgl_init()
-    plot3d(data[1:3],
-           type='s',
-           box=FALSE,
-           col=data$color,
-           radius = .001
-    )
-    tmp <- data %>% group_by(var_cluster,color) %>% summarise(dm1=mean(DM_1), dm2=mean(DM_2),dm3=mean(DM_3))# %>%
-    with(tmp,text3d(dm1,dm2,dm3,var_cluster))
+    scrna.sub <- runSlingshot(scrna.sub,reduction = reduction)
     
-    movie3d(spin3d(axis = c(0, 1, 1)), duration = 10,
-            dir = getwd())
-    rglwidget()
+#     dims=1:3
+#     dims <- paste0(Key(object = scrna[[reduction]]), dims)
+#     data <- FetchData(object = scrna, vars = c(dims,groupby))
+#     if(is.numeric(data[,4])){
+#       data$color = map2color(data[,4],c(-3, 3))
+#     }else{
+#       data$color=cpallette[as.numeric(data[,4])]
+#     }
+#     try(rgl.close())
+#     open3d()
+#     # resize window
+#     rgl_init()
+#     plot3d(data[1:3],
+#            type='s',
+#            box=FALSE,
+#            col=data$color,
+#            radius = .001
+#     )
+#     tmp <- data %>% group_by(var_cluster,color) %>% summarise(dm1=mean(DM_1), dm2=mean(DM_2),dm3=mean(DM_3))# %>%
+#     with(tmp,text3d(dm1,dm2,dm3,var_cluster))
+#     
+#     movie3d(spin3d(axis = c(0, 1, 1)), duration = 10,
+#             dir = getwd())
+#     rglwidget()
     })
   })
   ####################################################
@@ -870,7 +871,7 @@ server <- function(input, output,session) {
         if(input$goButton == 0)
           return()
         isolate({
-          scrna <- Idents(object = scrna, id = input$setidentlist) #set ident
+          Idents(object = scrna)  = input$setidentlist #set ident
           validate(need(input$identb,"Select at least one option from Second cell group to compare to first cell group. If you want to compare to all, uncheck the 'Check to choose a different category to compare' option"))
           validate(need(input$identb!=input$identa,"First and second cell groups can't be the same"))
             identb=input$identb
