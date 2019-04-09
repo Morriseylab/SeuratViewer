@@ -763,7 +763,7 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
     scrna=fileload()
     opt=names(scrna@reductions)
-    selectInput("dimr3d", "Select one",opt,selected = opt[1])
+    selectInput("dimr3d", "Select Reduction",opt,selected = opt[1])
       })
   })
   
@@ -795,19 +795,31 @@ server <- function(input, output,session) {
     for (i in 1:nrow(centers)) {
       a[[i]] <- list(x= centers$x[i],y= centers$y[i],z= centers$z[i],text= centers$var_cluster[i],showarrow= T,arrowhead=4,arrowsize=0.5)
     }
+    if(input$check3d == T){
+      validate(
+        need(is.na(scrna.sub@misc$sds)==F,"Lineage curve information not found. Please run slingshot on the dataset and upload to website again")
+      )
+      curved <- bind_rows(lapply(names(scrna.sub@misc$sds$data@curves), function(x){c <- slingCurves(scrna.sub@misc$sds$data)[[x]]
+      d <- as.data.frame(c$s[c$ord,seq_len(2)])
+      d$curve<-x
+      return(d)}))
+      colnames(data)[1:3] = c("DM_1","DM_2","DM_3")
+      plot=plot_ly(side=I(3)) %>%
+        add_trace(x = data$DM_1,y = data$DM_2,z = data$DM_3,colors=cpallette,color=data$var_cluster,type = "scatter3d") %>% 
+        add_paths(x = curved$DM_1,y = curved$DM_2,z = curved$DM_3, mode="lines",color=I("black"),size=I(7)) %>% 
+        layout(scene = list(
+          aspectratio = list(x = 1,y = 1,z = 1),
+          dragmode = "turntable",
+          xaxis = list(title = dims[1]),yaxis = list(title = dims[2]),zaxis = list(title = dims[3]),annotations = a))
+    }else{
     plot=plot_ly(side=I(3)) %>%
       add_trace(x = data$DM_1,y = data$DM_2,z = data$DM_3,colors=cpallette,color=data$var_cluster,type = "scatter3d") %>% 
       #add_paths(x = curved$DM_1,y = curved$DM_2,z = curved$DM_3, mode="lines",color=I("black"),size=I(7)) %>% 
-      layout(
-        scene = list(
+      layout(scene = list(
           aspectratio = list(x = 1,y = 1,z = 1),
           dragmode = "turntable",
-          xaxis = list(title = dims[1]),
-          yaxis = list(title = dims[2]),
-          zaxis = list(title = dims[3]),
-          annotations = a
-        )
-      )
+          xaxis = list(title = dims[1]),yaxis = list(title = dims[2]),zaxis = list(title = dims[3]),annotations = a))
+    }
     plot
     })
   })

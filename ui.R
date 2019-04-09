@@ -223,11 +223,13 @@ ui <- dashboardPage(
     
     tabItem(tabName = "3dplot",
             fluidRow(
-              box(plotlyOutput("plot3d"),width=8, status='primary',title = "3D Plot",solidHeader = TRUE),
+              box(plotlyOutput("plot3d", height=700),width=8, status='primary',title = "3D Plot",solidHeader = TRUE),
               box(
                 title = "Controls",solidHeader = TRUE,width=4,status='primary',
                 column(6,uiOutput("dimr3d")),
-                column(6,uiOutput("var3d")))
+                column(6,uiOutput("var3d")),
+                checkboxInput("check3d", label = "Check to show pseudotime curve", value = FALSE))
+              
                 #downloadButton('download3dplot', 'Download 3D-Plot plot'))
               )
     ),#end3dplotTab
