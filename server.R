@@ -783,7 +783,7 @@ server <- function(input, output,session) {
     dims=1:3
     dims <- paste0(Key(object = scrna.sub[[reduction]]), dims)
     data <- FetchData(object = scrna.sub, vars = c(dims,groupby))
-    colnames(data)[1:3] = c("DM_1","DM_2","DM_3","var_cluster")
+    colnames(data)[1:4] = c("DM_1","DM_2","DM_3","var_cluster")
     a3=aggregate(data$DM_3, by=list(data$var_cluster), FUN=mean)
     a2=aggregate(data$DM_2, by=list(data$var_cluster), FUN=mean)
     a1=aggregate(data$DM_1, by=list(data$var_cluster), FUN=mean)
