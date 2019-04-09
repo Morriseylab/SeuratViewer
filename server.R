@@ -11,21 +11,22 @@ library(plotly)
 library(shinyjs)
 library(htmlwidgets)
 library(DT)
-options(rgl.useNULL=TRUE)
-library(shinyRGL)
-library(rgl)
-library(rglwidget)
-#library(Seurat)
-library(Seurat, lib.loc="~/R_lib")
-#library(cowplot)
-library(cowplot,lib.loc = "~/R_lib")
+#options(rgl.useNULL=TRUE)
+#library(shinyRGL)
+#library(rgl)
+#library(rglwidget)
+library(Seurat)
+#library(Seurat, lib.loc="~/R_lib")
+library(cowplot)
+#library(cowplot,lib.loc = "~/R_lib")
 library(data.table)
 library(NMF)
 library(tibble)
 library(network)
-library(igraph,lib.loc = "~/R_lib")
+library(igraph)
+#library(igraph,lib.loc = "~/R_lib")
 library(shinyBS)
-library(slingshot)
+#library(slingshot)
 source("functions.R")
 
 #Specify color palette for the tSNE and UMAP plsots
@@ -757,37 +758,57 @@ server <- function(input, output,session) {
     })
   })
   
+  #Generate list of reductions
+  output$dimr3d <- renderUI({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+    scrna=fileload()
+    opt=names(scrna@reductions)
+    selectInput("dimr3d", "Select one",opt,selected = opt[1])
+      })
+  })
+  
+  #Create 3D plot
   output$plot3d = renderPlotly({
    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    scrna=fileload()
+    scrna.sub=fileload()
     reduction=input$dimr3d
     groupby=input$var3d
-    scrna.sub <- runSlingshot(scrna.sub,reduction = reduction)
+    maxdim <- getMaxDim(scrna.sub)
+    if(reduction=='umap'){
+      scrna.sub <- RunUMAP(scrna.sub,dims=1:maxdim,n.components = 3)
+    }else if(reduction=='tsne'){
+      scrna.sub <- RunTSNE(scrna.sub,dims=1:maxdim,dim.embed= 3)
+    }
     
-#     dims=1:3
-#     dims <- paste0(Key(object = scrna[[reduction]]), dims)
-#     data <- FetchData(object = scrna, vars = c(dims,groupby))
-#     if(is.numeric(data[,4])){
-#       data$color = map2color(data[,4],c(-3, 3))
-#     }else{
-#       data$color=cpallette[as.numeric(data[,4])]
-#     }
-#     try(rgl.close())
-#     open3d()
-#     # resize window
-#     rgl_init()
-#     plot3d(data[1:3],
-#            type='s',
-#            box=FALSE,
-#            col=data$color,
-#            radius = .001
-#     )
-#     tmp <- data %>% group_by(var_cluster,color) %>% summarise(dm1=mean(DM_1), dm2=mean(DM_2),dm3=mean(DM_3))# %>%
-#     with(tmp,text3d(dm1,dm2,dm3,var_cluster))
-#     
-#     movie3d(spin3d(axis = c(0, 1, 1)), duration = 10,
-#             dir = getwd())
-#     rglwidget()
+    dims=1:3
+    dims <- paste0(Key(object = scrna.sub[[reduction]]), dims)
+    data <- FetchData(object = scrna.sub, vars = c(dims,groupby))
+    colnames(data)[1:3] = c("DM_1","DM_2","DM_3")
+    a3=aggregate(data$DM_3, by=list(data$var_cluster), FUN=mean)
+    a2=aggregate(data$DM_2, by=list(data$var_cluster), FUN=mean)
+    a1=aggregate(data$DM_1, by=list(data$var_cluster), FUN=mean)
+    centers=inner_join(a1,a2,by="Group.1")
+    centers=inner_join(centers,a3,by="Group.1")
+    colnames(centers)=c("var_cluster","x","y","z")
+    
+    a <- list()
+    for (i in 1:nrow(centers)) {
+      a[[i]] <- list(x= centers$x[i],y= centers$y[i],z= centers$z[i],text= centers$var_cluster[i],showarrow= T,arrowhead=4,arrowsize=0.5)
+    }
+    plot=plot_ly(side=I(3)) %>%
+      add_trace(x = data$DM_1,y = data$DM_2,z = data$DM_3,colors=cpallette,color=data$var_cluster,type = "scatter3d") %>% 
+      #add_paths(x = curved$DM_1,y = curved$DM_2,z = curved$DM_3, mode="lines",color=I("black"),size=I(7)) %>% 
+      layout(
+        scene = list(
+          aspectratio = list(x = 1,y = 1,z = 1),
+          dragmode = "turntable",
+          xaxis = list(title = dims[1]),
+          yaxis = list(title = dims[2]),
+          zaxis = list(title = dims[3]),
+          annotations = a
+        )
+      )
+    plot
     })
   })
   ####################################################

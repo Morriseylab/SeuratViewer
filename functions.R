@@ -1,5 +1,5 @@
 require(dplyr)
-
+library(slingshot)
 
 getGeneRange <- function(scrna,gene_probes){
   gene_values=as.data.frame(FetchData(scrna,gene_probes[1]))
@@ -165,31 +165,25 @@ autocurve.edges2 <-function (graph, start = 0.5)
   res
 }
 
-#functions for 3d plot
-map2color<-function(x, limits=NULL){
-  inf_vals = is.infinite(x)
+#Get maximum dimensions run
+getMaxDim <- function(object){
   
-  if (is.null(limits) == FALSE){
-    x[x < limits[1]] = limits[1]
-    x[x > limits[2]] = limits[2]
-  }
-  x[inf_vals] = median(x) 
-  ii <- cut(x, breaks = seq(min(x, na.rm=T), max(x, na.rm=T), len = 100), 
-            include.lowest = TRUE)
-  #colors <- colorRampPalette(c("darkgray", "purple"))(99)[ii]
-  colors = viridisLite::viridis(99)[ii]
-  colors[inf_vals] = "darkgray"
-  return(colors)
+  object@reductions$pca@jackstraw$overall.p.values %>% 
+    as.data.frame(.) %>% 
+    mutate(adj = p.adjust(Score,method='bonferroni')) %>% 
+    filter(adj <0.05) %>% 
+    summarise(max=max(PC)) %>% 
+    pull(max)
+  
+  
 }
 
-
-
-rgl_init <- function(new.device = FALSE, bg = "white", width = 640) { 
-  if( new.device | rgl.cur() == 0 ) {
-    rgl.open()
-    par3d(windowRect = 50 + c( 0, 0, width, width ) )
-    rgl.bg(color = bg )
-  }
-  rgl.clear(type = c("shapes", "bboxdeco"))
-  rgl.viewpoint(theta = 15, phi = 20, zoom = 0.7)
+#Seurat Extras functions
+runSlingshot  <- function(object,reduction='dm',groups=NULL, start.clus=NULL,end.clus=NULL){
+  rd <- Embeddings(object,reduction)
+  cl <- Idents(object = object)
+  object@misc[['sds']] <-  list("dr"=reduction,"data"=slingshot(rd,cl,start.clus=start.clus,end.clus=end.clus))
+  ps <- slingPseudotime(object@misc[['sds']]$data)
+  object@meta.data[,colnames(ps)] <- ps 
+  return(object)
 }
