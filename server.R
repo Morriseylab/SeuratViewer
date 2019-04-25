@@ -440,7 +440,7 @@ server <- function(input, output,session) {
     scrna=fileload()
     dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    selectInput("umapa","Dimensionality Reduction",dimr,selected = "tsne")})
+    selectInput("umapa","Dimensionality Reduction",dimr,selected = "umap")})
   })
   
   #Dimensionality reduction options for right plot
@@ -448,7 +448,7 @@ server <- function(input, output,session) {
     scrna=fileload()
     dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    selectInput("umapb","Dimensionality Reduction",dimr,selected = "tsne")})
+    selectInput("umapb","Dimensionality Reduction",dimr,selected = "umap")})
   })
   
   #Genelist for tsne plot A
@@ -581,7 +581,7 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
     scrna=fileload()
     dimr=names(scrna@reductions)
-    selectInput("umapint","Dimensionality Reduction",dimr,selected = "tsne")})
+    selectInput("umapint","Dimensionality Reduction",dimr,selected = "umap")})
   })
   
   #Genelist for tsne plot 
@@ -664,7 +664,7 @@ server <- function(input, output,session) {
     scrna=fileload()
     dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      selectInput("bigenedim","Dimensionality Reduction",dimr,selected = "tsne")})
+      selectInput("bigenedim","Dimensionality Reduction",dimr,selected = "umap")})
   })
   
   #Genelist A for bigene plot 
@@ -763,7 +763,7 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
     scrna=fileload()
     opt=names(scrna@reductions)
-    selectInput("dimr3d", "Select Reduction",opt,selected = opt[1])
+    selectInput("dimr3d", "Select Reduction",opt,selected = "umap")
       })
   })
   
@@ -833,7 +833,7 @@ server <- function(input, output,session) {
     scrna=fileload()
     dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      selectInput("umapdeg","Dimensionality Reduction",dimr,selected = "tsne")})
+      selectInput("umapdeg","Dimensionality Reduction",dimr,selected = "umap")})
   })
   
   #Generate drop down menu for Cell group/ other variables to be displayed in the DEG tab
@@ -1124,7 +1124,7 @@ server <- function(input, output,session) {
     scrna=fileload()
     dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      selectInput("umapge","Dimensionality Reduction",dimr,selected = "tsne")})
+      selectInput("umapge","Dimensionality Reduction",dimr,selected = "umap")})
   })
   
   #Genelist for Gene Expression Plot
@@ -1180,7 +1180,7 @@ server <- function(input, output,session) {
     scrna=fileload()
     dimr=names(scrna@reductions)
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      selectInput("umapclust","Dimensionality Reduction",dimr,selected = "tsne")})
+      selectInput("umapclust","Dimensionality Reduction",dimr,selected = "umap")})
   })
   
   #Generate drop down for categories starting with "var" in Cluster-wise gene expression
@@ -1381,7 +1381,7 @@ server <- function(input, output,session) {
      scrna=fileload()
      dimr=names(scrna@reductions)
      withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       selectInput("bigenedimr","Dimensionality Reduction",dimr,selected = "tsne")})
+       selectInput("bigenedimr","Dimensionality Reduction",dimr,selected = "umap")})
    })
    
    #Generate drop-down to generate variables based on which you want to find pairs 
