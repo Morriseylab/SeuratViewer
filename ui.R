@@ -169,7 +169,8 @@ ui <- dashboardPage(
                   column(6,conditionalPanel(
                     condition = "input.subsb ==true",uiOutput("subsbui") #generate ident list for right plot
                   )
-                  )),
+                  ))),
+            box(title = "tSNE plots",solidHeader = TRUE,width=12,status='primary',
                 plotOutput("comptsne2", height = 600),
                 downloadButton('downloadtsneplot', 'Download tSNE plot')
             )
@@ -248,7 +249,7 @@ ui <- dashboardPage(
                 checkboxInput("checklabel3", label = "Check for cell  group labelling", value = TRUE),
                 checkboxInput("checkviolin", label = "Check to remove points from violin plot", value = TRUE),
                 hr(),
-                #uiOutput("identdef"),
+                uiOutput("identdef"),
                 checkboxInput("setident", label = "Check to choose a different category to compare", value = FALSE),
                 conditionalPanel(
                   condition = "input.setident ==true",uiOutput("setidentlist"),

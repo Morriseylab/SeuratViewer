@@ -848,7 +848,7 @@ server <- function(input, output,session) {
   #Generate drop down menu for the default ident/cluster/variable of comparison
   output$identdef = renderUI({
     scrna=fileload()
-    options=names(scrna@misc)
+    options=sort(unique(scrna@misc$findallmarkers$cluster))
     selectInput("identdef", "First cluster/variable of comparison (Cell Group 1)",options)
   })
   
@@ -917,6 +917,7 @@ server <- function(input, output,session) {
       }
       if(input$setident==F){
         markers=scrna@misc$findallmarkers
+        markers=markers[markers$cluster==input$identdef,]
         geneid=rownames(markers)
         url= paste("http://www.genecards.org/cgi-bin/carddisp.pl?gene=",geneid,sep = "")
         markers$Link=paste0("<a href='",url,"'target='_blank'>",rownames(markers),"</a>")
