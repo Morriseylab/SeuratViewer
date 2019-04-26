@@ -131,12 +131,12 @@ server <- function(input, output,session) {
   output$datasetTable<- renderTable({
     user=input$username
     file=read.csv('data/param.csv',stringsAsFactors = F)
-    colnames(file)=c("Project Name","Project Description","Organism","Username")
+    colnames(file)=c("Project Name","Project Description","Organism","Username","File type")
     file=file[order(file$`Project Name`),]
     if(user=="allusers" | user=="admin"){
       file=file
     }else{
-      file=file[file$Username==user,] %>% dplyr::select(-Username)
+      file=file[file$Username==user,] %>% dplyr::select(-Username,-`File type`)
       colnames(file)=c("Project Name","Project Description","Organism")
       file=file[order(file$`Project Name`),]
     }
@@ -155,9 +155,16 @@ server <- function(input, output,session) {
   #Load Rdata
   fileload <- reactive({
     if(input$filetype == 'list'){
-    inFile = paste('data/',as.character(input$projects),'.RData',sep = '')
-    load(inFile)}
-    else{
+       file=read.csv('data/param.csv',stringsAsFactors = F)
+       filetype=file$filetype[file$projects==input$projects]
+       if(filetype=="RData"){
+        inFile = paste('data/',as.character(input$projects),'.RData',sep = '')
+        load(inFile)}
+#       }else if(filetype=="RDS"){
+#         inFile = paste('data/',as.character(input$projects),'.RDS',sep = '')
+#         scrna=readRDS(inFile)
+#       }
+    }else{
       file=input$rdatafileupload
       scrna=readRDS(file$datapath)
     }
@@ -910,17 +917,17 @@ server <- function(input, output,session) {
             identb=input$identb
             p=unlist(strsplit(identb,","))
             markers=FindMarkers(object = scrna, ident.1 = input$identa, ident.2 = p, min.pct = input$minpct,logfc.threshold=input$lfc,test.use=input$test)
-            geneid=rownames(markers)
+            geneid=markers$gene
             url= paste("http://www.genecards.org/cgi-bin/carddisp.pl?gene=",geneid,sep = "")
-            markers$Link=paste0("<a href='",url,"'target='_blank'>",rownames(markers),"</a>")
+            markers$Link=paste0("<a href='",url,"'target='_blank'>",markers$gene,"</a>")
         })
       }
       if(input$setident==F){
         markers=scrna@misc$findallmarkers
         markers=markers[markers$cluster==input$identdef,]
-        geneid=rownames(markers)
+        geneid=markers$gene
         url= paste("http://www.genecards.org/cgi-bin/carddisp.pl?gene=",geneid,sep = "")
-        markers$Link=paste0("<a href='",url,"'target='_blank'>",rownames(markers),"</a>")
+        markers$Link=paste0("<a href='",url,"'target='_blank'>",markers$gene,"</a>")
       }
     })
     colnames(markers)[4]="Percentage expressed in Cell Group 1"
@@ -983,19 +990,19 @@ server <- function(input, output,session) {
     markers=markergenes()
       s=input$markergenes_rows_selected # get  index of selected row from table
       markers=markers[s, ,drop=FALSE]
-      plot2=FeaturePlot(object = scrna, features = rownames(markers), cols = c("grey","blue"),reduction = input$umapdeg,pt.size = input$pointa)
+      plot2=FeaturePlot(object = scrna, features = markers$gene, cols = c("grey","blue"),reduction = input$umapdeg,pt.size = input$pointa)
       #plot2=eval(parse(text=paste("plot2$`",rownames(markers),"`",sep="")))
   if(input$setident==T){
         setident=input$setidentlist  
       if(input$checkviolin ==T){
-      plot3=VlnPlot(object = scrna, features = rownames(markers),group.by = setident,pt.size=0,cols=cpallette)
-      }else{plot3=VlnPlot(object = scrna, features = rownames(markers),group.by = setident,cols=cpallette)}
-      plot4=RidgePlot(object = scrna, features = rownames(markers),group.by = setident,cols=cpallette)
+      plot3=VlnPlot(object = scrna, features = markers$gene,group.by = setident,pt.size=0,cols=cpallette)
+      }else{plot3=VlnPlot(object = scrna, features = markers$gene,group.by = setident,cols=cpallette)}
+      plot4=RidgePlot(object = scrna, features = markers$gene,group.by = setident,cols=cpallette)
   }else{
     if(input$checkviolin ==T){
-      plot3=VlnPlot(object = scrna, features = rownames(markers),pt.size=0,cols=cpallette)
-    }else{plot3=VlnPlot(object = scrna, features = rownames(markers),cols=cpallette)}
-    plot4=RidgePlot(object = scrna, features = rownames(markers),cols=cpallette)
+      plot3=VlnPlot(object = scrna, features = markers$gene,pt.size=0,cols=cpallette)
+    }else{plot3=VlnPlot(object = scrna, features = markers$gene,cols=cpallette)}
+    plot4=RidgePlot(object = scrna, features = markers$gene,cols=cpallette)
   }
     
       row1=plot_grid(plot1,plot2,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
@@ -1067,7 +1074,7 @@ server <- function(input, output,session) {
       scrna=fileload()
       if(input$shmptype =="deggene"){
       markers=markergenes()
-      markergenes=rownames(markers)[1:input$heatmapgenes]
+      markergenes=markers$gene[1:input$heatmapgenes]
       }else if(input$shmptype =="topgene"){
         markers <- FindAllMarkers(object = scrna, only.pos = TRUE, min.pct = 0.25,thresh.use = 0.25)
         markers %>% group_by(cluster) %>% top_n(input$topn, avg_logFC)
