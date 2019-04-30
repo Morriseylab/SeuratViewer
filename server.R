@@ -930,8 +930,10 @@ server <- function(input, output,session) {
         markers$Link=paste0("<a href='",url,"'target='_blank'>",markers$gene,"</a>")
       }
     })
-    colnames(markers)[4]="Percentage expressed in Cell Group 1"
-    colnames(markers)[5]="Percentage expressed in Cell Group 2"
+    markers =markers %>% rename("Percentage expressed in Cell Group 1"="pct.1")
+    markers =markers %>% rename("Percentage expressed in Cell Group 2"="pct.2")
+#     colnames(markers)[4]="Percentage expressed in Cell Group 1"
+#     colnames(markers)[5]="Percentage expressed in Cell Group 2"
     return(markers)
   })
   
