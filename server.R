@@ -917,6 +917,7 @@ server <- function(input, output,session) {
             identb=input$identb
             p=unlist(strsplit(identb,","))
             markers=FindMarkers(object = scrna, ident.1 = input$identa, ident.2 = p, min.pct = input$minpct,logfc.threshold=input$lfc,test.use=input$test)
+            markers$gene=rownames(markers)
             geneid=markers$gene
             url= paste("http://www.genecards.org/cgi-bin/carddisp.pl?gene=",geneid,sep = "")
             markers$Link=paste0("<a href='",url,"'target='_blank'>",markers$gene,"</a>")
