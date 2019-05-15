@@ -1,5 +1,5 @@
 # SeuratViewer
-R Shiny website for viewing single cell RNA-Seq data analysed using [Seurat.](https://satijalab.org/seurat/) 
+R Shiny website for viewing single cell RNA-Seq data analysed using [Seurat (version 3).](https://satijalab.org/seurat/) 
 Seurat is also hosted on GitHub. You can view the repository at
 
 - https://github.com/satijalab/seurat
