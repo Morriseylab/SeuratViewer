@@ -8,7 +8,7 @@ Seurat is also hosted on GitHub. You can view the repository at
 SeuratViewer reads in the expression data, sample data, feature annotation, dimensionality reduction/ clustering, and marker gene information as an RData object and enables users to view and interact with their single cell RNAseq data
 
 ## Requirements
-- R (version > 3.4)
+- R (version > 3.5)
 - RStudio Server
 - Shiny Server (if you need to host it online)
 
@@ -33,6 +33,10 @@ install.packages(c("devtools","shiny","shinydashboard","shinyjs","shinyBS","shin
 ## try http:// if https:// URLs are not supported
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("biomaRt","Biobase"))
+
+##This package contains helper functions 
+require(devtools)
+install_github("Morriseylab/scExtras")
 ```
 For linux users, other R dependencies include
 - RcppEigen
