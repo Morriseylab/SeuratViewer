@@ -1,1 +1,2 @@
-projects,desc,organism,userscrna_data1,Example single cell RNASeq dataset analysed using seurat,mouse,admin
+projects,desc,organism,user,filetype
+scrna_v3_data,Example single cell RNASeq dataset analysed using seurat,mouse,admin,RData
