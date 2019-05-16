@@ -30,9 +30,10 @@ install.packages(c("devtools","shiny","shinydashboard","shinyjs","shinyBS","shin
                    "dplyr","tidyr","openssl","httr","plotly","htmlwidgets","DT","shinyRGL","rgl","rglwidget","Seurat","cowplot",
                     "data.table","NMF","tibble","network","igraph","visNetwork"))
 
-## try http:// if https:// URLs are not supported
-source("https://bioconductor.org/biocLite.R")
-biocLite(c("biomaRt","Biobase"))
+#Install packages from bioconductor
+install.packages("BiocManager")
+BiocManager::install(c("biomaRt","Biobase","slingshot"))
+
 
 ##This package contains helper functions 
 require(devtools)
