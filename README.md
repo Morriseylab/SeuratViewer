@@ -1,5 +1,5 @@
 # SeuratViewer
-R Shiny website for viewing single cell RNA-Seq data analysed using [Seurat.](https://satijalab.org/seurat/) 
+R Shiny website for viewing single cell RNA-Seq data analysed using [Seurat.](https://satijalab.org/seurat/) (version 3)
 Seurat is also hosted on GitHub. You can view the repository at
 
 - https://github.com/satijalab/seurat
@@ -8,7 +8,7 @@ Seurat is also hosted on GitHub. You can view the repository at
 SeuratViewer reads in the expression data, sample data, feature annotation, dimensionality reduction/ clustering, and marker gene information as an RData object and enables users to view and interact with their single cell RNAseq data
 
 ## Requirements
-- R (version > 3.4)
+- R (version > 3.5)
 - RStudio Server
 - Shiny Server (if you need to host it online)
 
@@ -30,9 +30,15 @@ install.packages(c("devtools","shiny","shinydashboard","shinyjs","shinyBS","shin
                    "dplyr","tidyr","openssl","httr","plotly","htmlwidgets","DT","shinyRGL","rgl","rglwidget","Seurat","cowplot",
                     "data.table","NMF","tibble","network","igraph","visNetwork"))
 
-## try http:// if https:// URLs are not supported
-source("https://bioconductor.org/biocLite.R")
-biocLite(c("biomaRt","Biobase"))
+#Install packages from bioconductor
+install.packages("BiocManager")
+BiocManager::install(c("biomaRt","Biobase","slingshot"))
+
+
+##This package contains helper functions 
+require(devtools)
+install_github("Morriseylab/scExtras")
+install_github("Morriseylab/ligrec")
 ```
 For linux users, other R dependencies include
 - RcppEigen
@@ -42,24 +48,21 @@ For linux users, other R dependencies include
 ## Input Data format
 ### Creating your dataset 
 
-Analyse your single cell data using the [Seurat](https://satijalab.org/seurat/) package. Run the following code to run FindMarkers function on all clusters. Please note that the object should always be saved as **scrna**.
+Analyse your single cell data using the [Seurat](https://satijalab.org/seurat/) package. Run the following functions to find the markers genes in all clusters and find the ligand receptor pairs. Please note that the object should always be saved as **scrna**.
 ```
-scrna@misc=NA
-scrna@misc <-  vector(mode="list", length=length(levels(scrna@ident)))
-names(scrna@misc)=levels(scrna@ident)
-for(c in levels(scrna@ident)){
-  scrna@misc[[c]] <- FindMarkers(scrna,ident.1 = c) %>% tibble::rownames_to_column('gene_name')
-  rownames(scrna@misc[[c]])=scrna@misc[[c]]$gene_name
-} 
+org = "mouse" #use mouse or human based on your dataset
+scrna@misc[["findallmarkers"]] <- FindAllMarkers(object = scrna, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+scrna= scExtras::ligrec(object=scrna,org=org)
 ```
-Save Seurat object  
+Save Seurat object as RData or RDS file
+Note : You have to specify filetype as RDS or RData in the param file
 ```
-save(scrna,file="scrna_data1.RData")
+save(scrna,file="scrna_v3_data.RData")
 ```
 
 ### Adding your dataset
 
-Add your data to the param.csv file and move it to the data directory. You can find an example dataset [here.](http://165.123.69.6/SeuratViewer/scrna_data1.RData) Please note that the data directory must be in the same location as your server.R, ui.R and function.R files (rename the Example data folder into data). The param.csv file should also be saved in the data directory as the RData files.
+Add your data to the param.csv file and move it to the data directory. You can find an example dataset [here.](http://165.123.69.6/SeuratViewer/scrna_v3_data.RData) Please note that the data directory must be in the same location as your server.R, ui.R and function.R files (rename the Example data folder into data). The param.csv file should also be saved in the data directory as the RData files.
 
 ### NOTE
 Please note that this script requires a username and a password. Before running it, either comment out the Authentication section in server.R or add the username and password in authentication.csv file in the data folder. The username has to be entered in the param.csv file as well so that the user can view only specific datasets.
