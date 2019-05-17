@@ -1638,7 +1638,7 @@ server <- function(input, output,session) {
        result=result[result$Receptor_cluster %in% input$checkgrp2,]}
        validate(need(is.na(result)==F,"No pairs found. Change Filtering options"))
        edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
-       colnames(edges)=c("from","to")
+       colnames(edges)=c("to","from")
        e2=as.data.frame(table(edges[,1:2]))
        min=min(e2$Freq)
        n=ifelse(min<4,4,min)
@@ -1738,9 +1738,9 @@ server <- function(input, output,session) {
        col=cpallette[1:nrow(nodes)]
        nodes$color=col
        perpair <- result %>% group_by(Receptor_cluster, Lig_cluster) %>% summarise(freq = n()) %>% ungroup()
-       edges <- perpair %>%  left_join(nodes, by = c("Receptor_cluster" = "label")) %>% rename(from = id)
+       edges <- perpair %>%  left_join(nodes, by = c("Receptor_cluster" = "label")) %>% rename(to = id)
        
-       edges <- edges %>% left_join(nodes, by = c("Lig_cluster" = "label")) %>% rename(to = id)
+       edges <- edges %>% left_join(nodes, by = c("Lig_cluster" = "label")) %>% rename(from = id)
        edges <- dplyr::select(edges, from, to, freq)
        edges=left_join(edges,nodes,by=c("from"="id")) %>% dplyr::select(-label)
        edge.col=edges$color
