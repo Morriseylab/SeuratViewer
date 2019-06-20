@@ -27,7 +27,7 @@ library(network)
 library(igraph)
 #library(igraph,lib.loc = "/home/bapoorva/R_lib")
 library(shinyBS)
-#library(slingshot)
+library(scExtras)
 source("functions.R")
 
 #Specify color palette for the tSNE and UMAP plsots
@@ -161,11 +161,11 @@ server <- function(input, output,session) {
        filetype=file$filetype[file$projects==input$projects]
        if(filetype=="RData"){
         inFile = paste('data/',as.character(input$projects),'.RData',sep = '')
-        load(inFile)}
-#       }else if(filetype=="RDS"){
-#         inFile = paste('data/',as.character(input$projects),'.RDS',sep = '')
-#         scrna=readRDS(inFile)
-#       }
+        load(inFile)
+      }else if(filetype=="RDS"){
+        inFile = paste('data/',as.character(input$projects),'.RDS',sep = '')
+        scrna=readRDS(inFile)
+      }
     }else{
       file=input$rdatafileupload
       scrna=readRDS(file$datapath)
@@ -231,76 +231,22 @@ server <- function(input, output,session) {
     })
   })
   
-  ######################################################################################################
-  ######################################################################################################
-  ###################### CALC PARAMETERS TAB ############################################################
-  ######################################################################################################
-  ######################################################################################################
-  #Create subtabs for the QC plots
-  output$plotsubtab <- renderUI({
-    tabsetPanel(id = "subTabPanel1",
-                tabPanel("Create Seurat Object",tableOutput("seurobj")),
-                tabPanel("Filter Cells and Scale Data",tableOutput('filtobj')),
-                tabPanel("Dimension Reduction",tableOutput('dimred')),
-                tabPanel("Find Clusters",DT::dataTableOutput('vargenes'))
-    )
-    
-  })
-  
-  #Seuarat Object
-  seurobj= reactive({
+  #Create dropdown for commands used
+  output$seucomm = renderUI({
     scrna=fileload()
-    ulist=scrna@calc.params$CreateSeuratObject
-    ulist=ulist[1:11]
-    dd  <-  as.data.frame(matrix(unlist(ulist), nrow=length(unlist(ulist[1]))))
-    t=unlist(ulist)
-    colnames(dd)=names(t)
-    return(dd)
+    selectInput("seucomm","Choose Parameter",names(scrna@commands),selected = 1)
   })
   
-  output$seurobj <- renderTable({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      seurobj()
-    })
-  })
-  
-  #Filter criteria
-  filtobj= reactive({
+  commands <- reactive({
     scrna=fileload()
-    ulist=scrna@calc.params$FilterCells
-    t=unlist(ulist)
-    vars=scrna@calc.params$ScaleData$vars.to.regress
-    vars=paste(vars,sep="",collapse=",")
-    vars=as.data.frame(vars)
-    rownames(vars)="variables regressed"
-    colnames(vars)="t"
-    t=as.data.frame(t)
-    t=rbind(t,vars)
-    return(t)
+    comm=input$seucomm
+    k=eval(parse(text=paste("scrna@commands$",comm,sep="")))
+    return(k)
   })
-  
-  output$filtobj = renderTable({
-    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-      filtobj()    })
+  output$commands <- renderPrint({
+      commands()
   })
-  
-  #Dimension reduction
-  dimred= reactive({
-    scrna=fileload()
-    pca=scrna@calc.params$RunPCA$pcs.compute
-    tsne=length(scrna@calc.params$RunTSNE$dims.use)
-    umap=length(scrna@calc.params$RunUMAP$dims.use)
-    umap.nei=scrna@calc.params$RunUMAP$n_neighbors
-    df=as.data.frame(c(pca,tsne,umap,umap.nei))
-    rownames(df)=c("No.PCs.computed","tSNE.dims.used","UMAP.dims.used","UMAP.n_neighbors")
-    colnames(df)="values"
-    return(df)
-  })
-  
-  output$dimred = renderTable({
-    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-      dimred()    })
-  })
+
   ######################################################################################################
   ######################################################################################################
   ###################### VARIABLE GENES TAB ############################################################
@@ -1220,12 +1166,12 @@ server <- function(input, output,session) {
     scrna=fileload()
     Idents(object = scrna) = input$setvar
     avgexp=AverageExpression(object = scrna)
-    avgexp= avgexp %>% dplyr::select(input$selectcluster)
+    avgexp= avgexp$RNA %>% dplyr::select(input$selectcluster)
     genes.use=rownames(avgexp)
     data.use <- GetAssayData(object = scrna,slot = "data")
     cells <- WhichCells(object = scrna, ident = input$selectcluster)
     thresh.min=0
-    data.temp <- round(x = apply(X = data.use[genes.use, cells, drop = F],
+    data.temp <- round(x = apply(X = as.data.frame(as.matrix(data.use))[genes.use, cells, drop = F],
                                  MARGIN = 1,
                                  FUN = function(x) {
                                    return(sum(x > thresh.min) / length(x = cells))

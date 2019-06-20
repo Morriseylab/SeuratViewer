@@ -34,7 +34,6 @@ ui <- dashboardPage(
                        fileInput('rdatafileupload', 'Upload RDS File')
                      ),
                      menuItem('Project Summary', tabName = 'summ', icon = icon('hand-o-right')),
-                     #menuItem('Parameters Calculated', tabName = 'calcparams', icon = icon('hand-o-right')),
                      menuItem('Variable Genes', tabName = 'vargenes', icon = icon('hand-o-right')),
                      menuItem('Principle component Analysis', tabName = 'pca', icon = icon('hand-o-right')),
                      menuItem('tSNE Plots', tabName = 'tplot', icon = icon('hand-o-right'),
@@ -95,16 +94,13 @@ ui <- dashboardPage(
                 width = 12, status = "primary",solidHeader = TRUE,
                 title = "Project Summary",
                 verbatimTextOutput("prjsumm")
+              ),
+              box(
+                width = 12, status = "primary",solidHeader = TRUE,
+                uiOutput('seucomm'),
+                verbatimTextOutput("commands")
               )
       ),
-    ######################################################################################################################################
-    tabItem(tabName = "calcparams",
-            box(
-              width = 12, status = "primary",solidHeader = TRUE,
-              title = "Parameters calculated",
-              uiOutput("plotsubtab")
-            )
-    ),
       
     ######################################################################################################################################
     tabItem(tabName = "vargenes",
@@ -269,7 +265,7 @@ ui <- dashboardPage(
     tabItem(tabName = "heatmap",
             box(
               title = "Controls",solidHeader = TRUE,width=12,status='primary',
-              radioButtons("shmptype", label = "Genes to use as input",choices = list("Top genes across all clusters" = "topgene", "Differentially Expressed genes" = "deggene"),selected = "topgene"),
+              radioButtons("shmptype", label = "Genes to use as input",choices = list("Top genes across all clusters" = "topgene", "Differentially Expressed genes" = "deggene"),selected = "deggene"),
               conditionalPanel(
                 condition = "input.shmptype =='topgene'",sliderInput("topn", "Top n genes",min = 5, max = 15, value = 5,step=1)),
               conditionalPanel(
