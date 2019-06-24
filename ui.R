@@ -35,13 +35,14 @@ ui <- dashboardPage(
                      ),
                      menuItem('Project Summary', tabName = 'summ', icon = icon('hand-o-right')),
                      menuItem('Variable Genes', tabName = 'vargenes', icon = icon('hand-o-right')),
+                     menuItem('Feature correlation Plot', tabName = 'featurescatter', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
                      menuItem('Principle component Analysis', tabName = 'pca', icon = icon('hand-o-right')),
-                     menuItem('tSNE Plots', tabName = 'tplot', icon = icon('hand-o-right'),
-                              menuSubItem("Compare tSNE Plots", tabName = "tsneplot"),
-                              menuSubItem("Interactive tSNE/uMap Plot", tabName = "intertsne")
+                     menuItem('Dimension Reduction Plots', tabName = 'tplot', icon = icon('hand-o-right'),
+                              menuSubItem("Compare Plots", tabName = "tsneplot"),
+                              menuSubItem("Interactive DR Plots", tabName = "intertsne")
                               ),
                      menuItem('Biplot', tabName = 'biplot', icon = icon('hand-o-right')),
-                     menuItem('3D-plot', tabName = '3dplot', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
+                     menuItem('3D-plot', tabName = '3dplot', icon = icon('hand-o-right')),
                      menuItem('Differential Expression', tabName = 'deg', icon = icon('hand-o-right')),
                      menuItem('Seurat Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
                      bsPopover("heatmap",title="Note",content= "Please return to Differential Expression tab to generate marker genes before attemping to view this Heatmap",placement="left",trigger="hover",options=list(container="body")),
@@ -116,6 +117,29 @@ ui <- dashboardPage(
             box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
                 uiOutput("ndim"),
                 sliderInput("ngenes", "Number of genes:",min = 10, max = 50, value = 10,step=5))
+    ),#end of pca
+    ######################################################################################################################################
+    tabItem(tabName = "featurescatter",
+            box(title = "Scatter Plots",solidHeader = TRUE,width=8,status='primary',
+                plotOutput("scatterplot", height = 800)
+            ),#End box
+            box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
+                uiOutput("scatcat"),
+                  conditionalPanel(
+                  condition = "input.scatcat != 'PCA_dim'",
+                  uiOutput("scatcat2")
+                ),
+                conditionalPanel(
+                  condition = "input.scatcat == 'PCA_dim'",
+                  uiOutput("dimscat1"),
+                  uiOutput("dimscat2")
+                )
+            #checkboxInput("allpca", label = "Check if you want to see all PCA plots", value = FALSE))
+#             conditionalPanel(
+#               condition = "input.scatcat == 'All_PCs",
+#               uiOutput("allpcaplots")
+#             )
+            )
     ),#end of pca
     ######################################################################################################################################
     tabItem(tabName = "tsneplot",

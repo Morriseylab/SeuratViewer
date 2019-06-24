@@ -311,7 +311,70 @@ server <- function(input, output,session) {
     })
   })
   
+  ######################################################################################################
+  ######################################################################################################
+  ################################# FEATURESCATTER  TAB ################################################
+  ######################################################################################################
+  ######################################################################################################
+  #Generate dropdown for feature scatter
+  output$scatcat = renderUI({
+    scrna=fileload()
+    options=c(colnames(scrna@meta.data)[sapply(scrna@meta.data,class) %in% c("numeric","integer")],"PCA_dim","All_PCs")
+    selectInput("scatcat","Select one",options,selected = options[1])
+  })
   
+  output$scatcat2 = renderUI({
+    scrna=fileload()
+    options=colnames(scrna@meta.data)[sapply(scrna@meta.data,class) %in% c("numeric","integer")]
+    selectInput("scatcat2","Select one",options,selected = options[2])
+  })
+  
+  #Generate dropdown for PC's
+  output$dimscat1 = renderUI({
+    scrna=fileload()
+    options=colnames(scrna@reductions$pca@cell.embeddings)
+    selectInput("firstPC","Choose PC",options,selected = options[1])
+  })
+  
+  output$dimscat2 = renderUI({
+    scrna=fileload()
+    options=colnames(scrna@reductions$pca@cell.embeddings)
+    selectInput("secPC","Choose PC",options,selected = options[2])
+  })
+  
+  #Generate feature scatter
+  scatterplot= reactive({
+    scrna=fileload()
+    if(input$scatcat == 'PCA_dim'){
+    FeatureScatter(scrna,input$firstPC,input$secPC)}
+    else if(input$scatcat == 'All_PCs'){
+      PCs=colnames(scrna@reductions$pca@cell.embeddings)
+      oddindex=seq(1,length(PCs),2)
+      evenindex=seq(2,length(PCs),2)
+      for(j in seq(1,0.5*(length(PCs)))){
+          plot_grid(
+          FeatureScatter(scrna,PCs[oddindex][j],PCs[evenindex][j]),
+          ncol=2)
+      }}
+      #do.call(grid.arrange,p)}
+      else{
+      FeatureScatter(scrna,input$scatcat,input$scatcat2)}
+
+
+
+  })
+  
+  #Render plot
+  output$scatterplot = renderPlot({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      scatterplot()
+    })
+  })
+  
+  #Render plot
+  output$allpcaplots = renderUI({
+    h3("")
+  })
   ###################################################
   ###################################################
   ####### Compare Tsne plot with controls  ##########
