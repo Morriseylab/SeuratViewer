@@ -1,34 +1,34 @@
-library(shiny)
-library(shinyBS)
-library(RColorBrewer)
-library(biomaRt)
-library(Biobase)
-library(reshape2)
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-library(plotly)
-library(shinyjs)
-library(htmlwidgets)
-library(DT)
-library(scExtras)
-#options(rgl.useNULL=TRUE)
-#library(shinyRGL)
-#library(rgl)
-#library(rglwidget)
-library(Seurat)
-#library(Seurat, lib.loc="/home/bapoorva/R_lib")
-library(cowplot)
-#library(cowplot,lib.loc = "/home/bapoorva/R_lib")
-library(data.table)
-library(NMF)
-library(tibble)
-library(network)
-library(igraph)
-#library(igraph,lib.loc = "/home/bapoorva/R_lib")
-library(shinyBS)
-library(scExtras)
-source("functions.R")
+# library(shiny)
+# library(shinyBS)
+# library(RColorBrewer)
+# library(biomaRt)
+# library(Biobase)
+# library(reshape2)
+# library(ggplot2)
+# library(dplyr)
+# library(tidyr)
+# library(plotly)
+# library(shinyjs)
+# library(htmlwidgets)
+# library(DT)
+# library(scExtras)
+# #options(rgl.useNULL=TRUE)
+# #library(shinyRGL)
+# #library(rgl)
+# #library(rglwidget)
+# library(Seurat)
+# #library(Seurat, lib.loc="/home/bapoorva/R_lib")
+# library(cowplot)
+# #library(cowplot,lib.loc = "/home/bapoorva/R_lib")
+# library(data.table)
+# library(NMF)
+# library(tibble)
+# library(network)
+# library(igraph)
+# #library(igraph,lib.loc = "/home/bapoorva/R_lib")
+# library(shinyBS)
+# library(scExtras)
+# source("functions.R")
 
 #Specify color palette for the tSNE and UMAP plsots
 cpallette=c("#64B2CE", "#DA5724", "#74D944", "#CE50CA", "#C0717C", "#CBD588", "#5F7FC7",
@@ -347,23 +347,22 @@ server <- function(input, output,session) {
     scrna=fileload()
     if(input$scatcat == 'PCA_dim'){
     FeatureScatter(scrna,input$firstPC,input$secPC)}
-    else if(input$scatcat == 'All_PCs'){
+      else{
+      FeatureScatter(scrna,input$scatcat,input$scatcat2)}
+})
+  
+  #Generate feature scatter
+  scatterplot2= reactive({
+    scrna=fileload()
+    if(input$scatcat == 'All_PCs'){
       PCs=colnames(scrna@reductions$pca@cell.embeddings)
       oddindex=seq(1,length(PCs),2)
       evenindex=seq(2,length(PCs),2)
+      p=list()
       for(j in seq(1,0.5*(length(PCs)))){
-          plot_grid(
-          FeatureScatter(scrna,PCs[oddindex][j],PCs[evenindex][j]),
-          ncol=2)
-      }}
-      #do.call(grid.arrange,p)}
-      else{
-      FeatureScatter(scrna,input$scatcat,input$scatcat2)}
-
-
-
+        p[[j]]=FeatureScatter(scrna,PCs[oddindex][j],PCs[evenindex][j])}
+      plot_grid(plotlist = p,ncol=3)}
   })
-  
   #Render plot
   output$scatterplot = renderPlot({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
@@ -372,9 +371,13 @@ server <- function(input, output,session) {
   })
   
   #Render plot
-  output$allpcaplots = renderUI({
-    h3("")
+  output$scatterplot2 = renderPlot({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      scatterplot2()
+    })
   })
+ 
+  
   ###################################################
   ###################################################
   ####### Compare Tsne plot with controls  ##########

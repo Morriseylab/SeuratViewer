@@ -121,7 +121,15 @@ ui <- dashboardPage(
     ######################################################################################################################################
     tabItem(tabName = "featurescatter",
             box(title = "Scatter Plots",solidHeader = TRUE,width=8,status='primary',
-                plotOutput("scatterplot", height = 800)
+                conditionalPanel(
+                  condition = "input.scatcat != 'All_PCs'",
+                  plotOutput("scatterplot", height = 800)
+                ),
+                conditionalPanel(
+                  condition = "input.scatcat == 'All_PCs'",
+                  plotOutput("scatterplot2", height = 2500)
+                )
+                
             ),#End box
             box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
                 uiOutput("scatcat"),
