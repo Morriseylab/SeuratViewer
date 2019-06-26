@@ -121,32 +121,29 @@ ui <- dashboardPage(
     ######################################################################################################################################
     tabItem(tabName = "featurescatter",
             box(title = "Scatter Plots",solidHeader = TRUE,width=8,status='primary',
+#                 conditionalPanel(
+#                   condition = "input.scatcat != 'All_PCs'",
+#                   plotOutput("scatterplot", height = 800)
+#                 ),
                 conditionalPanel(
-                  condition = "input.scatcat != 'All_PCs'",
-                  plotOutput("scatterplot", height = 800)
-                ),
-                conditionalPanel(
-                  condition = "input.scatcat == 'All_PCs'",
+                  condition = "input.feasca == 'pp' || input.feasca == 'pg'",
                   plotOutput("scatterplot2", height = 2500)
                 )
                 
             ),#End box
             box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
-                uiOutput("scatcat"),
+                selectInput("feasca","Select one",c('PC_PC' = "pp",'PC_Gene' = "pg", 'Gene_Gene' = "gg"),selected = 'pp'),
+#                 uiOutput("scatcat"),
                   conditionalPanel(
-                  condition = "input.scatcat != 'PCA_dim'",
-                  uiOutput("scatcat2")
-                ),
-                conditionalPanel(
-                  condition = "input.scatcat == 'PCA_dim'",
-                  uiOutput("dimscat1"),
-                  uiOutput("dimscat2")
+                  condition = "input.feasca == 'pg'",
+                  uiOutput("feagenelist"),
+                  uiOutput("plotpages")
                 )
-            #checkboxInput("allpca", label = "Check if you want to see all PCA plots", value = FALSE))
-#             conditionalPanel(
-#               condition = "input.scatcat == 'All_PCs",
-#               uiOutput("allpcaplots")
-#             )
+#                 conditionalPanel(
+#                   condition = "input.scatcat == 'PCA_dim'",
+#                   uiOutput("dimscat1"),
+#                   uiOutput("dimscat2")
+#                 )
             )
     ),#end of pca
     ######################################################################################################################################

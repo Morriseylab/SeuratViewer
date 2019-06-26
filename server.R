@@ -1,34 +1,34 @@
-# library(shiny)
-# library(shinyBS)
-# library(RColorBrewer)
-# library(biomaRt)
-# library(Biobase)
-# library(reshape2)
-# library(ggplot2)
-# library(dplyr)
-# library(tidyr)
-# library(plotly)
-# library(shinyjs)
-# library(htmlwidgets)
-# library(DT)
-# library(scExtras)
-# #options(rgl.useNULL=TRUE)
-# #library(shinyRGL)
-# #library(rgl)
-# #library(rglwidget)
-# library(Seurat)
-# #library(Seurat, lib.loc="/home/bapoorva/R_lib")
-# library(cowplot)
-# #library(cowplot,lib.loc = "/home/bapoorva/R_lib")
-# library(data.table)
-# library(NMF)
-# library(tibble)
-# library(network)
-# library(igraph)
-# #library(igraph,lib.loc = "/home/bapoorva/R_lib")
-# library(shinyBS)
-# library(scExtras)
-# source("functions.R")
+library(shiny)
+library(shinyBS)
+library(RColorBrewer)
+library(biomaRt)
+library(Biobase)
+library(reshape2)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(plotly)
+library(shinyjs)
+library(htmlwidgets)
+library(DT)
+library(scExtras)
+#options(rgl.useNULL=TRUE)
+#library(shinyRGL)
+#library(rgl)
+#library(rglwidget)
+library(Seurat)
+#library(Seurat, lib.loc="/home/bapoorva/R_lib")
+library(cowplot)
+#library(cowplot,lib.loc = "/home/bapoorva/R_lib")
+library(data.table)
+library(NMF)
+library(tibble)
+library(network)
+library(igraph)
+#library(igraph,lib.loc = "/home/bapoorva/R_lib")
+library(shinyBS)
+library(scExtras)
+source("functions.R")
 
 #Specify color palette for the tSNE and UMAP plsots
 cpallette=c("#64B2CE", "#DA5724", "#74D944", "#CE50CA", "#C0717C", "#CBD588", "#5F7FC7",
@@ -316,52 +316,78 @@ server <- function(input, output,session) {
   ################################# FEATURESCATTER  TAB ################################################
   ######################################################################################################
   ######################################################################################################
-  #Generate dropdown for feature scatter
-  output$scatcat = renderUI({
+  #genelist for feature scatter plot
+  output$feagenelist = renderUI({
     scrna=fileload()
-    options=c(colnames(scrna@meta.data)[sapply(scrna@meta.data,class) %in% c("numeric","integer")],"PCA_dim","All_PCs")
-    selectInput("scatcat","Select one",options,selected = options[1])
+    genes=rownames(scrna@assays$SCT)
+    selectInput("feagene","Select one",genes ,selected = genes[1])
   })
   
-  output$scatcat2 = renderUI({
+  #Tabs for plots
+  output$plotpages = renderUI({
     scrna=fileload()
-    options=colnames(scrna@meta.data)[sapply(scrna@meta.data,class) %in% c("numeric","integer")]
-    selectInput("scatcat2","Select one",options,selected = options[2])
+    PCs=length(colnames(scrna@reductions$pca@cell.embeddings))
+    for(l in seq(1,PCs,24)){
+      j=match(l,seq(1,PCs,24))
+      h=ifelse(l+24>=PCs,PCs,l+23)
+      nos[j]=paste(l,"-",h,sep="")}
+    selectInput("plotpages","Plots",nos,selected = nos[1])
   })
+  
+  #Generate dropdown for feature scatter
+#   output$scatcat = renderUI({
+#     scrna=fileload()
+#     options=c(colnames(scrna@meta.data)[sapply(scrna@meta.data,class) %in% c("numeric","integer")],"PCA_dim","All_PCs")
+#     selectInput("scatcat","Select one",options,selected = options[1])
+#   })
+#   
+#   output$scatcat2 = renderUI({
+#     scrna=fileload()
+#     options=colnames(scrna@meta.data)[sapply(scrna@meta.data,class) %in% c("numeric","integer")]
+#     selectInput("scatcat2","Select one",options,selected = options[2])
+#   })
   
   #Generate dropdown for PC's
-  output$dimscat1 = renderUI({
-    scrna=fileload()
-    options=colnames(scrna@reductions$pca@cell.embeddings)
-    selectInput("firstPC","Choose PC",options,selected = options[1])
-  })
-  
-  output$dimscat2 = renderUI({
-    scrna=fileload()
-    options=colnames(scrna@reductions$pca@cell.embeddings)
-    selectInput("secPC","Choose PC",options,selected = options[2])
-  })
-  
-  #Generate feature scatter
-  scatterplot= reactive({
-    scrna=fileload()
-    if(input$scatcat == 'PCA_dim'){
-    FeatureScatter(scrna,input$firstPC,input$secPC)}
-      else{
-      FeatureScatter(scrna,input$scatcat,input$scatcat2)}
-})
+#   output$dimscat1 = renderUI({
+#     scrna=fileload()
+#     options=colnames(scrna@reductions$pca@cell.embeddings)
+#     selectInput("firstPC","Choose PC",options,selected = options[1])
+#   })
+#   
+#   output$dimscat2 = renderUI({
+#     scrna=fileload()
+#     options=colnames(scrna@reductions$pca@cell.embeddings)
+#     selectInput("secPC","Choose PC",options,selected = options[2])
+#   })
+#   
+#   #Generate feature scatter
+#   scatterplot= reactive({
+#     scrna=fileload()
+#     if(input$scatcat == 'PCA_dim'){
+#     FeatureScatter(scrna,input$firstPC,input$secPC)}
+#       else{
+#       FeatureScatter(scrna,input$scatcat,input$scatcat2)}
+# })
   
   #Generate feature scatter
   scatterplot2= reactive({
     scrna=fileload()
-    if(input$scatcat == 'All_PCs'){
-      PCs=colnames(scrna@reductions$pca@cell.embeddings)
+    PCs=colnames(scrna@reductions$pca@cell.embeddings)
+    if(input$feasca == 'pp'){
       oddindex=seq(1,length(PCs),2)
       evenindex=seq(2,length(PCs),2)
       p=list()
       for(j in seq(1,0.5*(length(PCs)))){
         p[[j]]=FeatureScatter(scrna,PCs[oddindex][j],PCs[evenindex][j])}
       plot_grid(plotlist = p,ncol=3)}
+    else if(input$feasca == 'pg'){
+      p=list()
+      n=as.numeric(strsplit(input$plotpages,"-")[[1]][2])
+      PCs=PCs[1:n]
+      for(i in PCs){
+        p[[i]]=FeatureScatter(scrna,i,input$feagene)}
+      plot_grid(plotlist = p,ncol=3)
+    }
   })
   #Render plot
   output$scatterplot = renderPlot({
