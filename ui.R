@@ -121,10 +121,10 @@ ui <- dashboardPage(
     ######################################################################################################################################
     tabItem(tabName = "featurescatter",
             box(title = "Scatter Plots",solidHeader = TRUE,width=8,status='primary',
-#                 conditionalPanel(
-#                   condition = "input.scatcat != 'All_PCs'",
-#                   plotOutput("scatterplot", height = 800)
-#                 ),
+                conditionalPanel(
+                  condition = "input.feasca == 'gg'",
+                  plotOutput("scatterplot", height = 800)
+                ),
                 conditionalPanel(
                   condition = "input.feasca == 'pp' || input.feasca == 'pg'",
                   plotOutput("scatterplot2", height = 2500)
@@ -133,17 +133,17 @@ ui <- dashboardPage(
             ),#End box
             box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
                 selectInput("feasca","Select one",c('PC_PC' = "pp",'PC_Gene' = "pg", 'Gene_Gene' = "gg"),selected = 'pp'),
-#                 uiOutput("scatcat"),
                   conditionalPanel(
                   condition = "input.feasca == 'pg'",
                   uiOutput("feagenelist"),
                   uiOutput("plotpages")
-                )
-#                 conditionalPanel(
-#                   condition = "input.scatcat == 'PCA_dim'",
-#                   uiOutput("dimscat1"),
-#                   uiOutput("dimscat2")
-#                 )
+                ),
+                conditionalPanel(
+                  condition = "input.feasca == 'gg'",
+                  uiOutput("feascagenes1"),
+                  uiOutput("feascagenes2")
+                ),
+                uiOutput("feascacolor")
             )
     ),#end of pca
     ######################################################################################################################################

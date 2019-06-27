@@ -323,6 +323,15 @@ server <- function(input, output,session) {
     selectInput("feagene","Select one",genes ,selected = genes[1])
   })
   
+  #genelist for feature scatter plot
+  output$feascacolor = renderUI({
+    scrna=fileload()
+    metadata=as.data.frame(scrna@meta.data) 
+    metadata=metadata %>% select(starts_with("var"))
+    var=colnames(metadata)
+    selectInput("feascacolor","Select one",var ,selected = var[1])
+  })
+  
   #Tabs for plots
   output$plotpages = renderUI({
     scrna=fileload()
@@ -334,40 +343,24 @@ server <- function(input, output,session) {
     selectInput("plotpages","Plots",nos,selected = nos[1])
   })
   
-  #Generate dropdown for feature scatter
-#   output$scatcat = renderUI({
-#     scrna=fileload()
-#     options=c(colnames(scrna@meta.data)[sapply(scrna@meta.data,class) %in% c("numeric","integer")],"PCA_dim","All_PCs")
-#     selectInput("scatcat","Select one",options,selected = options[1])
-#   })
-#   
-#   output$scatcat2 = renderUI({
-#     scrna=fileload()
-#     options=colnames(scrna@meta.data)[sapply(scrna@meta.data,class) %in% c("numeric","integer")]
-#     selectInput("scatcat2","Select one",options,selected = options[2])
-#   })
+ # Generate dropdown genelist for plot
+  output$feascagenes1 = renderUI({
+    scrna=fileload()
+    genes=rownames(scrna@assays$SCT)
+    selectInput("feascagenes1","Select one",genes ,selected = genes[1])
+  })
   
-  #Generate dropdown for PC's
-#   output$dimscat1 = renderUI({
-#     scrna=fileload()
-#     options=colnames(scrna@reductions$pca@cell.embeddings)
-#     selectInput("firstPC","Choose PC",options,selected = options[1])
-#   })
-#   
-#   output$dimscat2 = renderUI({
-#     scrna=fileload()
-#     options=colnames(scrna@reductions$pca@cell.embeddings)
-#     selectInput("secPC","Choose PC",options,selected = options[2])
-#   })
-#   
-#   #Generate feature scatter
-#   scatterplot= reactive({
-#     scrna=fileload()
-#     if(input$scatcat == 'PCA_dim'){
-#     FeatureScatter(scrna,input$firstPC,input$secPC)}
-#       else{
-#       FeatureScatter(scrna,input$scatcat,input$scatcat2)}
-# })
+  output$feascagenes2 = renderUI({
+    scrna=fileload()
+    genes=rownames(scrna@assays$SCT)
+    selectInput("feascagenes2","Select one",genes ,selected = genes[2])
+  })
+  
+  #Generate feature scatter
+  scatterplot= reactive({
+    scrna=fileload()
+    FeatureScatter(scrna,input$feascagenes1,input$feascagenes2,group.by=input$feascacolor)
+})
   
   #Generate feature scatter
   scatterplot2= reactive({
@@ -378,14 +371,15 @@ server <- function(input, output,session) {
       evenindex=seq(2,length(PCs),2)
       p=list()
       for(j in seq(1,0.5*(length(PCs)))){
-        p[[j]]=FeatureScatter(scrna,PCs[oddindex][j],PCs[evenindex][j])}
+        p[[j]]=FeatureScatter(scrna,PCs[oddindex][j],PCs[evenindex][j],group.by=input$feascacolor)}
       plot_grid(plotlist = p,ncol=3)}
     else if(input$feasca == 'pg'){
       p=list()
-      n=as.numeric(strsplit(input$plotpages,"-")[[1]][2])
-      PCs=PCs[1:n]
+      n1=as.numeric(strsplit(input$plotpages,"-")[[1]][1])
+      n2=as.numeric(strsplit(input$plotpages,"-")[[1]][2])
+      PCs=PCs[n1:n2]
       for(i in PCs){
-        p[[i]]=FeatureScatter(scrna,i,input$feagene)}
+        p[[i]]=FeatureScatter(scrna,i,input$feagene,group.by=input$feascacolor)}
       plot_grid(plotlist = p,ncol=3)
     }
   })
