@@ -405,7 +405,9 @@ ui <- dashboardPage(
                 uiOutput("bigene_rangeb2"),
                 #sliderInput("perc_cells", "Filter by percentage of cells expressing the gene:",min = 10, max = 100, value = 50,step=5),
                 sliderInput("bigene_pointsize2", "Point Size:",min = 0, max = 5, value = 1,step=.25),
-                actionButton("lrpgo", "Change Parameters and Run")
+                actionButton("lrpgo", "Change Parameters and Run"),br(),br(),
+                downloadButton('downloadlr', 'Download Results'),br(),br(),
+                downloadButton('downloadlrbigene', 'Download Plot')
             ),
             box(
               width = 12, status = "primary",solidHeader = TRUE,

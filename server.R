@@ -1619,8 +1619,16 @@ server <- function(input, output,session) {
      })
    })
    
+   #Download function to download the table of ligand receptor pairs
+   output$downloadlr <- downloadHandler(
+     filename = function() { paste(projectname(), '_Ligrec_res.csv', sep='') },
+     content = function(file) {
+       write.csv(finalres(), file)
+     })
+   
+   
    #plot the bi-gene plot based on the row selected from lig-rec table
-   output$bigeneplot2 <- renderPlot({
+   bigeneplot2 <- reactive({
      withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
        table=finalres()
        s=input$pairs_res_rows_selected
@@ -1637,6 +1645,24 @@ server <- function(input, output,session) {
        ggdraw(p2)
      })
    })
+   
+   #Render plot
+   output$bigeneplot2 = renderPlot({
+     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+       bigeneplot2()
+     })
+   })
+   
+   #Download network
+   output$downloadlrbigene <- downloadHandler(
+     filename = function() {
+       paste0("Ligand-Receptorpair_bigene.pdf")
+     },
+     content = function(file){
+       pdf(file, width = 10, height = 8,useDingbats=FALSE)
+       plot(bigeneplot2())
+       dev.off()
+     })
    
    ######################################################################################################
    ######################################################################################################
