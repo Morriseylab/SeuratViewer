@@ -1623,7 +1623,7 @@ server <- function(input, output,session) {
    output$downloadlr <- downloadHandler(
      filename = function() { paste(projectname(), '_Ligrec_res.csv', sep='') },
      content = function(file) {
-       write.csv(finalres(), file)
+       write.csv(finalres(), file, row.names = F)
      })
    
    
