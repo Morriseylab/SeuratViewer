@@ -14,6 +14,10 @@ SeuratViewer reads in the expression data, sample data, feature annotation, dime
 
 If you need help installing the above or getting started, refer to [this](https://deanattali.com/2015/05/09/setup-rstudio-shiny-server-digital-ocean/#install-r)
 
+Please note that certain sections might use functions that require the installation of R packages from our github page. The installation instructions have been provided below. The packages are 
+ - scExtras - provides additional functions for single cell data processing like running dimension reduction methods like tsne, umap and diffusion maps and integrating seurat with [monocle](http://cole-trapnell-lab.github.io/monocle-release/) and [slingshot](https://bioconductor.org/packages/release/bioc/vignettes/slingshot/inst/doc/vignette.html)
+ - ligrec - function to compute ligand receptor pairs
+ 
 ## Installation
 For Linux, run the following commands in terminal 
 ```
@@ -45,20 +49,38 @@ For linux users, other R dependencies include
 - lme4
 - flexmix
 
-## Input Data format
-### Creating your dataset 
+## Creating Input data
 
-Analyse your single cell data using the [Seurat](https://satijalab.org/seurat/) package. Run the following functions to find the markers genes in all clusters and find the ligand receptor pairs. Please note that the object should always be saved as **scrna**.
+### Set parameters
+```
+outdir <-'~/Seurat' 
+projectname<-'project' # specify project name,this will also be the Rdata file name
+input10x <- c('LAM_rep1/filtered_feature_bc_matrix/','LAM_rep2/filtered_feature_bc_matrix') # dir(s) of the 10x output files, genes.tsv,barcodes.tsv
+org<-'human' 
+
+mouseorthologfile <- 'mouse_human.csv'
+npcs<-50 #How many inital PC dimensions to compute. 
+k=30 #This for nearest neighbors, 30 is default
+```
+### Preprocess the data and create a seurat object
+```
+dir.create(outdir,recursive = T)
+scrna <- processExper(dir=outdir,org=org,name=projectname,files=input10x ,ccscale = T,filter=T)
+scrna <- ClusterDR(scrna,npcs=npcs,maxdim='auto',k=k)
+
+scrna= ligrec(object=scrna,org=org)
+saveRDS(scrna,file=paste0(projectname,'.RDS'))
+```
+
+Or you can analyse your single cell data using the [Seurat](https://satijalab.org/seurat/) package. Run the following functions to find the markers genes in all clusters and find the ligand receptor pairs. Please note that the object should always be saved as **scrna**. Then add this part
 ```
 org = "mouse" #use mouse or human based on your dataset
 scrna@misc[["findallmarkers"]] <- FindAllMarkers(object = scrna, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
 scrna= scExtras::ligrec(object=scrna,org=org)
-```
-Save Seurat object as RData or RDS file
-Note : You have to specify filetype as RDS or RData in the param file
-```
 save(scrna,file="scrna_v3_data.RData")
 ```
+
+Note : You have to specify filetype as RDS or RData in the param file
 
 ### Adding your dataset
 
