@@ -58,7 +58,7 @@ projectname<-'project' # specify project name,this will also be the Rdata file n
 input10x <- c('LAM_rep1/filtered_feature_bc_matrix/','LAM_rep2/filtered_feature_bc_matrix') # dir(s) of the 10x output files, genes.tsv,barcodes.tsv
 org<-'human' 
 
-mouseorthologfile <- 'mouse_human.csv'
+mouseorthologfile <- 'Example data/mouse_human.csv'
 npcs<-50 #How many inital PC dimensions to compute. 
 k=30 #This for nearest neighbors, 30 is default
 ```
@@ -72,7 +72,7 @@ scrna= ligrec(object=scrna,org=org)
 saveRDS(scrna,file=paste0(projectname,'.RDS'))
 ```
 
-Or you can analyse your single cell data using the [Seurat](https://satijalab.org/seurat/) package. Run the following functions to find the markers genes in all clusters and find the ligand receptor pairs. Please note that the object should always be saved as **scrna**. Then add this part
+Or you can analyse your single cell data using the [Seurat](https://satijalab.org/seurat/) package. Run the following functions to find the markers genes in all clusters and find the ligand receptor pairs. Please note that the object should always be saved as **scrna**. 
 ```
 org = "mouse" #use mouse or human based on your dataset
 scrna@misc[["findallmarkers"]] <- FindAllMarkers(object = scrna, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
