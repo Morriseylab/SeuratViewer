@@ -14,7 +14,7 @@ SeuratViewer reads in the expression data, sample data, feature annotation, dime
 
 If you need help installing the above or getting started, refer to [this](https://deanattali.com/2015/05/09/setup-rstudio-shiny-server-digital-ocean/#install-r)
 
-Please note that certain sections might use functions that require the installation of R packages from our github page. The installation instructions have been provided below. The packages are 
+Please note that certain sections might use functions that require the installation of the following R packages. The installation instructions have been provided below. The packages are 
  - scExtras - provides additional functions for single cell data processing like running dimension reduction methods like tsne, umap and diffusion maps and integrating seurat with [monocle](http://cole-trapnell-lab.github.io/monocle-release/) and [slingshot](https://bioconductor.org/packages/release/bioc/vignettes/slingshot/inst/doc/vignette.html)
  - ligrec - function to compute ligand receptor pairs
  
