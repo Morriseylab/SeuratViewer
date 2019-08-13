@@ -319,8 +319,10 @@ server <- function(input, output,session) {
   #genelist for feature scatter plot
   output$feagenelist = renderUI({
     scrna=fileload()
-    genes=rownames(scrna@assays$SCT)
-    selectInput("feagene","Select one",genes ,selected = genes[1])
+    list=names(scrna@assays)
+    name=ifelse("SCT" %in% list, "SCT","RNA")
+    genes=rownames(eval(parse(text=paste0("scrna@assays$",name,sep=""))))
+    selectInput("feagene","Select Gene",genes ,selected = genes[1])
   })
   
   #genelist for feature scatter plot
@@ -329,13 +331,14 @@ server <- function(input, output,session) {
     metadata=as.data.frame(scrna@meta.data) 
     metadata=metadata %>% select(starts_with("var"))
     var=colnames(metadata)
-    selectInput("feascacolor","Select one",var ,selected = var[1])
+    selectInput("feascacolor","Select Variable for Color by option",var ,selected = var[1])
   })
   
   #Tabs for plots
   output$plotpages = renderUI({
     scrna=fileload()
     PCs=length(colnames(scrna@reductions$pca@cell.embeddings))
+    nos=vector()
     for(l in seq(1,PCs,24)){
       j=match(l,seq(1,PCs,24))
       h=ifelse(l+24>=PCs,PCs,l+23)
@@ -346,20 +349,37 @@ server <- function(input, output,session) {
  # Generate dropdown genelist for plot
   output$feascagenes1 = renderUI({
     scrna=fileload()
-    genes=rownames(scrna@assays$SCT)
-    selectInput("feascagenes1","Select one",genes ,selected = genes[1])
+    list=names(scrna@assays)
+    name=ifelse("SCT" %in% list, "SCT","RNA")
+    genes=rownames(eval(parse(text=paste0("scrna@assays$",name,sep=""))))
+    selectInput("feascagenes1","Select Gene1",genes ,selected = genes[1])
   })
   
   output$feascagenes2 = renderUI({
     scrna=fileload()
-    genes=rownames(scrna@assays$SCT)
-    selectInput("feascagenes2","Select one",genes ,selected = genes[2])
+    list=names(scrna@assays)
+    name=ifelse("SCT" %in% list, "SCT","RNA")
+    genes=rownames(eval(parse(text=paste0("scrna@assays$",name,sep=""))))
+    selectInput("feascagenes2","Select Gene2",genes ,selected = genes[2])
+  })
+  
+  output$feascagenelist = renderUI({
+    scrna=fileload()
+    list=names(scrna@assays)
+    name=ifelse("SCT" %in% list, "SCT","RNA")
+    genes=rownames(eval(parse(text=paste0("scrna@assays$",name,sep=""))))
+    selectInput("feascagenelist","Select one",genes ,selected = genes[1])
   })
   
   #Generate feature scatter
   scatterplot= reactive({
     scrna=fileload()
-    FeatureScatter(scrna,input$feascagenes1,input$feascagenes2,group.by=input$feascacolor)
+    list=c("nCount_RNA","nFeature_RNA","percent.mito","S.Score","G2M.Score")
+    if(input$feasca == 'gg'){
+    FeatureScatter(scrna,input$feascagenes1,input$feascagenes2,group.by=input$feascacolor)}
+    else if(input$feasca %in% list){
+      FeatureScatter(scrna,input$feascagenelist,input$feasca,group.by=input$feascacolor)  
+    }
 })
   
   #Generate feature scatter
@@ -1076,10 +1096,19 @@ server <- function(input, output,session) {
   ###################################################
   ###################################################
   #get the list of the differentially expressed markers from the differential expression tab and compute min and max
+  #Dropdown to select cluster
+  output$heatmapclust = renderUI({
+    scrna=fileload()
+    clust=order(unique(scrna@misc$findallmarkers$cluster))
+    selectInput("heatmapclust", "Select cluster",clust)
+    })
+  
   #number of genes to show in the dotpot
   output$heatmapgenes = renderUI({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      markers=markergenes()
+      markers=scrna@misc$findallmarkers
+      if(input$shmptype =="deggene"){
+      markers=markers[markers$cluster==input$heatmapclust,]}
       validate(
         need(nrow(markers)>0, "No Marker genes found")
       )
@@ -1090,7 +1119,7 @@ server <- function(input, output,session) {
         min=10
         max=nrow(markers)
       }
-      sliderInput("heatmapgenes", "Number of top genes to plot:",min = min, max = max,value = min)
+      sliderInput("heatmapgenes", "Number of genes to plot:",min = min, max = max,value = min)
     })
   })
   
@@ -1110,29 +1139,14 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       scrna=fileload()
       if(input$shmptype =="deggene"){
-      markers=markergenes()
+        markers=scrna@misc$findallmarkers
+        markers=markers[markers$cluster==input$heatmapclust,]
       markergenes=markers$gene[1:input$heatmapgenes]
       }else if(input$shmptype =="topgene"){
-        markers <- FindAllMarkers(object = scrna, only.pos = TRUE, min.pct = 0.25,thresh.use = 0.25)
+        markers=scrna@misc$findallmarkers
         markers %>% group_by(cluster) %>% top_n(input$topn, avg_logFC)
         markergenes=markers$gene
       }
-#       if(input$hmpcol=="PuYl"){
-#         lowcol="darkmagenta"
-#         midcol="black"
-#         highcol="yellow"
-#       }else if(input$hmpcol=="BuGn"){
-#         lowcol="yellow"
-#         midcol="green"
-#         highcol="blue"
-#       }else if(input$hmpcol=="RdYl"){
-#         lowcol="yellow"
-#         midcol="red"
-#         highcol="black"
-#       }else if(input$hmpcol=="RdBu"){
-#         lowcol="red"
-#         midcol="white"
-#         highcol="blue"}
       p=DoHeatmap(object = scrna, features = markergenes,group.by = input$hmpgrp, group.bar= T,label=TRUE)
       p2 <- add_sub(p, paste(projectname(),"_Heatmap",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
       ggdraw(p2)

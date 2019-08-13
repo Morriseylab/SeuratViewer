@@ -45,9 +45,7 @@ ui <- dashboardPage(
                      menuItem('3D-plot', tabName = '3dplot', icon = icon('hand-o-right')),
                      menuItem('Differential Expression', tabName = 'deg', icon = icon('hand-o-right')),
                      menuItem('Seurat Heatmap', tabName = 'heatmap', icon = icon('hand-o-right')),
-                     bsPopover("heatmap",title="Note",content= "Please return to Differential Expression tab to generate marker genes before attemping to view this Heatmap",placement="left",trigger="hover",options=list(container="body")),
-                     
-                     
+                     #bsPopover("heatmap",title="Note",content= "Please return to Differential Expression tab to generate marker genes before attemping to view this Heatmap",placement="left",trigger="hover",options=list(container="body")),
                      menuItem('Gene Expression Plots', tabName = 'geplot', icon = icon('hand-o-right'),
                               fluidRow(
                                 column(1,h4("")),
@@ -122,17 +120,16 @@ ui <- dashboardPage(
     tabItem(tabName = "featurescatter",
             box(title = "Scatter Plots",solidHeader = TRUE,width=8,status='primary',
                 conditionalPanel(
-                  condition = "input.feasca == 'gg'",
-                  plotOutput("scatterplot", height = 800)
-                ),
-                conditionalPanel(
                   condition = "input.feasca == 'pp' || input.feasca == 'pg'",
                   plotOutput("scatterplot2", height = 2500)
+                ),
+                conditionalPanel(
+                  condition = "input.feasca == 'gg' || input.feasca == 'nCount_RNA' || input.feasca == 'nFeature_RNA' || input.feasca == 'percent.mito' || input.feasca == 'S.Score' || input.feasca == 'G2M.Score'",
+                  plotOutput("scatterplot", height = 800)
                 )
-                
             ),#End box
             box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
-                selectInput("feasca","Select one",c('PC_PC' = "pp",'PC_Gene' = "pg", 'Gene_Gene' = "gg"),selected = 'pp'),
+                selectInput("feasca","Select one",c('PC_PC' = "pp",'PC_Gene' = "pg", 'Gene_Gene' = "gg",'nCount_RNA'="nCount_RNA",'nFeature_RNA'="nFeature_RNA",'G2M.Score'="G2M.Score",'S.Score'="S.Score",'percent.mito'="percent.mito"),selected = 'pp'),
                   conditionalPanel(
                   condition = "input.feasca == 'pg'",
                   uiOutput("feagenelist"),
@@ -142,6 +139,10 @@ ui <- dashboardPage(
                   condition = "input.feasca == 'gg'",
                   uiOutput("feascagenes1"),
                   uiOutput("feascagenes2")
+                 ),
+                conditionalPanel(
+                  condition = "input.feasca == 'nCount_RNA' || input.feasca == 'nFeature_RNA' || input.feasca == 'percent.mito' || input.feasca == 'S.Score' || input.feasca == 'G2M.Score'",
+                  uiOutput("feascagenelist")
                 ),
                 uiOutput("feascacolor")
             )
@@ -298,7 +299,10 @@ ui <- dashboardPage(
               conditionalPanel(
                 condition = "input.shmptype =='topgene'",sliderInput("topn", "Top n genes",min = 5, max = 15, value = 5,step=1)),
               conditionalPanel(
-                condition = "input.shmptype =='deggene'",uiOutput("heatmapgenes")),
+                condition = "input.shmptype =='deggene'",
+                fluidRow(
+                  column(6,uiOutput("heatmapclust")),
+                  column(6,uiOutput("heatmapgenes")))),
               uiOutput("hmpgrp"),
               #selectInput("hmpcol", "Select one",c('PurpleYellow' = "PuYl",'BlueGreen' = "BuGn", 'RedYellow' = "RdYl", 'RedBlue'="RdBu"),selected = "geneexp"),
               downloadButton('downloadheatmap', 'Download Heatmap')
