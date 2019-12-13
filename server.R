@@ -108,6 +108,29 @@ server <- function(input, output,session) {
   })
   ###################################################
   ###################################################
+  ################## LBI data display  ##############
+  ###################################################
+  ###################################################
+ lbitab<-reactive({
+    lbi= read.csv("data/lbi_bioinfo.csv")
+  })
+  
+  output$lbitab = DT::renderDataTable({
+    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+      DT::datatable(lbitab(),
+                    extensions = c('Buttons','Scroller'),
+                    options = list(dom = 'Bfrtip',
+                                   searchHighlight = TRUE,
+                                   pageLength = 20,
+                                   lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                   scrollX = TRUE,
+                                   buttons = c('copy', 'print')
+                    ),rownames=FALSE,caption= "LBI Human Lung",selection = list(mode = 'single', selected =1),escape = F)
+    })
+  })
+  
+  ###################################################
+  ###################################################
   ####### Display project list and load data  #######
   ###################################################
   ###################################################
@@ -902,8 +925,8 @@ server <- function(input, output,session) {
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data) 
     #metadata=metadata %>% select(starts_with("var"))
-    var=c(colnames(metadata),'Cell.group')
-    selectInput("tsnea","Select Group to display",var,selected = "Cell.group")
+    var=c(colnames(metadata),'Ident')
+    selectInput("tsnea","Select Group to display",var,selected = "Ident")
   })
   
   #Generate drop down menu for the default ident/cluster/variable of comparison
@@ -1035,7 +1058,7 @@ server <- function(input, output,session) {
     feature=names(met[met==TRUE])
     tsne=names(met[met==FALSE])
     
-    if(input$tsnea =="Cell.group"){
+    if(input$tsnea =="Ident"){
       plot1=DimPlot(object = scrna,reduction=input$umapdeg,no.legend = FALSE,label = input$checklabel3, do.return=T, pt.size = input$pointa,label.size = 7,cols=cpallette,vector.friendly=TRUE) + theme(legend.position="bottom")
     }else if(input$tsnea %in% tsne){
       plot1=DimPlot(object = scrna,reduction=input$umapdeg,group.by = tsnea,no.legend = FALSE,label = input$checklabel3,vector.friendly=TRUE, do.return=T,pt.size = input$pointa,label.size = 7,cols=cpallette) + theme(legend.position="bottom")
@@ -1106,9 +1129,13 @@ server <- function(input, output,session) {
   #number of genes to show in the dotpot
   output$heatmapgenes = renderUI({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      scrna=fileload()
       markers=scrna@misc$findallmarkers
       if(input$shmptype =="deggene"){
       markers=markers[markers$cluster==input$heatmapclust,]}
+      else if(input$shmptype == "tf"){}
+      else if(input$shmptype == "lig"){}
+      else if(input$shmptype == "rec"){}
       validate(
         need(nrow(markers)>0, "No Marker genes found")
       )
@@ -1144,7 +1171,20 @@ server <- function(input, output,session) {
       markergenes=markers$gene[1:input$heatmapgenes]
       }else if(input$shmptype =="topgene"){
         markers=scrna@misc$findallmarkers
-        markers %>% group_by(cluster) %>% top_n(input$topn, avg_logFC)
+        markers= markers %>% group_by(cluster) %>% top_n(input$topn, avg_logFC)
+        markergenes=markers$gene
+      }else if(input$shmptype =="tf"){
+        markers=scrna@misc$findallmarkers
+        
+        markers= markers %>% group_by(cluster) %>% top_n(input$topn, avg_logFC)
+        markergenes=markers$gene
+      }else if(input$shmptype =="lig"){
+        markers=scrna@misc$findallmarkers
+        markers= markers %>% group_by(cluster) %>% top_n(input$topn, avg_logFC)
+        markergenes=markers$gene
+      }else if(input$shmptype =="rec"){
+        markers=scrna@misc$findallmarkers
+        markers= markers %>% group_by(cluster) %>% top_n(input$topn, avg_logFC)
         markergenes=markers$gene
       }
       p=DoHeatmap(object = scrna, features = markergenes,group.by = input$hmpgrp, group.bar= T,label=TRUE)

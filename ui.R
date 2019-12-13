@@ -24,6 +24,12 @@ ui <- dashboardPage(
                                         )),
                    sidebarMenu(
                      menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+                     conditionalPanel(
+                       condition = "input.username == 'lungMap'",
+                       fluidRow(
+                         column(1,offset=1,menuSubItem("LBI Human Lung Tissue data", tabName = "lbi", icon = icon("hand-o-right"))))
+                       #checkboxInput("lbiview", label = "View LBI Human Lung Tissue data", value = TRUE)
+                     ),
                      radioButtons("filetype", label = h4("Select file input type"),inline=F,choices = list( "Select from list" = 'list',"Upload RData" = 'upload'),selected = 'list'),
                      conditionalPanel(
                        condition = "input.filetype == 'list'",
@@ -80,10 +86,18 @@ ui <- dashboardPage(
     useShinyjs(),
     tabItems(
       tabItem(tabName = "dashboard",
-              box(
+                box(
                 width = 12, status = "primary",solidHeader = TRUE,
                 title = "scRNA Data Sets",
                 tableOutput("datasetTable")
+              )
+      ),
+        ######################################################################################################################################
+      tabItem(tabName = "lbi",
+              box(
+                width = 12, status = "primary",solidHeader = TRUE,
+                title = "LBI Human Lung Tissue ",
+                DT::dataTableOutput("lbitab")
               )
       ),
       ######################################################################################################################################
@@ -295,9 +309,9 @@ ui <- dashboardPage(
     tabItem(tabName = "heatmap",
             box(
               title = "Controls",solidHeader = TRUE,width=12,status='primary',
-              radioButtons("shmptype", label = "Genes to use as input",choices = list("Top genes across all clusters" = "topgene", "Differentially Expressed genes" = "deggene"),selected = "deggene"),
+              selectInput("shmptype", "Genes to use as input",c('Top genes across all clusters' = "topgene", 'Differentially Expressed genes' = "deggene",'Tanscription factors' = "tf",'Ligands' = "lig",'Receptors' = "rec"),selected = "deggene"),
               conditionalPanel(
-                condition = "input.shmptype =='topgene'",sliderInput("topn", "Top n genes",min = 5, max = 15, value = 5,step=1)),
+                condition = "input.shmptype =='topgene'",sliderInput("topn", "Top n genes",min = 5, max = 15, value = 2,step=1)),
               conditionalPanel(
                 condition = "input.shmptype =='deggene'",
                 fluidRow(
