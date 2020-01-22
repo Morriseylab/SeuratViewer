@@ -41,7 +41,7 @@ ui <- dashboardPage(
                      ),
                      menuItem('Project Summary', tabName = 'summ', icon = icon('hand-o-right')),
                      menuItem('Variable Genes', tabName = 'vargenes', icon = icon('hand-o-right')),
-                     #menuItem('Feature correlation Plot', tabName = 'featurescatter', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
+                     menuItem('Feature correlation Plot', tabName = 'featurescatter', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
                      menuItem('Principle component Analysis', tabName = 'pca', icon = icon('hand-o-right')),
                      menuItem('Dimension Reduction Plots', tabName = 'tplot', icon = icon('hand-o-right'),
                               menuSubItem("Compare Plots", tabName = "tsneplot"),
