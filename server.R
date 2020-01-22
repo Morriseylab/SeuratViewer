@@ -1,76 +1,77 @@
 library(shiny)
 library(shinyBS)
+library("AnnotationDbi")
+library("org.Mm.eg.db")
+library(gage)
+library(gageData)
 library(RColorBrewer)
-library(biomaRt)
+library(NMF)
+#library(KEGGgraph)
 library(Biobase)
 library(reshape2)
 library(ggplot2)
+library(biomaRt)
+library(KEGGREST)
+library(png)
+library(GO.db)
+library(d3heatmap)
 library(dplyr)
 library(tidyr)
 library(plotly)
 library(shinyjs)
 library(htmlwidgets)
 library(DT)
-library(scExtras)
-#library(shinyRGL)
-#library(rgl)
-#library(rglwidget)
-library(Seurat)
-#library(Seurat, lib.loc="/home/bapoorva/R_lib")
-library(cowplot)
-#library(cowplot,lib.loc = "/home/bapoorva/R_lib")
+library(FactoMineR)
+library(factoextra)
+library(shinyRGL)
+library(rgl)
+library(rglwidget)
+library(SPIA)
+library(ReactomePA)
+library(limma)
+library(ggrepel)
+library(readxl)
+library(biomaRt)
 library(data.table)
-library(NMF)
-library(tibble)
-library(network)
-library(igraph)
-#library(igraph,lib.loc = "/home/bapoorva/R_lib")
-library(shinyBS)
-#library(slingshot)
 source("functions.R")
-
-#Specify color palette for the tSNE and UMAP plsots
-cpallette=c("#64B2CE", "#DA5724", "#74D944", "#CE50CA", "#C0717C", "#CBD588", "#5F7FC7",
-            "#8B4484", "#D3D93E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD",
-            "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#C84248", "#8569D5", "#5E738F", "#D1A33D",
-            "#8A7C64", "#599861","#000099","#FFCC66","#99CC33","#CC99CC","#666666", "#695F74")
-
 #Specify user-ids and passwords
 auth=read.csv("data/authentication.csv")
 my_username <- auth$user
 my_password <- auth$pwd
 
-server <- function(input, output,session) {
+#Create a theme for all plots.
+plotTheme <-theme_bw() + theme(axis.title.x = element_text(face="bold", size=12),
+                               axis.text.x  = element_text(angle=35, vjust=0.5, size=12),
+                               axis.title.y = element_text(face="bold", size=12),
+                               axis.text.y  = element_text(angle=0, vjust=0.5, size=12))
+
+server <- function(input, output, session) {
   
-  ###################################################
-  ###################################################
-  ################### AUTHENTICATION  ##############
-  ###################################################
-  ###################################################
-   values <- reactiveValues(authenticated = FALSE)
-
-   # Return the UI for a modal dialog with data selection input. If 'failed'
-   # is TRUE, then display a message that the previous value was invalid.
-   dataModal <- function(failed = FALSE) {
-     modalDialog(
-       textInput("username", "Username:"),
-       passwordInput("password", "Password:"),
-       footer = tagList(
-         # modalButton("Cancel"),
-         actionButton("ok", "OK")
-       )
-     )
-   }
-
-   # Show modal when button is clicked.
-   # This `observe` is suspended only whith right user credential
-
-   obs1 <- observe({
-     showModal(dataModal())
-   })
-
+  values <- reactiveValues(authenticated = FALSE)
+  
+  # Return the UI for a modal dialog with data selection input. If 'failed'
+  # is TRUE, then display a message that the previous value was invalid.
+  dataModal <- function(failed = FALSE) {
+    modalDialog(
+      textInput("username", "Username:"),
+      passwordInput("password", "Password:"),
+      footer = tagList(
+        # modalButton("Cancel"),
+        actionButton("ok", "OK")
+      )
+    )
+  }
+  
+  # Show modal when button is clicked.
+  # This `observe` is suspended only whith right user credential
+  
+  obs1 <- observe({
+    showModal(dataModal())
+  })
+  
   # When OK button is pressed, attempt to authenticate. If successful,
   # remove the modal.
+  
   obs2 <- observe({
     req(input$ok)
     isolate({
@@ -85,35 +86,24 @@ server <- function(input, output,session) {
         values$authenticated <- TRUE
         obs1$suspend()
         removeModal()
-
+        
       } else {
         values$authenticated <- FALSE
       }
     }
   })
-
-  ###################################################
-  ###################################################
-  ####### Display username in notification bar  ####
-  ###################################################
-  ###################################################
-  output$userloggedin = renderMenu({
-    msg= paste("Logged in as ",input$username,sep="")
-    prj= paste("Data: ",projectname(),sep="")
-    dropdownMenu(type = "notifications", badgeStatus = "info",
-                 notificationItem(icon = icon("user"), status = "info",msg),
-                 notificationItem(icon = icon("book"), status = "info",prj))
-  })
-  ###################################################
-  ###################################################
-  ####### Display project list and load data  #######
-  ###################################################
-  ###################################################
+  
+  ################################################################
+  ################################################################
+  ####### LOAD EXCEL AND POPULATE DROP DOWN FOR PROJECTS #########
+  ################################################################
+  ################################################################
+  
   #Read the parameter file
   readexcel = reactive({
-     user=input$username
-     file = read.csv("data/param.csv")
-    if(user=="allusers" | user=="admin" ){
+    user=input$username
+    file = read.csv(paste("data/param.csv",sep=""))
+    if(user=="allusers"){
       file=file
     }else{
       file=file[file$user==user,]
@@ -121,204 +111,782 @@ server <- function(input, output,session) {
   })
   
   #Get Project list and populate drop-down
-  output$projectlist = renderUI({
+  output$projects = renderUI({
     excel=readexcel()
-    prj=as.character(excel$projects)
+    prj=excel$projects
     selectInput("projects","Select a project",as.list(sort(as.character(prj))))
   })
   
-  #display project list in Dashboard
-  output$datasetTable<- renderTable({
+  ################################################################
+  ################# DISPLAY FILE LIST IN DASHBOARD ###############
+  ################################################################
+  
+  #Display file in dashboard
+  output$dashdata<- renderTable({
     user=input$username
     file=read.csv('data/param.csv',stringsAsFactors = F)
-    colnames(file)=c("Project Name","Project Description","Organism","Username","File type")
-    file=file[order(file$`Project Name`),]
-    if(user=="allusers" | user=="admin"){
+    if(user=="allusers"){
       file=file
+      colnames(file)=c("Project Name","Project Description","Old?(Y/N)","Type(RNA/Microarray)","Username")
+      file=file[order(file$`Project Name`),]
     }else{
-      file=file[file$Username==user,] %>% dplyr::select(-Username,-`File type`)
-      colnames(file)=c("Project Name","Project Description","Organism")
+      file=file[file$user==user,] %>% dplyr::select(-old:-user)
+      colnames(file)=c("Project Name","Project Description")
       file=file[order(file$`Project Name`),]
     }
   }, digits = 1)
   
-  #scrna <- reactiveValues(scrna = NULL)
-  
-  # observeEvent(input$load, {
-  #   inFile = paste('data/',as.character(input$projects),'.RData',sep = '')
-  #   withProgress(session = session, message = 'Loading Data...',detail = 'Please Wait...',{
-  #   load(inFile)
-  #   })
-  #   scrna <<- scrna
-  # })  
+  ###################################################
+  ###################################################
+  ####### LOAD RDATA FILE AND GET CONTRASTS##########
+  ###################################################
+  ###################################################
   
   #Load Rdata
   fileload <- reactive({
-    if(input$filetype == 'list'){
-       file=read.csv('data/param.csv',stringsAsFactors = F)
-       filetype=file$filetype[file$projects==input$projects]
-       if(filetype=="RData"){
-        inFile = paste('data/',as.character(input$projects),'.RData',sep = '')
-        load(inFile)}
-#       }else if(filetype=="RDS"){
-#         inFile = paste('data/',as.character(input$projects),'.RDS',sep = '')
-#         scrna=readRDS(inFile)
-#       }
-    }else{
-      file=input$rdatafileupload
-      scrna=readRDS(file$datapath)
-    }
-    return(scrna)
+    inFile = paste('data/',as.character(input$projects),'.RData',sep = '')
+    load(inFile)
+    loaddata=results
+    return(loaddata)
   })
   
-  #Create variable for project name
-  projectname = reactive({
-    if(input$filetype == 'list'){
-      project= input$projects
-    }else if(input$filetype == 'upload'){
-      project= input$rdatafileupload
-      project=project$name
-      project=strsplit(project,".RDS")
-      project=sapply(project,"[",1)
-    }
-      return(project)
-  })
-  ###################################################
-  ###################################################
-  ################## Project Summary  ###############
-  ###################################################
-  ###################################################
-  
-  #Get all information from the scrna object (input file) and generate some basic project summary for the summary
-  prjsumm <- reactive({
-    user=input$username
-    #user="allusers"
-   prj= read.csv("data/param.csv")
-   if(user=="allusers" | user=="admin"){
-     prj=prj
-   }else{
-     prj=prj[prj$user==user,] 
-   }
-   prj=prj[prj$projects==projectname(),]
-   pname=projectname()
-   if(input$filetype == 'list'){
-   pdesc=prj$desc
-   porg=prj$organism}
-   else{
-     pdesc=""
-     porg="prj$organism"
-   }
-   scrna=fileload()
-   numcells.nf=dim(GetAssayData(object = scrna, slot = "counts"))[2]
-   tcells=dim(GetAssayData(object=scrna))[2]
-   tgenes=dim(GetAssayData(object=scrna))[1]
-   if(is.null(scrna[["pca"]])){
-   maxdim=dim(scrna@dr$cca.aligned@cell.embeddings)[2]
-   }else{maxdim=length(scrna[["pca"]]@stdev)}
-   c.cnt=as.data.frame(table(Idents(object=scrna)))
-   df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),numcells.nf,tcells,tgenes,maxdim,"","",c.cnt$Freq))
-   rownames(df)=c("Project name","Project Description","Organism","Total number of cells before filtration","Total nummber of cells after filtering","Total number of genes","Dimension","","Cluster-wise number of genes",as.character(c.cnt$Var1))
-   colnames(df)<- NULL
-   return(df)
+  #Get contrast list and populate drop-down
+  output$contrasts = renderUI({
+    results=fileload()
+    lim=results$limma
+    contrasts=as.list(as.character(unlist(lapply((names(lim)),factor))))
+    selectInput("contrast","Select a comparison",contrasts,"pick one")
   })
   
-  output$prjsumm <- renderPrint({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    prjsumm()
-    #return(df)
-    })
+  
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  ####################################################################### PCA PLOT ######################################################################
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  #Populate drop-down for PC to plot on x-axis
+  output$pcaxoptions <- renderUI({
+    selectInput("pcaxaxes","Select Principle Component to plot on the X-axis ",c(1:10))
   })
   
-  ######################################################################################################
-  ######################################################################################################
-  ###################### CALC PARAMETERS TAB ############################################################
-  ######################################################################################################
-  ######################################################################################################
-  #Create subtabs for the QC plots
-  output$plotsubtab <- renderUI({
-    tabsetPanel(id = "subTabPanel1",
-                tabPanel("Create Seurat Object",tableOutput("seurobj")),
-                tabPanel("Filter Cells and Scale Data",tableOutput('filtobj')),
-                tabPanel("Dimension Reduction",tableOutput('dimred')),
-                tabPanel("Find Clusters",DT::dataTableOutput('vargenes'))
+  #Populate drop-down for PC to plot on y-axis
+  output$pcayoptions <- renderUI({
+    selectInput("pcayaxes","Select Principle Component to plot on the Y-axis",c(1:10),selected=2)
+  })
+  
+  #PRint the PC's chosen to be plotted
+  output$biplottitle <- renderText({
+    text=as.character(paste("Dim",input$pcaxaxes," vs Dim",input$pcayaxes,sep=""))
+    return(text)
+  })
+  
+  #Textbox to enter number of genes to use to plot
+  output$pcipslide <- renderUI({
+    textInput(inputId = 'pcipslide', label = "Enter top number of input genes that show maximum variance", value = '500')
+  })
+  
+  #Textbox to enter number of genes to view in the biplot
+  output$pcslide <- renderUI({
+    textInput(inputId = 'pcslide', label = "Enter number of genes to view in the biplot", value = '0')
+  })
+  
+  #Drop down menu for pc-plot colorby option
+  output$pcacolorby = renderUI({ 
+    results=fileload()
+    eset=results$eset
+    pd=pData(eset) #get pheno-data
+    pd=pd %>% select(starts_with("var")) #get columns from phenodata that start with "var"
+    kt=as.data.frame(t(na.omit(t(pd)))) #omit columns that have only NA's
+    bpcols=c("maineffect",colnames(kt))
+    selectInput("pcacolorby","Color By",bpcols) #populate drop down menu with the phenodata columns
+  })
+  
+  #Checkbox to view ellipses in the PCA plot
+  output$ellipse <- renderUI({
+    checkboxInput("ellipse", label = "Check to view ellipses", value = FALSE)
+  })
+  
+  
+  #Function for PCA plot
+  plotbiplot = reactive({
+    res.pca = res_pca()
+    x=as.numeric(input$pcaxaxes)
+    y=as.numeric(input$pcayaxes)
+    results=fileload()
+    v = results$eset
+    pData<-pData(v)
+    colorby=input$pcacolorby
+    hab=eval(parse(text = paste0("pData$",colorby,sep="")))
+    validate(
+      need(input$pcslide, "Enter number of genes to view in biplot")
     )
+    if(input$pcslide==0 & input$ellipse==F){
+      fviz_pca_ind(res.pca, repel=T,geom='point',label='var',addEllipses=FALSE, habillage = as.factor(hab),pointsize = 3.35,axes=c(x,y))+scale_shape_manual(values = c(rep(19,length(unique(hab)))))+theme(axis.title.x = element_text(face="bold", size=14),
+                                                                                                                                                                                                           axis.title.y = element_text(face="bold", size=14),
+                                                                                                                                                                                                           legend.text  = element_text(angle=0, vjust=0.5, size=14),
+                                                                                                                                                                                                           legend.title  = element_text(angle=0, vjust=0.5, size=14),
+                                                                                                                                                                                                           plot.title  = element_text(angle=0, vjust=0.5, size=16))
+    }
+    else if(input$pcslide==0 & input$ellipse==T){
+      fviz_pca_ind(res.pca, repel=T,geom='point',label='var',addEllipses=T,ellipse.type="confidence",ellipse.alpha=0.2, habillage = as.factor(hab),pointsize = 3.35,axes=c(x,y))+scale_shape_manual(values = c(rep(19,length(unique(hab)))))+theme(axis.title.x = element_text(face="bold", size=14),
+                                                                                                                                                                                                                                                   axis.title.y = element_text(face="bold", size=14),
+                                                                                                                                                                                                                                                   legend.text  = element_text(angle=0, vjust=0.5, size=14),
+                                                                                                                                                                                                                                                   legend.title  = element_text(angle=0, vjust=0.5, size=14),
+                                                                                                                                                                                                                                                   plot.title  = element_text(angle=0, vjust=0.5, size=16))
+      
+    }
+    
+    #fviz_pca_ind(res.pca, geom = c("point", "text"))}
+    else if(input$pcslide!=0 & input$ellipse==F){fviz_pca_biplot(res.pca,repel=T, label=c("var","ind"),habillage = as.factor(hab),pointsize = 3.35,axes=c(x,y),select.var = list(contrib = as.numeric(input$pcslide)))+scale_shape_manual(values = c(rep(19,length(unique(hab)))))+theme(axis.title.x = element_text(face="bold", size=14),
+                                                                                                                                                                                                                                                                                         axis.title.y = element_text(face="bold", size=14),
+                                                                                                                                                                                                                                                                                         legend.text  = element_text(angle=0, vjust=0.5, size=14),
+                                                                                                                                                                                                                                                                                         legend.title  = element_text(angle=0, vjust=0.5, size=14),
+                                                                                                                                                                                                                                                                                         plot.title  = element_text(angle=0, vjust=0.5, size=16))
+    }
+    
+    else{fviz_pca_biplot(res.pca,repel=T, label=c("var","ind"),addEllipses=T,ellipse.type="confidence",ellipse.alpha=0.1,habillage = as.factor(hab),pointsize = 3.35,axes=c(x,y),select.var = list(contrib = as.numeric(input$pcslide)))+scale_shape_manual(values = c(rep(19,length(unique(hab)))))+theme(axis.title.x = element_text(face="bold", size=14),
+                                                                                                                                                                                                                                                                                                           axis.title.y = element_text(face="bold", size=14),
+                                                                                                                                                                                                                                                                                                           legend.text  = element_text(angle=0, vjust=0.5, size=14),
+                                                                                                                                                                                                                                                                                                           legend.title  = element_text(angle=0, vjust=0.5, size=14),
+                                                                                                                                                                                                                                                                                                           plot.title  = element_text(angle=0, vjust=0.5, size=16))
+    }
+  })
+  
+  #plotting function for pca plot
+  output$biplot = renderPlot({
+    plotbiplot()
+  })
+  
+  #Button for dwnloading PCA plot
+  output$dwldbiplot = renderUI({
+    downloadButton('downloadbiplot', 'Download Biplot')
+  }) 
+  
+  #Download function for pca plot
+  output$downloadbiplot <- downloadHandler(
+    filename = function() {
+      paste0("biplot.pdf")
+    },
+    content = function(file){
+      pdf(file,width=14,height = 9,useDingbats=FALSE)
+      plot(plotbiplot())
+      dev.off()
+    })
+  
+  ###################################################
+  ###################################################
+  ########### VARIANCES OF PCA PLOT #################
+  ###################################################
+  ###################################################
+  #Text explaining PCA variances
+  output$pcatitle <- renderText({
+    text="The proportion of variances retained by the principal components can be viewed in the scree plot. The scree plot is a graph of the eigenvalues/variances associated with components"
+    return(text)
+  })
+  
+  #PLot scree plot of all PC's
+  output$pcaplot_ip = renderPlot({
+    res.pca = res_pca()
+    fviz_screeplot(res.pca, ncp=10)
+  })
+  
+  #get expression data and perform PCA
+  res_pca = reactive({
+    n=as.numeric(input$pcipslide)
+    validate(
+      need(as.numeric(input$pcipslide) > 199, "Minimum value of input genes that show maximum variance should at least be 200")
+    )
+    results=fileload()
+    v = results$eset
+    keepGenes <- v@featureData@data
+    pData<-phenoData(v)
+    v.filter = v[rownames(v@assayData$exprs) %in% rownames(keepGenes),]
+    Pvars <- apply(v.filter@assayData$exprs,1,var)
+    select <- order(Pvars, decreasing = TRUE)[seq_len(min(n,length(Pvars)))]
+    v.var <-v.filter[select,]
+    m<-v.var@assayData$exprs
+    rownames(m) <- v.var@featureData@data$SYMBOL
+    m=as.data.frame(m)
+    m=unique(m)
+    res.pca = PCA(t(m), graph = FALSE)
+  })
+  
+  #Extract PCA information like eigan values, variance of each PC 
+  pcaplo_tab = reactive({
+    res.pca =res_pca()
+    eigenvalues = res.pca$eig
+    return(eigenvalues)
+  })
+  
+  #Display above PC information in a table
+  output$pcaplot_tab = DT::renderDataTable({
+    DT::datatable(pcaplo_tab(),
+                  extensions = c('Scroller'),
+                  options = list(
+                    searchHighlight = TRUE,
+                    scrollX = TRUE
+                  ))
+  })
+  
+  ###################################################
+  ###################################################
+  ##################3D PCA PLOT #####################
+  ###################################################
+  ###################################################
+  #PLot 3D PCA plot
+  output$pcaplot3d = renderRglwidget({
+    graphics.off()
+    pdf(NULL)
+    v=datasetInput3()
+    results=fileload()
+    pData=pData(results$eset)
+    v=t(v)
+    v= v[,apply(v, 2, var, na.rm=TRUE) != 0]
+    pca <- res_pca()
+    vars <- apply(pca$var$coord, 2, var)
+    props <- round((vars / sum(vars))*100,1)
+    groups=factor(gsub('-','_',pData$maineffect))
+    try(rgl.close())
+    open3d()
+    # resize window
+    par3d(windowRect = c(100, 100, 612, 612))
+    palette(c('blue','red','green','orange','cyan','black','brown','pink'))
+    plot3d(pca$ind$coord[,1:3], col =as.numeric(groups), type='s',alpha=1.75,axes=F,
+           xlab=paste('PC1 (',props[1],'%)',sep=''),
+           ylab=paste('PC2 (',props[2],'%)',sep=''),
+           zlab=paste('PC3 (',props[3],'%)',sep='')
+    )
+    axes3d(edges=c("x--", "y--", "z"), lwd=2, expand=10, labels=FALSE,box=T)
+    grid3d("x")
+    grid3d("y")
+    grid3d("z")
+    l=length(levels(groups))
+    ll=1:l
+    y=1+(ll*15)
+    legend3d("topright", legend = levels(groups), pch = 16, col=palette(),cex=1, inset=c(0.02))
+    rglwidget()
+  })
+  
+  ###################################################
+  ###################################################
+  ######## GET PROJECT DESC AND DISPLAY   ###########
+  ###################################################
+  ###################################################
+  #Read parameter file and get project description for the project selected
+  prjdesc = reactive({
+    file = readexcel()
+    prj=input$projects
+    desc=file$desc[file$projects %in% prj]
+    desc=as.character(desc)
+  })
+  
+  #Display text in main project description panel
+  output$pdesc <- renderText({
+    desc=prjdesc()
+  })
+  
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  ####################################################################### DOT PLOT ######################################################################
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  
+  #Drop down menu for dot-plot x-axis grouping
+  output$boxplotcol = renderUI({ 
+    results=fileload()
+    eset=results$eset
+    pData=pData(eset) #get pheno-data
+    kc=pData[ , grepl( "var_" , colnames(pData) ) ] #get columns from phenodata that start with "var"
+    kt=as.data.frame(t(na.omit(t(kc)))) #omit columns that have only NA's
+    kc=data.frame(maineffect=pData$maineffect,sample_name=pData$sample_name,kt) #create a dataframe with maineffect and sample_name and non-null columns starting with var
+    bpcols=as.list(as.character(unlist(lapply((colnames(kc)),factor))))
+    selectInput("color","Select an Attribute for the X-axis",bpcols) #populate drop down menu with the phenodata columns
+  })
+  
+  #Drop down menu for dot-plot color
+  output$boxplotcol2 = renderUI({ 
+    results=fileload()
+    eset=results$eset
+    pData=pData(eset) #get pheno-data
+    kc=pData[ , grepl( "var_" , colnames(pData) ) ] #get columns from phenodata that start with "var"
+    kt=as.data.frame(t(na.omit(t(kc)))) #omit columns that have only NA's
+    kc=data.frame(maineffect=pData$maineffect,sample_name=pData$sample_name,kt) #create a dataframe with maineffect and sample_name and non-null columns starting with var
+    bpcols=as.list(as.character(unlist(lapply((colnames(kc)),factor))))
+    selectInput("color2","Color By",bpcols) #populate drop down menu with the phenodata columns
+  })
+  
+  #Checkbox for whether or not to display the minimum expression line 
+  output$minexprline = renderUI({ 
+    tagList(
+      checkboxInput("minexprline", label = "Show expression threshold line", value = FALSE),
+      bsTooltip("minexprline","Please note that not all projects have this option currently", placement = "bottom", trigger = "hover",options = NULL)
+    )
+  })
+  
+  #Extract expression data to create dot-plot
+  dotplot_out = reactive({
+    s = input$table_rows_selected #select rows from table
+    dt = datasetInput() #load limma data
+    dt$id=rownames(dt)
+    dt=data.frame(dt$id,dt[,-ncol(dt)])
+    validate(
+      need((is.data.frame(dt) && nrow(dt))!=0, "No data in table")
+    )
+    dt1 = dt[s, , drop=FALSE]#get limma data corresponding to selected row in table
+    id = as.character(dt[s,1]) 
+    results=fileload()
+    eset <- results$eset
+    pData=pData(eset) #get pheno-data
+    if(is.factor(pData$sample_name)==T){lev=levels(pData$sample_name)}
+    minexpr=pData$minexpr[1]
+    signal=as.data.frame(eset@assayData$exprs[id,])
+    colnames(signal)="signal"
+    signal$id=rownames(signal)
+    e=left_join(pData,signal,by=c('sample_name'='id'))
+    if(is.factor(pData$sample_name)==T){e$sample_name= factor(e$sample_name, levels = levels(pData$sample_name))}
+    if(is.na(dt1$SYMBOL)) #if gene symbol does not exist,use ENSEMBL id
+    {genesymbol=dt1$ENSEMBL}
+    else{
+      genesymbol=dt1$SYMBOL} #get the gene symbol of the row selected
+    if(input$minexprline==T){
+      gg=ggplot(e,aes_string(x=input$color,y="signal",col=input$color2))+plotTheme+guides(color=guide_legend(title=as.character(input$color2)))+
+        labs(title=genesymbol, x="Condition", y="Expression Value") + geom_point(size=5,position=position_jitter(w = 0.1))+ geom_smooth(method=lm,se=FALSE) +
+        stat_summary(fun.y = "mean", fun.ymin = "mean", fun.ymax= "mean", size= 0.3, geom = "crossbar",width=.2) + geom_hline(yintercept=minexpr, linetype="dashed", color = "red")}
+    else{
+      gg=ggplot(e,aes_string(x=input$color,y="signal",col=input$color2))+plotTheme+guides(color=guide_legend(title=as.character(input$color2)))+
+        labs(title=genesymbol, x="Condition", y="Expression Value") + geom_point(size=5,position=position_jitter(w = 0.1))+ geom_smooth(method=lm,se=FALSE) +
+        stat_summary(fun.y = "mean", fun.ymin = "mean", fun.ymax= "mean", size= 0.3, geom = "crossbar",width=.2)
+    }
+    gg
+  })
+  
+  # plot dotplot
+  output$dotplot = renderPlot({
+    dotplot_out()
+  })
+  
+  #function to download dot plot
+  output$downloaddotplot <- downloadHandler(
+    filename = function() {
+      paste0(input$projects, '_dotplot.jpg', sep='') 
+      #paste0("dotplot.jpg")
+    },
+    content = function(file){
+      jpeg(file, quality = 100, width = 800, height = 800)
+      plot(dotplot_out())
+      dev.off()
+    })
+  
+  ###################################################
+  ###################################################
+  ###########LOAD LIMMA FILE AND DISPLAY#############
+  ###################################################
+  ###################################################
+  #Read limma data from eset
+  datasetInput0.5 = reactive({
+    contrast=input$contrast
+    results=fileload()
+    k=paste('results$limma$',contrast,sep='')
+    limmadata=eval(parse(text = k))
+  })
+  
+  #Update limma results based on gene selection (upregulated, downregulated, both or none)
+  datasetInput = reactive({
+    contrast=input$contrast #select contrast
+    limmadata=datasetInput0.5()
+    limmadata=subset(limmadata, select=-c(logFC))
+    lfc=as.numeric(input$lfc) #get logFC
+    apval=as.numeric(input$apval)#get adjusted P.Vals
+    if(is.null(input$radio))
+    {
+      d = limmadata
+    }
+    else if(input$radio=='none')
+    {
+      d=limmadata
+    }
+    else if(input$radio=='down')
+    {
+      d=limmadata
+      d = d[which(d$fc < (-1*(lfc)) & d$adj.P.Val < apval),]
+    }
+    else if(input$radio=='up')
+    {
+      d=limmadata
+      d = d[which(d$fc>lfc & d$adj.P.Val < apval),]
+    }
+    else if(input$radio=='both')
+    {
+      d=limmadata
+      d = d[which(abs(d$fc) > lfc & d$adj.P.Val < apval),]
+    }
+    #limma = as.data.frame(d) #load limma data
+    geneid=d$SYMBOL
+    url= paste("http://www.genecards.org/cgi-bin/carddisp.pl?gene=",geneid,sep = "")
+    if(url=="http://www.genecards.org/cgi-bin/carddisp.pl?gene="){
+      d$link<-NULL
+    }else{
+      d$link=paste0("<a href='",url,"'target='_blank'>","Link to GeneCard","</a>")}
+    d=as.data.frame(d) 
+    #d=as.data.frame(d) %>% select(-t)
+    return(d)
+  })
+  
+  #print limma results in data table
+  output$table = DT::renderDataTable({
+    input$lfc
+    input$apval
+    input$project
+    input$contrast
+    DT::datatable(datasetInput(),
+                  extensions = 'Buttons', options = list(
+                    dom = 'Bfrtip',
+                    buttons = list()),
+                  rownames=FALSE,selection = list(mode = 'single', selected =1),escape=FALSE)
+  })
+  
+  #Display text (contrast name) above limma table
+  output$contrdesc <- renderText({
+    contrastname=input$contrast
+    text=paste('CONTRAST:  ',contrastname,sep="   ")
+    return(text)
+  })
+  
+  #download limma results data as excel sheet
+  output$dwld <- downloadHandler(
+    filename = function() { paste(input$projects, '.csv', sep='') },
+    content = function(file) {
+      write.csv(datasetInput(), file)
+    })
+  
+  ###################################################
+  ###################################################
+  ############# DISPLAY VOLCANO PLOT  ###############
+  ###################################################
+  ###################################################
+  #Get limma data
+  datasetInputvol = reactive({
+    limmadata=datasetInput()
+    return(limmadata)
+  })
+  
+  #Drop down to choose what genes to display on volcano plot
+  output$volcdrop <- renderUI({
+    selectInput("volcdrop", "Select input type",c('Significant genes' = "signi",'GO genes' = "go"))
     
   })
   
-  #Seuarat Object
-  seurobj= reactive({
-    scrna=fileload()
-    ulist=scrna@calc.params$CreateSeuratObject
-    ulist=ulist[1:11]
-    dd  <-  as.data.frame(matrix(unlist(ulist), nrow=length(unlist(ulist[1]))))
-    t=unlist(ulist)
-    colnames(dd)=names(t)
-    return(dd)
+  #Slider to choose number of genes to display on volcano plot
+  output$volcslider <- renderUI({
+    conditionalPanel(
+      condition = "input.volcdrop == 'signi'",
+      fluidRow(
+        column(6,sliderInput("volcslider", label = h4("Select top number of genes"), min = 0,max = 25, value = 5))
+      ))
+    
   })
   
-  output$seurobj <- renderTable({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      seurobj()
+  #Function to assign values to volcano plot points
+  vpt = reactive({
+    diff_df=datasetInput0.5()
+    
+    FDR=input$apval
+    lfc=input$lfc
+    
+    if(input$volcdrop=="signi"){
+      diff_df$group <- "NotSignificant"
+      # change the grouping for the entries with significance but not a large enough Fold change
+      diff_df[which(diff_df['adj.P.Val'] < FDR & abs(diff_df['logFC']) < lfc ),"group"] <- "Filtered by FDR"
+      
+      # change the grouping for the entries a large enough Fold change but not a low enough p value
+      diff_df[which(diff_df['adj.P.Val'] > FDR & abs(diff_df['logFC']) > lfc ),"group"] <- "Filtered by FC"
+      
+      # change the grouping for the entries with both significance and large enough fold change
+      diff_df[which(diff_df['adj.P.Val'] < FDR & abs(diff_df['logFC']) > lfc ),"group"] <- "Significant (Filtered by both FDR and FC)"
+    }
+    else if(input$volcdrop=="go"){
+      top_peaks2=GOHeatup()
+      diff_df$group <- "All genes"
+      diff_df[which(diff_df$SYMBOL %in% top_peaks2$SYMBOL ),"group"] <- "Selected_genes"
+    }
+    return(diff_df)
+  })
+  
+  #Function to draw the volcano plot
+  volcanoplot_out = reactive({
+    diff_df=vpt()
+    
+    if(input$volcdrop=="signi"){
+      # Find and label the top peaks..
+      n=input$volcslider
+      if(n>0){
+        top_peaks <- diff_df[with(diff_df, order(adj.P.Val,logFC)),][1:n,]
+        top_peaks <- rbind(top_peaks, diff_df[with(diff_df, order(adj.P.Val,-logFC)),][1:n,])
+        
+        a <- list()
+        for (i in seq_len(nrow(top_peaks))) {
+          m <- top_peaks[i, ]
+          a[[i]] <- list(x = m[["logFC"]],y = -log10(m[["adj.P.Val"]]),text = m[["SYMBOL"]],xref = "x",yref = "y",showarrow = FALSE,arrowhead = 0.5,ax = 20,ay = -40)
+        }
+        p <- plot_ly(data = diff_df, x = diff_df$logFC, y = -log10(diff_df$adj.P.Val),text = diff_df$SYMBOL, mode = "markers", color = diff_df$group) %>% layout(title ="Volcano Plot",xaxis=list(title="Log Fold Change"),yaxis=list(title="-log10(FDR)")) %>%
+          layout(annotations = a)
+      }
+      else{
+        p <- plot_ly(data = diff_df, x = diff_df$logFC, y = -log10(diff_df$adj.P.Val),text = diff_df$SYMBOL, mode = "markers", color = diff_df$group) %>% layout(title ="Volcano Plot",xaxis=list(title="Log Fold Change"),yaxis=list(title="-log10(FDR)"))
+      }
+    }
+    else if(input$volcdrop=="go"){
+      # Find and label the top peaks..
+      top_peaks <- diff_df[diff_df$SYMBOL %in% top_peaks2$SYMBOL,]
+      a <- list()
+      for (i in seq_len(nrow(top_peaks))) {
+        m <- top_peaks[i, ]
+        a[[i]] <- list(x = m[["logFC"]],y = -log10(m[["adj.P.Val"]]),text = m[["SYMBOL"]],xref = "x",yref = "y",showarrow = FALSE,arrowhead = 0.5,ax = 20,ay = -40)
+      }
+      p <- plot_ly(data = diff_df, x = diff_df$logFC, y = -log10(diff_df$adj.P.Val),text = diff_df$SYMBOL, mode = "markers", color = diff_df$group) %>% layout(title ="Volcano Plot",xaxis=list(title="Log Fold Change"),yaxis=list(title="-log10(FDR)")) 
+    }
+    p
+  })
+  
+  #Make non-interactive plot for volcano plot download
+  volcanoplot_dout = reactive({
+    diff_df=vpt()
+    if(input$volcdrop=="signi"){
+      n=input$volcslider
+      if(n>0){
+        top_peaks <- diff_df[with(diff_df, order(adj.P.Val,logFC)),][1:n,]
+        top_peaks <- rbind(top_peaks, diff_df[with(diff_df, order(adj.P.Val,-logFC)),][1:n,])
+        p <- ggplot(data = diff_df, aes(x = diff_df$logFC, y = -log10(diff_df$adj.P.Val))) + geom_point_rast(aes(color=diff_df$group)) +ggtitle("Volcano Plot") + xlab("Log Fold Change") + ylab("-log10(FDR)") +labs(color="")+ geom_label_repel(data=top_peaks,aes(x = top_peaks$logFC, y = -log10(top_peaks$adj.P.Val),label=top_peaks$SYMBOL)) + theme_bw()
+      }
+      else{
+        p <- ggplot(data = diff_df, aes(x = diff_df$logFC, y = -log10(diff_df$adj.P.Val))) + geom_point_rast(aes(color=diff_df$group)) +ggtitle("Volcano Plot") + xlab("Log Fold Change") + ylab("-log10(FDR)") +labs(color="") + theme_bw()
+      }
+    }
+    else if(input$volcdrop=="go"){
+      top_peaks <- diff_df[diff_df$SYMBOL %in% top_peaks2$SYMBOL,]
+      p <- ggplot(data = diff_df, aes(x = diff_df$logFC, y = -log10(diff_df$adj.P.Val))) + geom_point_rast(aes(color=diff_df$group)) +ggtitle("Volcano Plot") + xlab("Log Fold Change") + ylab("-log10(FDR)") +labs(color="") + theme_bw()
+    }
+    p
+  })
+  
+  #Render and display interactive volcano plot
+  output$volcanoplot = renderPlotly({
+    input$radio
+    input$lfc
+    input$apval
+    input$volcslider
+    input$volcdrop
+    volcanoplot_out()
+  })
+  
+  #Display limma results 
+  output$table_volc = DT::renderDataTable({
+    DT::datatable(datasetInput(),
+                  extensions = c('Buttons','Scroller'),
+                  options = list(dom = 'Bfrtip',
+                                 searchHighlight = TRUE,
+                                 pageLength = 10,
+                                 lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                 scrollX = TRUE,
+                                 buttons = c('copy', 'print')
+                  ),rownames=TRUE,selection = list(mode = 'single', selected =1),escape=FALSE)
+  })
+  
+  
+  #Download non-interactive volcano plot
+  output$dwldvolcanoplot <- downloadHandler(
+    filename = function() {
+      paste0("volcano.pdf")
+    },
+    content = function(file){
+      pdf(file,width=14,height = 9,useDingbats=FALSE)
+      plot(volcanoplot_dout())
+      dev.off()
     })
+  
+  ###################################################
+  ###################################################
+  #######CONDITIONAL PANEL FOR Limma ################
+  ###################################################
+  ###################################################
+  
+  #Create checkboxes with contrasts corresponding to the project (displayed only when multiple contrast checkbox is selected)
+  output$contrastslimma <- renderUI({
+    results=fileload()
+    lim=results$limma
+    contrasts=as.list(as.character(unlist(lapply((names(lim)),factor))))
+    checkboxGroupInput("multicontrast",label="Pick Contrasts",choices=contrasts)
   })
   
-  #Filter criteria
-  filtobj= reactive({
-    scrna=fileload()
-    ulist=scrna@calc.params$FilterCells
-    t=unlist(ulist)
-    vars=scrna@calc.params$ScaleData$vars.to.regress
-    vars=paste(vars,sep="",collapse=",")
-    vars=as.data.frame(vars)
-    rownames(vars)="variables regressed"
-    colnames(vars)="t"
-    t=as.data.frame(t)
-    t=rbind(t,vars)
-    return(t)
+  #create table with p.value and FC value for the contrasts selected
+  multilimma = reactive({
+    validate(
+      need(input$multicontrast, "Please Select at least one comparison ")
+    )
+    contr=input$multicontrast
+    results=fileload()
+    full_limma = data.frame(id=as.character())
+    for(i in 1:length(contr)){
+      k=paste('results$limma$',contr[i],sep='')
+      limmadata=eval(parse(text = k))
+      limmadata2=data.frame(id=rownames(limmadata),logFC=limmadata$logFC,adj.P.Val=limmadata$adj.P.Val)
+      colnames(limmadata2)[-1]=paste(colnames(limmadata2[,c(-1)]),contr[i], sep = "_")
+      full_limma=full_join(full_limma,limmadata2,by='id')
+    }
+    k=data.frame(id=rownames(limmadata),SYMBOL=limmadata$SYMBOL)
+    m=full_join(k,full_limma,by='id')
+    return(m)
   })
   
-  output$filtobj = renderTable({
-    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-      filtobj()    })
+  
+  #update table with the dataframe
+  output$table_TRUE = DT::renderDataTable({
+    input$project
+    input$contrast
+    DT::datatable(multilimma(),
+                  extensions = c('Buttons','Scroller'),
+                  options = list(dom = 'Bfrtip',
+                                 searchHighlight = TRUE,
+                                 pageLength = 10,
+                                 lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                 scrollX = TRUE,
+                                 buttons = list('copy')
+                  ),rownames=TRUE,selection = list(mode = 'single', selected =1),escape=FALSE)
   })
   
-  #Dimension reduction
-  dimred= reactive({
-    scrna=fileload()
-    pca=scrna@calc.params$RunPCA$pcs.compute
-    tsne=length(scrna@calc.params$RunTSNE$dims.use)
-    umap=length(scrna@calc.params$RunUMAP$dims.use)
-    umap.nei=scrna@calc.params$RunUMAP$n_neighbors
-    df=as.data.frame(c(pca,tsne,umap,umap.nei))
-    rownames(df)=c("No.PCs.computed","tSNE.dims.used","UMAP.dims.used","UMAP.n_neighbors")
-    colnames(df)="values"
-    return(df)
+  #action button to download the table
+  output$dwldmultitab = renderUI({
+    downloadButton('multidwld','Download Table')
+  }) 
+  
+  #fucntion to download multi-contrast limma table
+  output$multidwld <- downloadHandler(
+    filename = function() { paste(input$projects, '_multiple_contrasts.csv', sep='') },
+    content = function(file) {
+      write.csv(multilimma(), file,row.names=FALSE)
+    })
+  
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  ####################################################### DISPLAY RAW EXPRESSION (VOOM) DATA ############################################################
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  
+  #load voom data from eset
+  datasetInput3 = reactive({
+    results=fileload()
+    exprsdata=results$eset@assayData$exprs
   })
   
-  output$dimred = renderTable({
-    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-      dimred()    })
-  })
-  ######################################################################################################
-  ######################################################################################################
-  ###################### VARIABLE GENES TAB ############################################################
-  ######################################################################################################
-  ######################################################################################################
-  
-  #Load the scrna input RData file and extract the variable genes and its stats
-  vargenes= reactive({
-    scrna=fileload()
-    var=as.data.frame(VariableFeatures(object = scrna))
-    #var=as.data.frame(scrna@var.genes)
-    colnames(var)="Gene"
-    stat=HVFInfo(object = scrna)
-    stat$Gene=rownames(stat)
-    var=left_join(var,stat,by="Gene")
+  #annotate voom data using featuresdata 
+  datasetInput33 = reactive({
+    results=fileload()
+    exprsdata=as.data.frame(results$eset@assayData$exprs)
+    features=as.data.frame(pData(featureData(results$eset)))
+    features$id=rownames(features)
+    exprsdata$id=rownames(exprsdata)
+    genes <- inner_join(features,exprsdata,by=c('id'='id'))
+    return(genes)
   })
   
-  output$vargenes = DT::renderDataTable({
-    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-      DT::datatable(vargenes(),
+  #print voom or expression data file
+  output$table3 = DT::renderDataTable({
+    DT::datatable(datasetInput33(),
+                  extensions = c('Buttons','Scroller'),
+                  options = list(dom = 'Bfrtip',
+                                 searchHighlight = TRUE,
+                                 pageLength = 10,
+                                 lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                 scrollX = TRUE,
+                                 buttons = c('copy', 'print')
+                  ),rownames=FALSE,caption= "Voom data")
+  })
+  
+  #action button to download the raw expression matrix
+  output$dwldrawtab = renderUI({
+    downloadButton('rawdwld','Download Raw Data')
+  }) 
+  
+  #fucntion to download voom expression data table
+  output$rawdwld <- downloadHandler(
+    filename = function() { paste(input$projects, '_rawdata.csv', sep='') },
+    content = function(file) {
+      write.csv(datasetInput33(), file,row.names=FALSE)
+    })
+  
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  ################################################################ DISPLAY PHENO DATA ###################################################################
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  
+  #load pheno from eset
+  phenofile = reactive({
+    results=fileload()
+    pd=pData(results$eset)
+    if("minexpr" %in% colnames(pData)){
+      pd=pd %>% dplyr::select(-minexpr)
+    }
+    else{pd=pd}
+  })
+  
+  #print pheno data file 
+  output$phenofile = DT::renderDataTable({
+    DT::datatable(phenofile(),
+                  extensions = c('Buttons','Scroller'),
+                  options = list(dom = 'Bfrtip',
+                                 searchHighlight = TRUE,
+                                 pageLength = 10,
+                                 lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                 scrollX = TRUE,
+                                 buttons = c('copy', 'print')
+                  ),rownames=FALSE,caption= "Sample data")
+  })
+  
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  ############################################################### CAMERA OUTPUT DISPLAY #################################################################
+  #######################################################################################################################################################
+  #######################################################################################################################################################
+  
+  #populate camera dropdown menu in the sidebar with the genesets based on the project RData
+  output$cameradd = renderUI({
+    results=fileload()
+    contrast=input$contrast
+    cam=paste("results$camera$",contrast,sep="")
+    cam=eval(parse(text=cam))
+    cameradd=as.list(as.character(unlist(lapply((names(cam)),factor))))
+    selectInput("cameradd","Select a Gene Set",cameradd)
+  })
+  
+  #Get camera data from Rdata file for the chosen contrast
+  geneid = reactive({
+    results=fileload()
+    cameradd=input$cameradd
+    contrast=input$contrast #get user input for contrast/comparison
+    c=paste('results$camera$',contrast,'$',cameradd,'$camera_result',sep='') #get camera data corresponding to the contrast chosen
+    cam=eval(parse(text = c)) #convert string to variable
+    cam=data.frame(name=rownames(cam),cam)
+    name=cam$name
+    if (cameradd == "GO")
+    {
+      url= paste("http://amigo.geneontology.org/amigo/term/",name,sep = "") #create link to Gene Ontology Consortium
+      cam$link=paste0("<a href='",url,"'target='_blank'>","Link to Gene Ontology Consortium","</a>")
+      cam=as.data.frame(cam)
+    }else{
+      url= paste("http://software.broadinstitute.org/gsea/msigdb/cards/",name,".html",sep = "")
+      cam$link=paste0("<a href='",url,"'target='_blank'>","Link to Molecular Dignature Database","</a>")
+      cam=as.data.frame(cam)}
+    return(cam) # return datatable with camera results
+  })
+  
+  # print out camera results in a table
+  output$tablecam = DT::renderDataTable({
+    input$camera
+    input$cameradd
+    input$contrast
+    isolate({
+      DT::datatable(geneid(),
                     extensions = c('Buttons','Scroller'),
                     options = list(dom = 'Bfrtip',
                                    searchHighlight = TRUE,
@@ -326,1646 +894,1145 @@ server <- function(input, output,session) {
                                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
                                    scrollX = TRUE,
                                    buttons = c('copy', 'print')
-                    ),rownames=FALSE,caption= "Variable genes",selection = list(mode = 'single', selected =1),escape = F)
+                    ),rownames= FALSE,selection = list(mode = 'single', selected =1),escape=FALSE,caption = "Camera Results")
     })
   })
   
-  ######################################################################################################
-  ######################################################################################################
-  ################################# PCA TAB ############################################################
-  ######################################################################################################
-  ######################################################################################################
-  
-  #Generate drop down menu to populate the max number of dimensions used in the scRNA analysis
-  output$ndim = renderUI({
-    scrna=fileload()
-    maxdim="NA"
-    maxdim=length(scrna[['pca']]@stdev)
-    validate(need(is.na(maxdim)==F,"PCA dimensional Reduction has not been computed"))
-    var=1:maxdim
-    selectInput("ndim","Choose number of dimensions",var,selected = 1)
+  #Generate text title for the gene list table
+  output$camdesc <- renderText({
+    s = input$tablecam_rows_selected
+    dt = geneid() 
+    dt = as.character(dt[s, , drop=FALSE]) 
+    camname=dt[1]
+    text=paste('Gene list for Camera term :',camname,sep="")
+    return(text)
   })
   
-  #Plot the PCA/Viz plot for the number of dimensions and number of genes chosen
-  vizplot= reactive({
-    scrna=fileload()
-    dim=input$ndim
-    validate(need(dim,"PCA dimensional Reduction has not been computed"))
-    par(mar=c(4,5,3,3))
-    g1=VizDimLoadings(object = scrna, dims = dim:dim,nCol=1,nfeatures = input$ngenes)
-    return(g1) 
+  #get the gene-list for every row in camera results table
+  campick2 = reactive({
+    results=fileload()
+    cameradd=input$cameradd
+    contrast=input$contrast #get user input for contrast/comparison
+    c=paste('results$camera$',contrast,'$',cameradd,'$indices',sep='') #get camera indices corresponding to the contrast chosen
+    cameraind=eval(parse(text = c))
+    cam=geneid() #get datatable with camera data from reactive
+    s=input$tablecam_rows_selected # get  index of selected row from table
+    cam=cam[s, ,drop=FALSE]
+    res=datasetInput0.5()
+    res2=datasetInput33()
+    if("ENTREZID" %in% colnames(res2)){
+      res2=res2
+    }
+    else{res2=res}
+    
+    #get gene list from indices
+    if (cameradd == "GO")
+    {
+      k=paste('res2$ENTREZID[cameraind$`',cam$name,'`]',sep='')}
+    else{
+      k=paste('res2$ENTREZID[cameraind$',cam$name,']',sep='')
+    }
+    genes=eval(parse(text = k)) #get entrez id's corresponding to indices
+    genesid=res[res$ENTREZID %in% genes,] #get limma data corresponding to entrez id's
+    return(data.frame(genesid)) #return the genelist
   })
   
-  #Render the vizplot
-  output$vizplot = renderPlot({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      vizplot()
+  #print data table with gene list corresponding to each row in camera datatable
+  output$campick3 = DT::renderDataTable({
+    input$cameradd
+    input$contrast
+    input$projects
+    DT::datatable(campick2(),
+                  extensions = c('Buttons','Scroller'),
+                  options = list(dom = 'Bfrtip',
+                                 searchHighlight = TRUE,
+                                 pageLength = 10,
+                                 lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                 scrollX = TRUE,
+                                 buttons = c('copy', 'print')
+                  ),rownames=FALSE,escape=FALSE,caption="GENE LIST")
+  })
+  
+  
+  #download camera datatable
+  output$downloadcam <- downloadHandler(
+    filename = function() { paste('Camera_',input$projects,'_',input$contrast,'.csv', sep='') },
+    content = function(file) {
+      write.csv(geneid(), file)
+    })
+  
+  ###################################################
+  ###################################################
+  ###### CREATE ENRICHMENT PLOT FROM CAMERA #########
+  ###################################################
+  ###################################################
+  #Create enrichment plot for the camera term
+  eplotcamera = reactive({
+    results=fileload()
+    cameradd=input$cameradd
+    contrast=input$contrast #get user input for contrast/comparison
+    s = input$camres_rows_selected
+    dt = geneid() 
+    dt = as.character(dt[s, , drop=FALSE]) 
+    cat= dt$name
+    c=paste('results$camera$',contrast,'$',cameradd,'$indices$',category,sep='') #get camera indices corresponding to the contrast chosen
+    cameraind=eval(parse(text = c))
+    exprsdata=as.data.frame(results$eset@assayData$exprs)
+    features=as.data.frame(pData(featureData(results$eset)))
+    features$id=rownames(features)
+    exprsdata$id=rownames(exprsdata)
+    res2<- inner_join(features,exprsdata,by=c('id'='id'))
+    k=res2$ENTREZID[cameraind]
+    limma_all=datasetInput0.5()
+    #limma=limma[limma$ENTREZID %in% k,]
+    
+  })
+  
+  #Render enrichment plot
+  output$eplotcamera = renderPlot({
+    eplotcamera()
+  })
+  
+  # print out camera results in a table
+  output$camres = DT::renderDataTable({
+    input$camera
+    input$cameradd
+    input$contrast
+    isolate({
+      DT::datatable(geneid(),
+                    extensions = c('Buttons','Scroller'),
+                    options = list(dom = 'Bfrtip',
+                                   searchHighlight = TRUE,
+                                   pageLength = 10,
+                                   lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                   scrollX = TRUE,
+                                   buttons = c('copy', 'print')
+                    ),rownames= FALSE,selection = list(mode = 'single', selected =1),escape=FALSE,caption = "Camera Results")
     })
   })
   
-  
   ###################################################
   ###################################################
-  ####### Compare Tsne plot with controls  ##########
+  ######### CREATE HEATMAP FROM CAMERA ##############
   ###################################################
   ###################################################
-  
-  #generate variable list for left plot
-  output$tsnea2 = renderUI({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data) 
-    #metadata=metadata %>% select(starts_with("var"))
-    var=colnames(metadata)
-    selectInput("tsnea2","Select a Variable",var,"pick one")
-  })
-  
-  #generate variable list for right plot
-  output$tsneb2 = renderUI({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data) 
-    #metadata=metadata %>% select(starts_with("var"))
-    var=colnames(metadata)
-    selectInput("tsneb2","Select a Variable",var,"pick one")
-  })
-  
-  #Conditional panel. When subselect cells is chosen, if category is 'var', generate a slider with min and max values for numerical categories
-  # and drop down menu with factors of that category if its non-numeric. If category is 'cluster', generate drop-down with cluster names and if
-  # category is 'geneexp', display error that says cannot subselect
-  output$subsaui = renderUI({
-    scrna=fileload()
-    clusts=levels(Idents(object=scrna))
-    if(input$categorya2=="clust"){
-      selectInput("selclust","Select a Cluster",clusts)
-    }else if(input$categorya2=="var"){
-      metadata=as.data.frame(scrna@meta.data)
-      met= sapply(metadata,is.numeric)
-      feature=names(met[met==TRUE])
-      tsne=names(met[met==FALSE])
-      t=paste("scrna@meta.data$",input$tsnea2,sep="")
-      if(input$tsnea2 %in% tsne){
-        opt1=unique(eval(parse(text=t)))
-        selectInput("selclust2","Select one of the options",opt1)
-      }else if(input$tsnea2 %in% feature){
-        min=min(eval(parse(text=t)))
-        max=max(eval(parse(text=t)))
-        sliderInput("tsnea2lim", label = h5("Select Range"), min = min,max =max, value =c(min,max)) 
-      }
-    }else if(input$categorya2=="geneexp"){
-      validate(need(input$categorya2!="geneexp","Cannot subselect gene expression values"))
-    }
-  })
-  
-  #Conditional panel. When subselect cells is chosen, if category is 'var', generate a slider with min and max values for numerical categories
-  # and drop down menu with factors of that category if its non-numeric. If category is 'cluster', generate drop-down with cluster names and if
-  # category is 'geneexp', display error that says cannot subselect
-  output$subsbui = renderUI({
-    scrna=fileload()
-    clusts=levels(Idents(object=scrna))
-    if(input$categoryb2=="clust"){
-      selectInput("selclustb","Select a Cluster",clusts)
-    }else if(input$categoryb2=="var"){
-      metadata=as.data.frame(scrna@meta.data)
-      met= sapply(metadata,is.numeric)
-      feature=names(met[met==TRUE])
-      tsne=names(met[met==FALSE])
-      t=paste("scrna@meta.data$",input$tsneb2,sep="")
-      if(input$tsneb2 %in% tsne){
-        opt2=unique(eval(parse(text=t)))
-        selectInput("selclustb2","Select one of the options",opt2)
-      }else if(input$tsneb2 %in% feature){
-        min=min(eval(parse(text=t)))
-        max=max(eval(parse(text=t)))
-        sliderInput("tsneb2lim", label = h5("Select Range"), min = min,max =max, value =c(min,max)) 
-      }
-    }else if(input$categoryb2=="geneexp"){
-      validate(need(input$categoryb2!="geneexp","Cannot subselect gene expression values"))
-    }
-  })
-  
-  #Dimensionality reduction options for left plot
-  output$umapa = renderUI({
-    scrna=fileload()
-    dimr=names(scrna@reductions)
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    selectInput("umapa","Dimensionality Reduction",dimr,selected = "umap")})
-  })
-  
-  #Dimensionality reduction options for right plot
-  output$umapb = renderUI({
-    scrna=fileload()
-    dimr=names(scrna@reductions)
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    selectInput("umapb","Dimensionality Reduction",dimr,selected = "umap")})
-  })
-  
-  #Genelist for tsne plot A
-  output$gene1aui = renderUI({
-    scrna=fileload()
-    options=sort(rownames(GetAssayData(object = scrna)))
-    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
-      selectInput('gene1a', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
-  })
-  
-  #Genelist for tsne plot B
-  output$gene2aui = renderUI({
-    scrna=fileload()
-    options=sort(rownames(GetAssayData(scrna)))
-    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
-      selectInput('gene2a', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
-  }) 
-  
-  #Based on all use input, generate plots using the right category and dimensionality reduction methods
-  comptsne2 = reactive({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data)
-    met= sapply(metadata,is.numeric)
-    tsnea=input$tsnea2
-    tsneb=input$tsneb2
-    feature=names(met[met==TRUE])
-    tsne=names(met[met==FALSE])
+  #extract voom expression data of all genes corresponding to selected row in camera datatable
+  heatmapcam <- reactive({
+    genesid=campick2()  #gene list from camera
+    voom=as.data.frame(datasetInput3())#voom data
+    genes_cam<-voom[rownames(voom) %in% rownames(genesid),]
     
-    if(input$categorya2 =="clust" & input$subsa==F){
-      plot1=DimPlot(object = scrna,reduction=input$umapa,group.by = "ident",no.legend = FALSE,label = input$checklabel1,vector.friendly = T, do.return=T, pt.size = input$pointa2,label.size = 7, cols=cpallette)
-    }else if(input$categorya2 =="clust" & input$subsa==TRUE){
-      cells=names(Idents(object=scrna)[Idents(object=scrna)==input$selclust])
-      plot1=DimPlot(object = scrna,reduction=input$umapa,cells.highlight=cells,group.by = "ident",vector.friendly = T,no.legend = FALSE,label = F, do.return=T, pt.size = input$pointa2, cols=cpallette)
-    }else if(input$categorya2=="geneexp"){
-      validate(need(input$gene1a %in% rownames(GetAssayData(object=scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
-      plot1=FeaturePlot2(object = scrna,reduction=input$umapa, features = input$gene1a, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
-      #plot1=eval(parse(text=paste("plot1$`",input$gene1a,"`",sep="")))
-    }else if(input$categorya2 =="var" & input$tsnea2 %in% tsne & input$subsa==FALSE){
-      plot1=DimPlot(object = scrna,reduction=input$umapa,group.by = tsnea,no.legend = FALSE,label = input$checklabel1,vector.friendly = T, do.return=T,pt.size = input$pointa2,label.size = 7, cols=cpallette)
-    }else if(input$categorya2 =="var" & input$tsnea2 %in% tsne & input$subsa==TRUE){
-      t=paste("rownames(scrna@meta.data[scrna@meta.data$",input$tsnea2,"==\"",input$selclust2,"\",])",sep="")
-      cells=eval(parse(text=t))
-      plot1=DimPlot(object = scrna,reduction=input$umapa,group.by = tsnea,cells.highlight=cells,vector.friendly = T,no.legend = FALSE,label =F, do.return=T,pt.size = input$pointa2, cols=cpallette)
-    }else if(input$categorya2 =="var" & input$tsnea2 %in% feature & input$subsa==FALSE){
-      plot1=FeaturePlot2(object = scrna,reduction=input$umapa, features = tsnea, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
-      #plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
-    }else if(input$categorya2 =="var" & input$tsnea2 %in% feature & input$subsa==TRUE){
-      t=paste('rownames(scrna@meta.data[scrna@meta.data$',input$tsnea2, '>',input$tsnea2lim[1], ' & metadata$',input$tsnea2, '<', input$tsnea2lim[2],',])',sep="")
-      cells=eval(parse(text=t))
-      plot1=FeaturePlot2(object = scrna,reduction=input$umapa, features = tsnea,cells.use = cells, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
-      #plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
-    }
-    
-    if(input$categoryb2 =="clust" & input$subsb==F){
-      plot2=DimPlot(object = scrna,reduction=input$umapb,group.by = "ident",no.legend = FALSE,vector.friendly = T,label = input$checklabel2, do.return=T,pt.size = input$pointa2,label.size = 7, cols=cpallette)
-    }else if(input$categoryb2 =="clust" & input$subsb==TRUE){
-      cells=names(Idents(object=scrna)[Idents(object=scrna)==input$selclustb])
-      plot2=DimPlot(object = scrna,reduction=input$umapb,cells.highlight=cells,group.by = "ident",vector.friendly = T,no.legend = FALSE,label = F, do.return=T, pt.size = input$pointa2, cols=cpallette)
-    }else if(input$categoryb2=="geneexp"){
-      validate(need(input$gene2a %in% rownames(GetAssayData(object=scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
-      plot2=FeaturePlot2(object = scrna,reduction=input$umapb, features = input$gene2a, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
-      #plot2=eval(parse(text=paste("plot2$`",input$gene2a,"`",sep="")))
-    }else if(input$categoryb2 =="var" & input$tsneb2 %in% tsne & input$subsb==F){
-      plot2=DimPlot(object = scrna,reduction=input$umapb,group.by = tsneb,no.legend = FALSE,vector.friendly = T,label = input$checklabel2, do.return=T,pt.size = input$pointa2,label.size = 7, colse=cpallette)
-    }else if(input$categoryb2 =="var" & input$tsneb2 %in% tsne & input$subsb==TRUE){
-      t=paste("rownames(scrna@meta.data[scrna@meta.data$",input$tsneb2,"==\"",input$selclustb2,"\",])",sep="")
-      cells=eval(parse(text=t))
-      plot2=DimPlot(object = scrna,reduction=input$umapb,group.by = tsneb,cells.highlight=cells,vector.friendly = T,no.legend = FALSE,label = F, do.return=T,pt.size = input$pointa2, cols=cpallette)
-    }else if(input$categoryb2 =="var" & input$tsneb2 %in% feature & input$subsb==F){
-      plot2=FeaturePlot2(object = scrna,reduction=input$umapb, features = tsneb, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
-      #plot2=eval(parse(text=paste("plot2$`",tsneb,"`",sep="")))
-    }else if(input$categoryb2 =="var" & input$tsneb2 %in% feature & input$subsb==TRUE){
-      t=paste('rownames(scrna@meta.data[scrna@meta.data$',input$tsneb2, '>',input$tsneb2lim[1], ' & metadata$',input$tsneb2, '<', input$tsneb2lim[2],',])',sep="")
-      cells=eval(parse(text=t))
-      plot2=FeaturePlot2(object = scrna,reduction=input$umapb, features = tsneb,cells.use = cells, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
-      #plot2=eval(parse(text=paste("plot2$`",tsneb,"`",sep="")))
-    }
-    
-    p=plot_grid(plot1,plot2)
-    #p2 <- add_sub(p, paste(input$projects,"_CompareTsne",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
-    p2 <- add_sub(p, paste(projectname(),"_CompareTsne",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
-    ggdraw(p2)
-    ggdraw(p2)
   })
   
-  #render final plot
-  output$comptsne2 = renderPlot({
-    input$load
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      comptsne2()
-    })
+  #Set limit for number of genes that can be viewed in the heatmap
+  output$hmplimcam <- renderUI({
+    pval=campick2() 
+    top_expr=datasetInput3()
+    top_expr=top_expr[rownames(top_expr) %in% rownames(pval),]
+    mx=nrow(top_expr)
+    sliderInput("hmplimcam", label = h5("Select number of genes to view in the heatmap"), min = 2,max =mx, value = mx)
   })
   
-  #Handler to download plot
-  output$downloadtsneplot <- downloadHandler(
-    filename = function() {
-      paste0(projectname(),"_CompareTsne.pdf",sep="")
+  #Create scale for heatmap
+  output$hmpscale_out2 = renderPlot({
+    hmpscaletest(hmpcol=input$hmpcol2,voom=datasetInput3(),checkbox=input$checkbox2)
+  })
+  
+  #create heatmap for heatmap
+  camheatmap = reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    top_expr=heatmapfun(results=fileload(),expr=heatmapcam(),pval=campick2(),file = readexcel(),prj=input$projects,hmplim=input$hmplimcam,hmpsamp=input$hmpsamp2,
+                        contrast=input$contrast)
+    sym=rownames(top_expr)
+    #Remove rows that have variance 0 (This will avoid the Na/Nan/Inf error in heatmap)
+    ind = apply(top_expr, 1, var) == 0
+    top_expr <- top_expr[!ind,]
+    if(input$checkbox2==TRUE){
+      d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby2,xaxis_font_size = 10,colors = colorRampPalette(brewer.pal(n = 9, input$hmpcol2))(30),labRow = sym)}
+    else{d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby2,xaxis_font_size = 10,colors = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol2)))(30),labRow = sym)}
+  })
+  
+  # Render heatmap for camera genes
+  output$camheatmap <- renderD3heatmap({
+    input$hmpcol #user input-color palette
+    input$clusterby #user input-cluster by
+    input$checkbox #user input-reverse colors
+    input$gene #user input-slider input for number of genes
+    input$genelist
+    input$makeheat
+    input$gage
+    input$go_dd
+    input$table4_rows_selected
+    input$tablecam_rows_selected
+    input$projects
+    input$contrast
+    input$cameradd
+    input$hmpsamp2
+    input$hmplimcam
+    camheatmap()
+  })
+  
+  #Create non-interactive heatmap for download
+  camheatmapalt = reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    top_expr=heatmapfun(results=fileload(),expr=heatmapcam(),pval=campick2(),file = readexcel(),prj=input$projects,hmplim=input$hmplimcam,hmpsamp=input$hmpsamp2,
+                        contrast=input$contrast)
+    sym=rownames(top_expr)
+    #Remove rows that have variance 0 (This will avoid the Na/Nan/Inf error in heatmap)
+    ind = apply(top_expr, 1, var) == 0
+    top_expr <- top_expr[!ind,]
+    if(input$checkbox2==TRUE){
+      aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv=TRUE,Colv=TRUE,fontsize = 10,color = colorRampPalette(brewer.pal(n = 9, input$hmpcol2))(30),labRow = sym)}
+    else{aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv=TRUE,Colv=TRUE,fontsize = 10,color = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol2)))(30),labRow = sym)}
+  })
+  
+  #Download camera heatmap
+  output$downloadcamheatmap <- downloadHandler(
+    filename = function(){
+      paste0('camera_heatmap','.pdf',sep='')
     },
     content = function(file){
-      pdf(file,width=14,height = 8,useDingbats=FALSE)
-      plot(comptsne2())
+      pdf(file,width=9,height = 14,useDingbats=FALSE, onefile = F)
+      camheatmapalt()
       dev.off()
     })
   
-  ###################################################
-  ###################################################
-  ########### Interactive Tsne plots  ###############
-  ###################################################
-  ###################################################
-  #Generate drop down menu for variables from meta-data for right plot
-  output$intervar = renderUI({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data) 
-    #metadata=metadata %>% select(starts_with("var"))
-    var=colnames(metadata)
-    selectInput("intervar","Select a Variable",var,"pick one")
+  ########################################################################################################################################################
+  ########################################################################################################################################################
+  ################################################################## SPIA PATHWAY ANALYSIS################################################################
+  ########################################################################################################################################################
+  ########################################################################################################################################################
+  #For the chosen contrast, get SPIA results from the RData 
+  spia_op <- reactive({
+    results=fileload()
+    contrast=input$contrast #get user input for contrast/comparison
+    c=paste('results$spia$',contrast,sep='') #get SPIA data corresponding to the contrast chosen
+    sp=eval(parse(text = c)) #convert string to variable
+    spia_result=data.frame(sp)
+    validate(
+      need(nrow(spia_result) > 1, "No Results")
+    )
+    spia_result$KEGGLINK <- paste0("<a href='",spia_result$KEGGLINK,"' target='_blank'>","Link to KEGG","</a>")
+    return(spia_result) 
   })
   
-  #Generate drop down menu for categoried starting with Var from meta-data for left plot
-  output$setcategory = renderUI({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% dplyr::select(starts_with("var_"))
-    var=c(colnames(metadata))
-    selectInput("setcategory","Choose category",var,"pick one")
+  #Display SPIA results in a table
+  output$spiaop <- DT::renderDataTable({
+    input$runspia
+    input$contrast
+    input$projects
+    isolate({
+      DT::datatable(spia_op(),escape = FALSE,selection = list(mode = 'single', selected =1),
+                    extensions = c('Buttons','Scroller'),
+                    options = list(
+                      dom = 'RMDCT<"clear">lfrtip',
+                      searchHighlight = TRUE,
+                      pageLength = 10,
+                      lengthMenu = list(c(5, 10, 15, 20, 25, -1), c('5', '10', '15', '20', '25', 'All')),
+                      scrollX = TRUE,
+                      buttons = c('copy', 'print')
+                    ),rownames=FALSE)
+    })
   })
   
-  #Generate drop down menu for Dimensionality reduction options for both plots
-  output$umapint = renderUI({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    scrna=fileload()
-    dimr=names(scrna@reductions)
-    selectInput("umapint","Dimensionality Reduction",dimr,selected = "umap")})
+  #Display the SPIA term selected from table above the genelist
+  output$spiadesc <- renderText({
+    s = input$spiaop_rows_selected
+    dt = spia_op() 
+    dt = dt[s, , drop=FALSE]
+    camname=dt$Name
+    text=paste('Gene list for SPIA term :',camname,'-',dt[2],sep="")
+    return(text)
   })
   
-  #Genelist for tsne plot 
-  output$geneinterui = renderUI({
-    scrna=fileload()
-    options=sort(rownames(GetAssayData(object=scrna)))
-    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
-      selectInput('geneinter', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
+  #Get genelist for SPIA term selected from the table of SPIA results
+  spiagenes = reactive({
+    spiaid=spia_op() 
+    final_res=datasetInput()
+    s=input$spiaop_rows_selected 
+    row=spiaid[s, ,drop=FALSE]
+    results=fileload()
+    pd=pData(results$eset)
+    org=unique(pd$organism)
+    if(org %in% c("Mus musculus", "Mouse", "Mm","Mus_musculus", "mouse")){
+      id=paste("mmu",row$ID,sep="")
+      allgenelist=keggLink("mmu",id) #for each kegg id, get gene list
+    }else{
+      id=paste("hsa",row$ID,sep="")
+      allgenelist=keggLink("hsa",id) #for each kegg id, get gene list
+    }
+    p=strsplit(allgenelist,":")
+    genes_entrez=sapply(p,"[",2)
+    genelist=final_res[final_res$ENTREZID %in% genes_entrez,]
+    return(genelist) #return the genelist
   })
   
- #Render the tsne plot using plotly
-  output$intertsne = renderPlotly({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      pdf(NULL)
-      scrna=fileload()
-      plot1=DimPlot(object = scrna,reduction=input$umapint,group.by = input$setcategory,no.legend = FALSE,label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 5,vector.friendly = T, cols=cpallette)
-      plot=ggplotly(plot1)
+  #Render table to display the genelist per SPAI term
+  output$spiagenes = DT::renderDataTable({
+    DT::datatable(spiagenes(),
+                  extensions = c('Buttons','Scroller'),
+                  options = list(dom = 'Bfrtip',
+                                 searchHighlight = TRUE,
+                                 pageLength = 10,
+                                 lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                 scrollX = TRUE,
+                                 buttons = c('copy', 'print')
+                  ),rownames=FALSE,escape=FALSE,selection = list(mode = 'single', selected =1,caption="Genelist"))
+  })
+  
+  #Download function to download SPIA results as a csv file
+  output$dwldspia <- downloadHandler(
+    filename = function() { paste(input$projects,'_',input$contrast, '_spia.csv', sep='') },
+    content = function(file) {
+      write.csv(spia_op(), file)
+    })
+  
+  #######################################################
+  #######################################################
+  ######### CREATE HEATMAP FROM SPIA ####################
+  #######################################################
+  #######################################################
+  
+  #extract voom expression data of all genes corresponding to selected row in spia datatable
+  heatmapspia <- reactive({
+    genesid=spiagenes()  #gene list from camera
+    voom=as.data.frame(datasetInput3())#voom data
+    genes_spia<-voom[rownames(voom) %in% rownames(genesid),]
+    
+  })
+  
+  #get max and min genes per SPIA term to show on slider
+  output$hmplimspia <- renderUI({
+    pval=spiagenes() 
+    top_expr=datasetInput3()
+    top_expr=top_expr[rownames(top_expr) %in% rownames(pval),]
+    mx=nrow(top_expr)
+    sliderInput("hmplimspia", label = h5("Select number of genes to view in the heatmap"), min = 2,max =mx, value = mx)
+  })
+  
+  #Generate a heatmap color scale
+  output$hmpscale_out2spia = renderPlot({
+    hmpscaletest(hmpcol=input$hmpcolspia,voom=datasetInput3(),checkbox=input$checkboxspia)
+  })
+  
+  #Function to generate d3 camera heatmap
+  camheatmap = reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    top_expr=heatmapfun(results=fileload(),expr=heatmapcam(),pval=campick2(),file = readexcel(),prj=input$projects,hmplim=input$hmplimcam,hmpsamp=input$hmpsamp2,
+                        contrast=input$contrast)
+    sym=rownames(top_expr)
+    #Remove rows that have variance 0 (This will avoid the Na/Nan/Inf error in heatmap)
+    ind = apply(top_expr, 1, var) == 0
+    top_expr <- top_expr[!ind,]
+    if(input$checkbox2==TRUE){
+      d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby2,xaxis_font_size = 10,colors = colorRampPalette(brewer.pal(n = 9, input$hmpcol2))(30),labRow = sym)}
+    else{d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby2,xaxis_font_size = 10,colors = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol2)))(30),labRow = sym)}
+  })
+  
+  # Render SPIA heatmap 
+  output$spiaheatmap <- renderD3heatmap({
+    input$hmpcolspia #user input-color palette
+    input$clusterbyspia #user input-cluster by
+    input$checkboxspia #user input-reverse colors
+    input$gene #user input-slider input for number of genes
+    input$genelist
+    input$spiaop_rows_selected
+    input$projects
+    input$contrast
+    input$hmpsamp2spia
+    input$hmplimspia
+    spiaheatmap()
+  })
+  
+  #create SPIA heatmap function
+  spiaheatmap <- reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    top_expr=heatmapfun(results=fileload(),expr=heatmapspia(),pval=spiagenes(),file = readexcel(),prj=input$projects,hmplim=input$hmplimspia,hmpsamp=input$hmpsamp2spia,
+                        contrast=input$contrast)
+    sym=rownames(top_expr)
+    #Remove rows that have variance 0 (This will avoid the Na/Nan/Inf error in heatmap)
+    ind = apply(top_expr, 1, var) == 0
+    top_expr <- top_expr[!ind,]
+    if(input$checkboxspia==TRUE){
+      d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterbyspia,xaxis_font_size = 10,colors = colorRampPalette(brewer.pal(n = 9, input$hmpcolspia))(30),labRow = sym)}
+    else{d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterbyspia,xaxis_font_size = 10,colors = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcolspia)))(30),labRow = sym)}
+  })
+  
+  #Create non-interactive SPIA heatmap function for download
+  spiaheatmapalt <- reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    top_expr=heatmapfun(results=fileload(),expr=heatmapspia(),pval=spiagenes(),file = readexcel(),prj=input$projects,hmplim=input$hmplimspia,hmpsamp=input$hmpsamp2spia,
+                        contrast=input$contrast)
+    sym=rownames(top_expr)
+    #Remove rows that have variance 0 (This will avoid the Na/Nan/Inf error in heatmap)
+    ind = apply(top_expr, 1, var) == 0
+    top_expr <- top_expr[!ind,]
+    if(input$checkboxspia==TRUE){
+      aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv=TRUE,Colv=TRUE,fontsize = 10,color = colorRampPalette(brewer.pal(n = 9, input$hmpcolspia))(30),labRow = sym)}
+    else{aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv=TRUE,Colv=TRUE,fontsize = 10,color = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcolspia)))(30),labRow = sym)}
+  })
+  
+  #Download SPIA heatmap
+  output$downloadspiaheatmap <- downloadHandler(
+    filename = function(){
+      paste0('SPIA_heatmap','.pdf',sep='')
+    },
+    content = function(file){
+      pdf(file,width=9,height = 14,useDingbats=FALSE, onefile = F)
+      spiaheatmapalt()
       dev.off()
-      return(plot)
     })
-  })
-
-  #Render the gene plot using plotly
-  output$intergene = renderPlotly({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      pdf(NULL)
-      scrna=fileload()
-      metadata=as.data.frame(scrna@meta.data)
-      met= sapply(metadata,is.numeric)
-      #metadata=metadata %>% select(starts_with("var"))
-      tsnea=input$intervar
-      feature=names(met[met==TRUE])
-      #feature=c("nGene","nUMI","percent.mito","S.Score","G2M.Score","var.ratio.pca")
-      tsne=names(met[met==FALSE])
-      
-      if(input$intercat=="geneexp"){
-        validate(need(input$geneinter %in% rownames(GetAssayData(object=scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
-        plot1=FeaturePlot2(object = scrna,reduction=input$umapint, features = input$geneinter, cols = c("grey", "blue"),pt.size = input$umap_pointsize)
-        #plot1=eval(parse(text=paste("plot1$`",input$geneinter,"`",sep="")))
-      }else if(input$intercat =="var" & tsnea %in% tsne){
-        plot1=DimPlot(object = scrna,reduction=input$umapint,group.by = tsnea,no.legend = FALSE,label = TRUE, do.return=T,pt.size = input$umap_pointsize,label.size = 7, cols=cpallette,vector.friendly = T)
-      }else if(input$intercat =="var" & tsnea %in% feature){
-        plot1=FeaturePlot2(object = scrna,reduction=input$umapint, features = tsnea, cols = c("grey", "blue"),pt.size = input$umap_pointsize)
-        #plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
-      }
-      plot=ggplotly(plot1)
-      dev.off()
-      return(plot)
-    })
+  ########################################################################################################################################################
+  ########################################################################################################################################################
+  ################################################################## REACTOME PA ANALYSIS################################################################
+  ########################################################################################################################################################
+  ########################################################################################################################################################
+  #Get list of enriched pathways
+  enrichpath = reactive({
+    results=fileload()
+    pd=pData(results$eset)
+    org=unique(pd$organism)
+    if(org %in% c("Mus musculus", "Mouse", "Mm","Mus_musculus","mouse")){
+      org="mouse"
+    }else{
+      org="human"
+    }
+    deg= datasetInput0.5()
+    deg=deg[abs(deg$fc) >2,]
+    res <- enrichPathway(gene=deg$ENTREZID,pvalueCutoff=0.05, readable=T,organism=org)
   })
   
-  ######################################################################################################
-  ######################################################################################################
-  ####### Display Biplot plot with controls ############################################################
-  ######################################################################################################
-  ######################################################################################################
-  
-  #generate Expression limit for gene A
-  output$bigene_rangea <- renderUI({
+  #create different table to display
+  enrichpath2 = reactive({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      #textInput("bigene_genea", label = "Gene A",value = bigene_genea)
-      r<-getGeneRange(fileload(),input$bigene_genea)
-      sliderInput("bigene_rangea", "Expression Limit Gene A (log2 UMI)",
-                  min = 0, max = r[2], value = c(r[1],r[2]),step=.25)
+      res= enrichpath()
+      res=as.data.frame(res)
+      validate(
+        need(nrow(res) > 0, "No results")
+      )
+      res = res %>% dplyr::select(-geneID)
     })
   })
   
-  #generate Expression limit for gene B
-  output$bigene_rangeb <- renderUI({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      #textInput("bigene_geneb", label = "Gene B",value = bigene_geneb)
-      r<-getGeneRange(fileload(),input$bigene_geneb)
-      sliderInput("bigene_rangeb", "Expression Limit Gene B (log2 UMI)",
-                  min = 0, max = r[2], value = c(r[1],r[2]),step=.25)
-    })
-  })
-  
-  #Generate dropdown to pick dimensionality reduction method for bigeneplot
-  output$bigenedim = renderUI({
-    scrna=fileload()
-    dimr=names(scrna@reductions)
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      selectInput("bigenedim","Dimensionality Reduction",dimr,selected = "umap")})
-  })
-  
-  #Genelist A for bigene plot 
-  output$bigene_geneaui = renderUI({
-    scrna=fileload()
-    options=sort(rownames(GetAssayData(object = scrna)))
-    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
-      selectInput('bigene_genea', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
-  })
-  
-  #Genelist B for bigene plot 
-  output$bigene_genebui = renderUI({
-    scrna=fileload()
-    options=sort(rownames(GetAssayData(object = scrna)))
-    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
-      selectInput('bigene_geneb', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[2])})
-  })
-  
-#plot the bi-gene plot
-  output$bigeneplot <- renderPlot({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      p=bigene_plot(fileload(),
-                    c(input$bigene_genea,input$bigene_geneb),
-                    limita=input$bigene_rangea,
-                    limitb=input$bigene_rangeb,
-                    marker_size = input$bigene_pointsize,
-                    type=input$bigenedim)
-      p2 <- add_sub(p, paste(projectname(),"_Bigeneplot",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
-      ggdraw(p2)
-    })
-  })
-  
-  # Generate cluster-wise counts for the two genes
-  genecounts <- reactive({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    scrna=fileload()
-    validate(need(input$bigene_genea %in% rownames(GetAssayData(object = scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
-    validate(need(input$bigene_geneb %in% rownames(GetAssayData(object = scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
-    genes=c(input$bigene_genea,input$bigene_geneb)
-    my.data=FetchData(scrna,c("ident",genes))
-    colnames(my.data)=c("ident","gene1","gene2")
-    my.data= my.data %>% group_by(ident) %>% summarize(Gene1_ct=sum(gene1>0), Gene2_ct=sum(gene2 > 0),Both_ct=sum(gene2 > 0 & gene1>0)) 
-    colnames(my.data)=c("Cell Group",genes[1],genes[2],"both")
-    return(my.data)
-    })
-  })
-  
-  #Generate table for cluster wise gene counts
-  output$bigene_genecount = DT::renderDataTable({
-    input$bigene_genea
-    input$bigene_geneb
-    DT::datatable(genecounts(),
+  #get list of enriched pathways and display in table
+  output$enrichpath = DT::renderDataTable({
+    input$project
+    input$contrast
+    DT::datatable(enrichpath2(),
                   extensions = 'Buttons', options = list(
                     dom = 'Bfrtip',
-                    pageLength = 10,
-                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
                     buttons = list()),
                   rownames=FALSE,selection = list(mode = 'single', selected =1),escape=FALSE)
-    
   })
   
-  
-  #Download bi-gene plot
-  output$downloadbiplot <- downloadHandler(
-    filename = function() {
-      paste0(projectname(),"_",input$bigene_genea,"_",input$bigene_geneb,"_Bigene.pdf",sep="")
-    },
-    content = function(file){
-      pdf(file,width=9,height = 9,useDingbats=FALSE)
-      plot(bigene_plot(fileload(),
-                       c(input$bigene_genea,input$bigene_geneb),
-                       limita=input$bigene_rangea,
-                       limitb=input$bigene_rangeb,
-                       marker_size = input$bigene_pointsize,type=input$bigenedim))
-      dev.off()
-    })
-  
-  ######################################################################################################
-  ######################################################################################################
-  ######################### Display 3D plot ############################################################
-  ######################################################################################################
-  ######################################################################################################
-  #generate dropdown for variable
-  output$var3d <- renderUI({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data) 
-    metadata=metadata %>% select(starts_with("var"))
-    var=colnames(metadata)
-    selectInput("var3d","Select a Variable",var,"pick one")
-    })
+  #Display list of genes in each enrichment pathway
+  enrichgenes = reactive({
+    res=enrichpath()
+    validate(
+      need(nrow(as.data.frame(res))>0,"No Enriched Pathways")
+    )
+    res=as.data.frame(res) 
+    s = input$enrichpath_rows_selected
+    genes = res[s, , drop=FALSE]
+    genes = genes$geneID
+    genes=gsub("/",", ",genes)
+    return(genes)
   })
   
-  #Generate list of reductions
-  output$dimr3d <- renderUI({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    scrna=fileload()
-    opt=names(scrna@reductions)
-    selectInput("dimr3d", "Select Reduction",opt,selected = "umap")
-      })
+  #print genelist
+  output$enrichgenes = renderPrint({
+    enrichgenes()
   })
   
-  #Create 3D plot
-  output$plot3d = renderPlotly({
-   withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-    scrna.sub=fileload()
-    reduction=input$dimr3d
-    groupby=input$var3d
-    maxdim <- getMaxDim(scrna.sub)
-    if(reduction=='umap'){
-      scrna.sub <- RunUMAP(scrna.sub,dims=1:maxdim,n.components = 3)
-    }else if(reduction=='tsne'){
-      scrna.sub <- RunTSNE(scrna.sub,dims=1:maxdim,dim.embed= 3)
+  #Create plot for visualizing enrichment results
+  enrichplot = reactive({
+    res= enrichpath()
+    shiny::validate(
+      need(nrow(as.data.frame(res))>0,"No Enriched Pathways")
+    )
+    if(input$enrichradio=='barplot'){
+      barplot(res, showCategory = input$ncat)
+    }else if(input$enrichradio=='dotplot'){
+      dotplot(res,showCategory= input$ncat)
+    }else if(input$enrichradio=='enrich'){
+      emapplot(res)
     }
-    
-    dims=1:3
-    dims <- paste0(Key(object = scrna.sub[[reduction]]), dims)
-    data <- FetchData(object = scrna.sub, vars = c(dims,groupby))
-    colnames(data)[1:4] = c("DM_1","DM_2","DM_3","var_cluster")
-    a3=aggregate(data$DM_3, by=list(data$var_cluster), FUN=mean)
-    a2=aggregate(data$DM_2, by=list(data$var_cluster), FUN=mean)
-    a1=aggregate(data$DM_1, by=list(data$var_cluster), FUN=mean)
-    centers=inner_join(a1,a2,by="Group.1")
-    centers=inner_join(centers,a3,by="Group.1")
-    colnames(centers)=c("var_cluster","x","y","z")
-    
-    a <- list()
-    for (i in 1:nrow(centers)) {
-      a[[i]] <- list(x= centers$x[i],y= centers$y[i],z= centers$z[i],text= centers$var_cluster[i],showarrow= T,arrowhead=4,arrowsize=0.5)
-    }
-    if(input$check3d == T){
-      validate(
-        need(is.na(scrna.sub@misc$sds)==F,"Lineage curve information not found. Please run slingshot on the dataset and upload to website again")
-      )
-      curved <- bind_rows(lapply(names(scrna.sub@misc$sds$data@curves), function(x){c <- slingCurves(scrna.sub@misc$sds$data)[[x]]
-      d <- as.data.frame(c$s[c$ord,seq_len(2)])
-      d$curve<-x
-      return(d)}))
-      colnames(data)[1:3] = c("DM_1","DM_2","DM_3")
-      plot=plot_ly(side=I(3)) %>%
-        add_trace(x = data$DM_1,y = data$DM_2,z = data$DM_3,colors=cpallette,color=data$var_cluster,type = "scatter3d") %>% 
-        add_paths(x = curved$DM_1,y = curved$DM_2,z = curved$DM_3, mode="lines",color=I("black"),size=I(7)) %>% 
-        layout(scene = list(
-          aspectratio = list(x = 1,y = 1,z = 1),
-          dragmode = "turntable",
-          xaxis = list(title = dims[1]),yaxis = list(title = dims[2]),zaxis = list(title = dims[3]),annotations = a))
-    }else{
-    plot=plot_ly(side=I(3)) %>%
-      add_trace(x = data$DM_1,y = data$DM_2,z = data$DM_3,colors=cpallette,color=data$var_cluster,type = "scatter3d") %>% 
-      #add_paths(x = curved$DM_1,y = curved$DM_2,z = curved$DM_3, mode="lines",color=I("black"),size=I(7)) %>% 
-      layout(scene = list(
-          aspectratio = list(x = 1,y = 1,z = 1),
-          dragmode = "turntable",
-          xaxis = list(title = dims[1]),yaxis = list(title = dims[2]),zaxis = list(title = dims[3]),annotations = a))
-    }
-    plot
-    })
-  })
-  ####################################################
-  ###################################################
-  ########## Setup Control Panel for DEG ############
-  ###################################################
-  ###################################################
-  #Generate drop down for dimensionality reduction in DEG tab
-  output$umapdeg = renderUI({
-    scrna=fileload()
-    dimr=names(scrna@reductions)
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      selectInput("umapdeg","Dimensionality Reduction",dimr,selected = "umap")})
-  })
-  
-  #Generate drop down menu for Cell group/ other variables to be displayed in the DEG tab
-  output$tsnea = renderUI({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data) 
-    #metadata=metadata %>% select(starts_with("var"))
-    var=c(colnames(metadata),'Cell.group')
-    selectInput("tsnea","Select Group to display",var,selected = "Cell.group")
-  })
-  
-  #Generate drop down menu for the default ident/cluster/variable of comparison
-  output$identdef = renderUI({
-    scrna=fileload()
-    options=sort(unique(scrna@misc$findallmarkers$cluster))
-    selectInput("identdef", "First cluster/variable of comparison (Cell Group 1)",options)
-  })
-  
-  #Generate drop down menu for the categories starting with "var" that can be set as the new ident/variable of comparison
-  output$setidentlist = renderUI({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% dplyr::select(starts_with("var_"))
-    var=c(colnames(metadata))
-    selectInput("setidentlist","Choose category to compare",var,"pick one")
-    
-  })
-  
-  #Generate drop down menu for the variables in the new ident against which the rest will be compared to find markers
-  output$identa = renderUI({
-    scrna=fileload()
-    if(input$setident==T){
-      Idents(object = scrna) = input$setidentlist
-      options=sort(unique(Idents(object=scrna)))
-    }else{
-      options=sort(levels(Idents(object=scrna)))
-    }
-    selectInput("identa", "First Cell group to compare",options)
-  })
-  
-  #Generate checkboxes for the variables in the new ident. Choose all those that you want to compare with the first 
-  output$identb = renderUI({
-    scrna=fileload()
-    if(input$setident==T){
-      Idents(object = scrna) = input$setidentlist
-      options=sort(unique(Idents(object=scrna)))
-    }else{
-      options=sort(levels(Idents(object=scrna)))
-    }
-    checkboxGroupInput("identb", label="Second Cell group to compare",choices=options)
-  })
-  
-  
-  ###################################################
-  ###################################################
-  ####### Display DEG plot with controls  ###########
-  ###################################################
-  ###################################################
-  
-  #Based on the input selected from the control panel, run Seurat's findMarkers to find marker genes that distinguish one
-  #chosen variable of a chosen category from other(s)
-  markergenes = reactive({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      scrna=fileload()
-      if(input$setident==T){ #set new ident if user choses to change category
-        validate(need(input$goButton != 0,"Make your selections and click the GO button"))
-        
-        if(input$goButton == 0)
-          return()
-        isolate({
-          Idents(object = scrna)  = input$setidentlist #set ident
-          validate(need(input$identb,"Select at least one option from Second cell group to compare to first cell group. If you want to compare to all, uncheck the 'Check to choose a different category to compare' option"))
-          validate(need(input$identb!=input$identa,"First and second cell groups can't be the same"))
-            identb=input$identb
-            p=unlist(strsplit(identb,","))
-            markers=FindMarkers(object = scrna, ident.1 = input$identa, ident.2 = p, min.pct = input$minpct,logfc.threshold=input$lfc,test.use=input$test)
-            markers$gene=rownames(markers)
-            geneid=markers$gene
-            url= paste("http://www.genecards.org/cgi-bin/carddisp.pl?gene=",geneid,sep = "")
-            markers$Link=paste0("<a href='",url,"'target='_blank'>",markers$gene,"</a>")
-        })
-      }
-      if(input$setident==F){
-        markers=scrna@misc$findallmarkers
-        markers=markers[markers$cluster==input$identdef,]
-        geneid=markers$gene
-        url= paste("http://www.genecards.org/cgi-bin/carddisp.pl?gene=",geneid,sep = "")
-        markers$Link=paste0("<a href='",url,"'target='_blank'>",markers$gene,"</a>")
-      }
-    })
-    markers =markers %>% rename("Percentage expressed in Cell Group 1"="pct.1")
-    markers =markers %>% rename("Percentage expressed in Cell Group 2"="pct.2")
-#     colnames(markers)[4]="Percentage expressed in Cell Group 1"
-#     colnames(markers)[5]="Percentage expressed in Cell Group 2"
-    return(markers)
-  })
-  
-  #Display results in a table
-  output$markergenes = DT::renderDataTable({
-    #input$identa
-    #input$identb
-    input$goButton
-    DT::datatable(markergenes(),
-                  extensions = 'Buttons', options = list(
-                    dom = 'Bfrtip',
-                    pageLength = 10,
-                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
-                    buttons = list()),
-                  rownames=TRUE,selection = list(mode = 'single', selected =1),escape=FALSE)
-    
-  })
-  
-  #Download function to download the table of marker genes
-  output$downloaddeg <- downloadHandler(
-    filename = function() { paste(projectname(), '.csv', sep='') },
-    content = function(file) {
-      write.csv(markergenes(), file)
-    })
-  
-  ###################################################
-  ###################################################
-  ### View Differentially expressed marker genes  ###
-  ###################################################
-  ###################################################
-  
-  #Generate the plots in deg tab
-  #plot1 is the tsne/umap/pca/phate/diffusion map (based on chosen dimensionality reduction)
-  #plot 2 is feature plot of gene selected from table
-  #plot 2 is violin of gene selected from table
-  #plot 2 is ridge plot of gene selected from table
-  comptsne = reactive({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data)
-    met= sapply(metadata,is.numeric)
-    validate(need(is.null(scrna@meta.data$var_cluster)==F,"var_cluster not found in meta data"))
-    scrna@meta.data$var_cluster=as.numeric(as.character(scrna@meta.data$var_cluster))
-    tsnea=input$tsnea
-    feature=names(met[met==TRUE])
-    tsne=names(met[met==FALSE])
-    
-    if(input$tsnea =="Cell.group"){
-      plot1=DimPlot(object = scrna,reduction=input$umapdeg,no.legend = FALSE,label = input$checklabel3, do.return=T, pt.size = input$pointa,label.size = 7,cols=cpallette,vector.friendly=TRUE) + theme(legend.position="bottom")
-    }else if(input$tsnea %in% tsne){
-      plot1=DimPlot(object = scrna,reduction=input$umapdeg,group.by = tsnea,no.legend = FALSE,label = input$checklabel3,vector.friendly=TRUE, do.return=T,pt.size = input$pointa,label.size = 7,cols=cpallette) + theme(legend.position="bottom")
-    }else if(input$tsnea %in% feature){
-      plot1=FeaturePlot2(object = scrna, features = tsnea, cols = c("grey", "blue"),reduction = input$umapdeg,pt.size = input$pointa,combine = T)
-      #plot1=eval(parse(text=paste("plot1$`",tsnea,"`",sep="")))
-    }
-   
-    markers=markergenes()
-      s=input$markergenes_rows_selected # get  index of selected row from table
-      markers=markers[s, ,drop=FALSE]
-      plot2=FeaturePlot2(object = scrna, features = markers$gene, cols = c("grey","blue"),reduction = input$umapdeg,pt.size = input$pointa)
-      #plot2=eval(parse(text=paste("plot2$`",rownames(markers),"`",sep="")))
-  if(input$setident==T){
-        setident=input$setidentlist  
-      if(input$checkviolin ==T){
-      plot3=VlnPlot(object = scrna, features = markers$gene,group.by = setident,pt.size=0,cols=cpallette)
-      }else{plot3=VlnPlot(object = scrna, features = markers$gene,group.by = setident,cols=cpallette)}
-      plot4=RidgePlot(object = scrna, features = markers$gene,group.by = setident,cols=cpallette)
-  }else{
-    if(input$checkviolin ==T){
-      plot3=VlnPlot(object = scrna, features = markers$gene,pt.size=0,cols=cpallette)
-    }else{plot3=VlnPlot(object = scrna, features = markers$gene,cols=cpallette)}
-    plot4=RidgePlot(object = scrna, features = markers$gene,cols=cpallette)
-  }
-    
-      row1=plot_grid(plot1,plot2,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
-      row2=plot_grid(plot3,plot4,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
-    p=plot_grid(row1,row2,align = 'v', rel_heights = c(1.7, 1),axis="tb",ncol=1)
-    p2 <- add_sub(p, paste(projectname(),"_Differential_Exp",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
-    ggdraw(p2)
-  })
-  
-  #Render the plot to display
-  output$comptsne = renderPlot({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      comptsne()
-    })
-  })
-  
-  #Download plot function
-  output$downloadplot <- downloadHandler(
-    filename = function() {
-      markers=markergenes()
-      s=input$markergenes_rows_selected # get  index of selected row from table
-      markers=markers[s, ,drop=FALSE]
-      paste0(projectname(),"_",rownames(markers),"_DEG.pdf",sep="")
-    },
-    content = function(file){
-      pdf(file, width = 12, height = 11,useDingbats=FALSE)
-      plot(comptsne())
-      dev.off()
-    })
-  
-  ###################################################
-  ###################################################
-  ####### Display Heatmap plot with controls  #######
-  ###################################################
-  ###################################################
-  #get the list of the differentially expressed markers from the differential expression tab and compute min and max
-  #number of genes to show in the dotpot
-  output$heatmapgenes = renderUI({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      markers=markergenes()
-      validate(
-        need(nrow(markers)>0, "No Marker genes found")
-      )
-      if(nrow(markers)<10){
-        min=1
-        max=nrow(markers)
-      }else{
-        min=10
-        max=nrow(markers)
-      }
-      sliderInput("heatmapgenes", "Number of top genes to plot:",min = min, max = max,value = min)
-    })
-  })
-  
-  #Generate drop-down for list of variables to group cells by
-  output$hmpgrp = renderUI({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      scrna=fileload()
-      metadata=as.data.frame(scrna@meta.data)
-      metadata=metadata %>% dplyr::select(starts_with("var_"))
-      var=c("ident",colnames(metadata))
-      selectInput("hmpgrp","Select a Variable",var,"pick one")
-    })
-  })
-  
-  #generate the heatmap
-  heatmap <- reactive({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      scrna=fileload()
-      if(input$shmptype =="deggene"){
-      markers=markergenes()
-      markergenes=markers$gene[1:input$heatmapgenes]
-      }else if(input$shmptype =="topgene"){
-        markers <- FindAllMarkers(object = scrna, only.pos = TRUE, min.pct = 0.25,thresh.use = 0.25)
-        markers %>% group_by(cluster) %>% top_n(input$topn, avg_logFC)
-        markergenes=markers$gene
-      }
-#       if(input$hmpcol=="PuYl"){
-#         lowcol="darkmagenta"
-#         midcol="black"
-#         highcol="yellow"
-#       }else if(input$hmpcol=="BuGn"){
-#         lowcol="yellow"
-#         midcol="green"
-#         highcol="blue"
-#       }else if(input$hmpcol=="RdYl"){
-#         lowcol="yellow"
-#         midcol="red"
-#         highcol="black"
-#       }else if(input$hmpcol=="RdBu"){
-#         lowcol="red"
-#         midcol="white"
-#         highcol="blue"}
-      p=DoHeatmap(object = scrna, features = markergenes,group.by = input$hmpgrp, group.bar= T,label=TRUE)
-      p2 <- add_sub(p, paste(projectname(),"_Heatmap",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
-      ggdraw(p2)
-    })
-  })
-  
-  #Render the heatmap
-  output$heatmap <- renderPlot({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      heatmap()
-    })
-  })
-  
-  #Download function for the heatmap
-  output$downloadheatmap <- downloadHandler(
-    filename = function() {
-      paste0(projectname(),"_Heatmap",sep="")
-    },
-    content = function(file){
-      pdf(file, width = 13, height = 8,useDingbats=FALSE)
-      plot(heatmap())
-      dev.off()
-    })
-  
-  ###################################################
-  ###################################################
-  ########### Plot gene expression  ################
-  ###################################################
-  ###################################################
-  
-  #Generate drop down for dimensionality reduction in GeneExpression Plots tab
-  output$umapge = renderUI({
-    scrna=fileload()
-    dimr=names(scrna@reductions)
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      selectInput("umapge","Dimensionality Reduction",dimr,selected = "umap")})
-  })
-  
-  #Genelist for Gene Expression Plot
-  output$geneidui = renderUI({
-    scrna=fileload()
-    options=sort(rownames(GetAssayData(object=scrna)))
-    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
-      selectInput('geneid', label='Gene Name',options,multiple=FALSE, selectize=TRUE,selected=options[1])})
-  })
-  
-  #For any gene entered, generate a feature plot, violin plot and a ridge plot
-  geplots = reactive({
-    scrna=fileload()
-    validate(need(input$geneid,"Enter the gene symbol"))
-    validate(need(input$geneid %in% rownames(GetAssayData(object=scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
-    plot2=FeaturePlot2(object = scrna, features = input$geneid, cols = c("grey","blue"),reduction = input$umapge,pt.size = input$genenid_pointsize)
-    #plot2=eval(parse(text=paste("plot2$`",input$geneid,"`",sep="")))
-    if(input$checkviolin2 ==T){
-      plot3=VlnPlot(object = scrna, features = input$geneid,pt.size=0,cols=cpallette)
-    }else{plot3=VlnPlot(object = scrna, features = input$geneid,cols=cpallette)}
-    plot4=RidgePlot(object = scrna, features = input$geneid,cols=cpallette)
-    row1=plot_grid(plot2,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
-    row2=plot_grid(plot3,plot4,align = 'h', rel_heights = c(1, 1),axis="lr", nrow=1)
-    plot_grid(row1,row2,align = 'v', rel_heights = c(1.7, 1),axis="tb",ncol=1)
   })
   
   #Render the plot
-  output$geplots = renderPlot({
+  output$enrichplot <- renderPlot({
+    enrichplot()
+  })
+  
+  #Render the plot
+  output$cnetplot <- renderPlot({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      geplots()
+      res= enrichpath()
+      validate(
+        need(nrow(as.data.frame(res))>0,"No Enriched Pathways")
+      )
+      limmares= datasetInput0.5()
+      genelist= limmares$fc
+      names(genelist)=limmares$ENTREZID
+      cnetplot(res, categorySize="pvalue", foldChange=genelist)
     })
   })
   
-  #Download the plots from gene expression plots tab
-  output$downloadplotge <- downloadHandler(
-    filename = function() {
-      paste0(input$geneid,"_Geneexp_plot.pdf",sep="")
-    },
-    content = function(file){
-      pdf(file,width=8,height = 13,useDingbats=FALSE)
-      plot(geplots())
-      dev.off()
-    })
+  ########################################################################################################################################################
+  ########################################################################################################################################################
+  ################################################################## REACTOME PA GSEA ################################################################
+  ########################################################################################################################################################
+  ########################################################################################################################################################
+  #Get list of enriched pathways from GSEA
+  gseapath = reactive({
+    results=fileload()
+    pd=pData(results$eset)
+    org=unique(pd$organism)
+    if(org %in% c("Mus musculus", "Mouse", "Mm","Mus_musculus","mouse")){
+      org="mouse"
+    }else{
+      org="human"
+    }
+    limmares= datasetInput0.5()
+    genelist= limmares$fc
+    names(genelist)=limmares$ENTREZID
+    genelist = sort(genelist, decreasing = TRUE)
+    y <- gsePathway(genelist, nPerm=10000,pvalueCutoff=0.2,pAdjustMethod="BH", verbose=FALSE,organism=org)
+  })
   
-  ###################################################
-  ###################################################
-  ########### Plot gene expression in clusters  #####
-  ###################################################
-  ###################################################
+  #create different table to display
+  gseapath2 = reactive({
+    res= gseapath()
+    res=as.data.frame(res) 
+  })
   
-  #Generate drop down for dimensionality reduction in Cluster-wise gene expression
-  output$umapclust = renderUI({
-    scrna=fileload()
-    dimr=names(scrna@reductions)
+  #Create Results table
+  output$gseares = DT::renderDataTable({
+    input$project
+    input$contrast
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      selectInput("umapclust","Dimensionality Reduction",dimr,selected = "umap")})
-  })
-  
-  #Generate drop down for categories starting with "var" in Cluster-wise gene expression
-  output$setvar = renderUI({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% dplyr::select(starts_with("var_"))
-    var=c(colnames(metadata))
-    selectInput("setvar","Choose category",var,"pick one")
-  })
-  
-  #Generate drop down for unique variable within the chose category in Cluster-wise gene expression
-  output$selectcluster = renderUI({
-    scrna=fileload()
-    options <- paste0("scrna@meta.data$",input$setvar,sep="")
-    options=unique(eval(parse(text=options)))
-    options=options[order(options)]
-    selectInput("selectcluster", "Select Cell group",options)
-  })
-  
-  
-  #Set ident to the chosen category and calculate average expression of genes per category and the percentage of cells
-  #they are expressed in
-  clusts= reactive({
-    scrna=fileload()
-    Idents(object = scrna) = input$setvar
-    avgexp=AverageExpression(object = scrna)
-    avgexp= avgexp %>% dplyr::select(input$selectcluster)
-    genes.use=rownames(avgexp)
-    data.use <- GetAssayData(object = scrna,slot = "data")
-    cells <- WhichCells(object = scrna, ident = input$selectcluster)
-    thresh.min=0
-    data.temp <- round(x = apply(X = data.use[genes.use, cells, drop = F],
-                                 MARGIN = 1,
-                                 FUN = function(x) {
-                                   return(sum(x > thresh.min) / length(x = cells))
-                                 }),digits = 3)
-    names(data.temp)=genes.use
-    data.temp=as.data.frame(data.temp)
-    data.temp$id=rownames(data.temp)
-    avgexp$id=rownames(avgexp)
-    df=inner_join(avgexp,data.temp,by="id") 
-    rownames(df)=df$id
-    df= df %>% dplyr::select(input$selectcluster,data.temp) 
-    df=df[order(-df[,1],-df[,2]),]
-    colnames(df)= c("Average Expression","Percentage of cells expressed in")
-    df$max_avg=max(df$`Average Expression`)
-    df$min_avg=min(df$`Average Expression`)
-    return(df)
-  })
-  
-  #use above table to compute min and maximum average expression and put it in a slider
-  output$avgexpslider <- renderUI({
-    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-      df=clusts()
-      min=unique(df$min_avg)
-      max=unique(df$max_avg)
-      sliderInput("avgexpslider", "Average Expression:",min = min, max = max, value = c(min,max))
+      DT::datatable(gseapath2(),
+                    extensions = 'Buttons', options = list(
+                      dom = 'Bfrtip',
+                      buttons = list()),
+                    rownames=FALSE,selection = list(mode = 'single', selected =1),escape=FALSE)
     })
   })
   
-  #filter the cluster-wise gene expression table based on user-defined filters of avg expression and percentage expressed
-  clustable= reactive({
-    df=clusts()
-    df= df %>% dplyr::select(-max_avg:-min_avg) 
-    df=df[df$`Percentage of cells expressed in` >input$pctslider[1] & df$`Percentage of cells expressed in` <input$pctslider[2],]
-    df=df[df$`Average Expression` >input$avgexpslider[1] & df$`Average Expression` <input$avgexpslider[2],]
-    return(df)
+  #Render the plot emap
+  output$plotemap <- renderPlot({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      res= gseapath()
+      emapplot(res, color="pvalue")
+    })
   })
   
-  #Display cluster-wise gene expression table
-  output$clustable = DT::renderDataTable({
-    input$setvar
-    input$selectcluster
-    input$avgexpslider
-    input$pctslider
-    input$umapclust
-    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-      DT::datatable(clustable(),
+  #Render the plot gsea
+  output$plotgsea <- renderPlot({
+    res= gseapath()
+    gseares=gseapath2()
+    s = input$gseares_rows_selected
+    gseares = gseares[s, , drop=FALSE]
+    id = gseares$ID
+    gseaplot(res, geneSetID = id)
+  })
+  
+  #Render the gsea pathway
+  output$plotpath <- renderPlot({
+    gseares=gseapath2()
+    s = input$gseares_rows_selected
+    gseares = gseares[s, , drop=FALSE]
+    id = gseares$Description
+    limmares= datasetInput0.5()
+    limmares=limmares[is.na(limmares$ENTREZID)==F,]
+    limmares=limmares[!duplicated(limmares$ENTREZID),]
+    genelist= limmares$fc
+    names(genelist)=limmares$ENTREZID
+    genelist = sort(genelist, decreasing = TRUE)
+    results=fileload()
+    pd=pData(results$eset)
+    org=unique(pd$organism)
+    if(org %in% c("Mus musculus", "Mouse", "Mm","Mus_musculus","mouse")){
+      org="mouse"
+    }else{
+      org="human"
+    }
+    viewPathway(id, readable=TRUE, foldChange=genelist, organism = org)
+  })
+  
+  ######################################################################################################################################################
+  ######################################################################################################################################################
+  ################################################################ GAGE GENE ONTOLOGY ##################################################################
+  ######################################################################################################################################################
+  ######################################################################################################################################################
+  
+  #Run gage and get results
+  datasetInput7 = reactive({
+    final_res=datasetInput0.5() #get limma data
+    logfc=final_res$fc #get FC values from limma data
+    names(logfc)=final_res$ENTREZID # get entrez ids for each row
+    results=fileload()
+    pd=pData(results$eset)
+    organism=pd$organism
+    prjs=c("DS_FalcorFoxA2","YT_mir302","RJ_ESC_Laminin","RJ_CardiacHdac7_updated","DS_FalcorKO")
+    prj2=c("DK_IPSC_lungepi","ZA_Boa_PKM2")
+    if(!input$projects %in% prjs){
+      if(!input$projects %in% prj2){
+        validate(
+          need(length(unique(organism))==1,"Please check pData file for errors in organism column. Does it have more than one organism or is it empty?")
+        )
+        organism=unique(pd$organism)[1]
+      }}
+    if(input$projects %in% prjs){
+      organism="mouse"
+    }
+    else if(input$projects %in% prj2){
+      organism="human"
+    }
+    if(organism=="human")
+    {
+      data(go.sets.hs) #load GO data from gage
+      data(go.subs.hs)
+      if(input$gage=='BP')
+      {
+        gobpsets = go.sets.hs[go.subs.hs$BP]
+        go_res = gage(logfc, gsets=gobpsets)
+      }
+      else if(input$gage=='cc')
+      {
+        goccsets = go.sets.hs[go.subs.hs$CC]
+        go_res = gage(logfc, gsets=goccsets, same.dir=TRUE)
+      }
+      else if(input$gage=='MF')
+      {
+        gomfsets = go.sets.hs[go.subs.hs$MF]
+        go_res = gage(logfc, gsets=gomfsets, same.dir=TRUE)
+      }}
+    else if(organism=="Rat")
+    {
+      data(go.sets.rn) #load GO data from gage
+      data(go.subs.rn)
+      if(input$gage=='BP')
+      {
+        gobpsets = go.sets.rn[go.subs.rn$BP]
+        go_res = gage(logfc, gsets=gobpsets)
+      }
+      else if(input$gage=='cc')
+      {
+        goccsets = go.sets.rn[go.subs.rn$CC]
+        go_res = gage(logfc, gsets=goccsets, same.dir=TRUE)
+      }
+      else if(input$gage=='MF')
+      {
+        gomfsets = go.sets.rn[go.subs.rn$MF]
+        go_res = gage(logfc, gsets=gomfsets, same.dir=TRUE)
+      }
+    }
+    else 
+    {
+      data(go.sets.mm) #load GO data from gage
+      data(go.subs.mm)
+      
+      if(input$gage=='BP')
+      {
+        gobpsets = go.sets.mm[go.subs.mm$BP]
+        go_res = gage(logfc, gsets=gobpsets)
+      }
+      else if(input$gage=='cc')
+      {
+        goccsets = go.sets.mm[go.subs.mm$CC]
+        go_res = gage(logfc, gsets=goccsets, same.dir=TRUE)
+      }
+      else if(input$gage=='MF')
+      {
+        gomfsets = go.sets.mm[go.subs.mm$MF]
+        go_res = gage(logfc, gsets=gomfsets, same.dir=TRUE)
+      }
+    }
+    return(go_res)
+  })
+  
+  #Get all GO terms based on user-selection (upregulated/downregulated)
+  datasetInput8 = reactive({
+    go_res=datasetInput7()
+    go_dd=input$go_dd
+    if(go_dd=="upreg"){
+      res=data.frame(go_res$greater)} #load limma data
+    else if(go_dd=="downreg"){
+      res=data.frame(go_res$less)
+    }
+    res = data.frame(GOterm=rownames(res),res)
+    
+    #Get GO id from GO terms
+    row=data.frame(lapply(res,as.character),stringsAsFactors = FALSE)
+    p=strsplit(row[,1], " ")
+    m=sapply(p,"[",1)
+    go_up=data.frame(GO_id=m,res)
+    go_term=go_up$GO_id
+    url= paste("http://amigo.geneontology.org/amigo/term/",go_term,sep = "") #create link to Gene Ontology Consortium
+    go_up$link=paste0("<a href='",url,"'target='_blank'>","Link to Gene Ontology Consortium","</a>")
+    go_up=as.data.frame(go_up)
+    return(go_up)
+  })
+  
+  #Print GO results in datatable
+  output$table4 = DT::renderDataTable({
+    input$go_dd
+    input$gage
+    input$radio
+    input$project
+    input$contrast
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      DT::datatable(datasetInput8(),
                     extensions = c('Buttons','Scroller'),
                     options = list(dom = 'Bfrtip',
                                    searchHighlight = TRUE,
                                    pageLength = 10,
                                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
                                    scrollX = TRUE,
-                                   buttons = c('copy', 'print')
-                    ),rownames=TRUE,caption= "Cluster-wise Gene expression",selection = list(mode = 'single', selected =1),escape = F)
+                                   buttons = c('copy','print')
+                    ),rownames=FALSE,escape=FALSE,selection = list(mode = 'single', selected =1))
     })
   })
   
-  #Generate plots of the chosen gene
-  clustplots= reactive({
-    scrna=fileload()
-    tab=clustable()
-    s=input$clustable_rows_selected
-    tab=tab[s, ,drop=FALSE]
-    gene=rownames(tab)
-    #cells <- WhichCells(object = scrna, ident = input$selectcluster)
-    plot1=DimPlot(object = scrna,reduction=input$umapclust,group.by = input$setvar,no.legend = FALSE,label = input$checklabel4,vector.friendly = T, do.return=T, pt.size = input$pointclust,label.size = 7, cols=cpallette)
-    plot2=FeaturePlot2(object = scrna,reduction=input$umapclust, features = gene, cols = c("grey", "blue"),pt.size = input$pointclust)
-    #plot2=eval(parse(text=paste("plot2$`",gene,"`",sep="")))
-    plot_grid(plot1,plot2)
-  })
-  
-  #Render above plot
-  output$clustplots = renderPlot({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      clustplots()
-    })
-  })
-  
-  #Download plot
-  output$downloadclustplot <- downloadHandler(
-    filename = function() {
-      paste0("Clustexp_plot.pdf",sep="")
-    },
-    content = function(file){
-      pdf(file,width=13,height = 9,useDingbats=FALSE)
-      plot(clustplots())
-      dev.off()
-    })
-  
-  #Download cluster-wise gene expression table
-  output$downloadclustertab <- downloadHandler(
-    filename = function() { paste(input$selectcluster, '_cluster-wiseGeneExp.csv', sep='') },
+  # Download function to get GO results in csv file
+  output$downloadgo <- downloadHandler(
+    filename = function() { paste('GO_',input$projects,'_',input$contrast,'_',input$gage,'_',input$go_dd,'.csv', sep='') },
     content = function(file) {
-      write.csv(clustable(), file)
+      write.csv(datasetInput8(), file)
     })
   
   ###################################################
   ###################################################
-  ################### Plot dot plot ################
+  ############## GET GENES FROM  GO #################
   ###################################################
   ###################################################
-  
-  #Generate drop-down for list of variables to group cells by
-  output$setdotvar = renderUI({
-    scrna=fileload()
-    metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% dplyr::select(starts_with("var_"))
-    var=c(colnames(metadata))
-    selectInput("setdotvar","Choose category",var,"pick one")
+  #Text title for gene list table
+  output$godesc <- renderText({
+    s = input$table4_rows_selected
+    dt = datasetInput8() #load GO data
+    dt = dt[s, , drop=FALSE] #get GO data corresponding to selected row in table
+    goid=dt$GO_id
+    text=paste('Gene list for GO term :',goid,sep="")
+    return(text)
   })
   
-  #Genelist for Dot plot
-  output$enterchoice = renderUI({
-    scrna=fileload()
-    options=sort(rownames(GetAssayData(object=scrna)))
-    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
-      selectInput('genelistfile2', label='Gene Name',options,multiple=TRUE, selectize=TRUE,selected=options[1])})
-  })
-  
-  #read in user-defined list of genes and generate the dot plot
-  dotplot= reactive({
-    scrna=fileload()
-    
-    if(input$radiofileup=="upload"){
-      validate(
-        need(input$genelistfile, "Please Upload Genelist")
-      )
-    file=input$genelistfile
-    df=fread(file$datapath,header = FALSE) #get complete gene list as string
-    genes=as.vector(df$V1)
-    }else if(input$radiofileup=="enter"){
-      validate(
-        need(input$genelistfile2, "Please Select Genes")
-      )
-      genes=input$genelistfile2
+  # get GO associated genes
+  GOHeatup = reactive({
+    s = input$table4_rows_selected
+    dt = datasetInput8() #load GO data
+    dt = dt[s, , drop=FALSE] #get GO data corresponding to selected row in table
+    results=fileload()
+    pd=pData(results$eset)
+    organism=pd$organism[1]
+    prjs=c("DS_FalcorFoxA2","YT_mir302","RJ_ESC_Laminin","RJ_CardiacHdac7_updated","DS_FalcorKO")
+    prj2=c("DK_IPSC_lungepi","ZA_Boa_PKM2")
+    if(input$projects %in% prjs){
+      organism="mouse"
     }
-    g1=DotPlot(object = scrna, features                                                          = genes, plot.legend = TRUE,group.by=input$setdotvar,do.return=TRUE) 
-    return(g1) 
+    else if(input$projects %in% prj2){
+      organism="human"
+    }
+    goid=dt$GO_id
+    if(organism=="human"){
+      enterezid=paste("go.sets.hs$`",goid,"`",sep="")
+    }
+    else if(organism=="Rat"){
+      enterezid=paste("go.sets.rn$`",goid,"`",sep="")
+    }
+    else{
+      enterezid=paste("go.sets.mm$`",goid,"`",sep="")
+    }
+    entrezid=eval(parse(text=enterezid))
+    limma=datasetInput0.5()
+    lim_vals=limma[limma$ENTREZID %in% entrezid,]
   })
   
-  #render the dot plot
-  output$dotplot = renderPlot({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-      dotplot()
+  #Print datatable with gene list
+  output$x4 = DT::renderDataTable({
+    input$gage
+    input$go_dd
+    input$radio
+    input$project
+    input$contrast
+    goheatup=GOHeatup()
+  },caption="Gene List",escape=FALSE)
+  
+  #Download function to get GO gene list as csv file
+  output$downloadgogene <- downloadHandler(
+    filename = function() { paste('GO_',input$projects,'_',input$contrast,'_',input$gage,'_',input$go_dd,'.csv', sep='') },
+    content = function(file) {
+      write.csv(GOHeatup(), file)
     })
+  
+  ###################################################
+  ###################################################
+  ########## MAKE HEATMAP WITH GO ###################
+  ###################################################
+  ###################################################
+  #Set limit for number of genes that can be viewed in the heatmap
+  output$hmplimgo <- renderUI({
+    pval=GOHeatup()
+    top_expr=datasetInput3()
+    top_expr=top_expr[rownames(top_expr) %in% rownames(pval),]
+    mx=nrow(top_expr)
+    sliderInput("hmplimgo", label = h5("Select number of genes to view in the heatmap"), min = 2,max =mx, value = mx)
   })
   
-  #Download plot
-  output$downloaddotplot <- downloadHandler(
-    filename = function() {
-      paste0(input$project,"_Dotplot.pdf",sep="")
+  #Generate a heatmap color scale
+  output$hmpscale_out3 = renderPlot({
+    hmpscaletest(hmpcol=input$hmpcol3,voom=datasetInput3(),checkbox=input$checkbox3)
+  })
+  
+  #plot heatmap
+  goheatmapup <- reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    top_expr=datasetInput3() 
+    pval=GOHeatup()
+    top_expr=top_expr[rownames(top_expr) %in% rownames(pval),]#voom expression data of all genes corresponding to selected row in GO datatable
+    top_expr=heatmapfun(results=fileload(),expr=as.data.frame(top_expr),pval=GOHeatup(),file = readexcel(),prj=input$projects,hmplim=input$hmplimgo,hmpsamp=input$hmpsamp3,
+                        contrast=input$contrast)
+    #Remove rows that have variance 0 (This will avoid the Na/Nan/Inf error in heatmap)
+    ind = apply(top_expr, 1, var) == 0
+    top_expr <- top_expr[!ind,]
+    sym=rownames(top_expr)
+    if(input$checkbox3==TRUE){
+      d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby3,xaxis_font_size = 10,colors = colorRampPalette(brewer.pal(n = 9, input$hmpcol3))(30),labRow = rownames(top_expr))}
+    else{d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby3,xaxis_font_size = 10,colors = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol3)))(30),labRow =rownames(top_expr))}
+  })
+  
+  # render D3heatmap for GO genes
+  output$goheatmap <- renderD3heatmap({
+    input$hmpcol #user input-color palette
+    input$clusterby #user input-cluster by
+    input$checkbox #user input-reverse colors
+    input$gene #user input-slider input for number of genes
+    input$genelist
+    input$makeheat
+    input$gage
+    input$go_dd
+    input$table4_rows_selected
+    input$tablecam_rows_selected
+    input$projects
+    input$contrast
+    input$cameradd
+    input$hmpsamp3
+    input$hmplimgo
+    goheatmapup()
+  })
+  
+  #function for non-interactive heatmap for download
+  goheatmapupalt <- reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    top_expr=datasetInput3() 
+    top_expr=top_expr[rownames(top_expr) %in% rownames(pval),]#voom expression data of all genes corresponding to selected row in GO datatable
+    top_expr=heatmapfun(results=fileload(),expr=top_expr,pval=GOHeatup(),file = readexcel(),prj=input$projects,hmplim=input$hmplimgo,hmpsamp=input$hmpsamp3,
+                        contrast=input$contrast)
+    
+    #Remove rows that have variance 0 (This will avoid the Na/Nan/Inf error in heatmap)
+    ind = apply(top_expr, 1, var) == 0
+    top_expr <- top_expr[!ind,]
+    if(input$checkbox3==TRUE){
+      aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv=TRUE,Colv =TRUE,fontsize = 10,color = colorRampPalette(brewer.pal(n = 9, input$hmpcol3))(30),labRow = rownames(top_expr))}
+    else{aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv=TRUE,Colv = TRUE,fontsize = 10,color = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol3)))(30),labRow = rownames(top_expr))}
+  })
+  
+  #Download GO heatmap
+  output$downloadgoheatmap <- downloadHandler(
+    filename = function(){
+      paste0('GO_heatmap','.pdf',sep='')
     },
     content = function(file){
-      pdf(file,width=10,height = 9,useDingbats=FALSE)
-      plot(dotplot())
+      pdf(file,width=9,height = 14,useDingbats=FALSE, onefile = F)
+      goheatmapupalt()
       dev.off()
     })
-   ###################################################
-   ###################################################
-   ##### CONTROL PANEL FOR LIGAND-RECEPTOR PAIRS #####
-   ###################################################
-   ###################################################
-   #Generate drop down for dimensionality reduction for bi-gene plot
-   output$bigenedimr = renderUI({
-     scrna=fileload()
-     dimr=names(scrna@reductions)
-     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       selectInput("bigenedimr","Dimensionality Reduction",dimr,selected = "umap")})
-   })
-   
-   #Generate drop-down to generate variables based on which you want to find pairs 
-   #This is important for choosing the 'select cluster' option
-   output$pairby <- renderUI({
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       scrna=fileload()
-       metadata=as.data.frame(scrna@meta.data)
-       metadata=metadata %>% dplyr::select(starts_with("var_"))
-       options=colnames(metadata)
-       selectInput("pairby","Select cell group ",options,selected=options[1])
-     })
-   })
-   
-  #If user chooses to select cluster and all genes, generate drop down menus to pick receptor cluster
-   output$clust1 <- renderUI({
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-     scrna=fileload()
-     t=paste("scrna@meta.data$",input$pairby,sep="")
-     options=unique(eval(parse(text=t)))
-     if(input$pairby=="ident"){options=levels(Idents(object=scrna))}
-     selectInput("clust1","Pick cellgroup for Receptor",options,selected=options[1])
-     })
-   })
-   
-   #If user chooses to select cluster and all genes, generate drop down menus to pick ligand cluster
-   output$clust2 <- renderUI({
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-     scrna=fileload()
-     t=paste("scrna@meta.data$",input$pairby,sep="")
-     options=unique(eval(parse(text=t)))
-     if(input$pairby=="ident"){options=levels(Idents(object=scrna))}
-     selectInput("clust2","Pick cellgroup for Ligand",options, selected=options[2])
-     })
-   })
-   
-   #If user chooses to select both cluster and genes, generate drop down menus to pick receptor cluster
-   output$clust1.1 <- renderUI({
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-     scrna=fileload()
-     t=paste("scrna@meta.data$",input$pairby2,sep="")
-     options=unique(eval(parse(text=t)))
-     selectInput("clust1.1","Pick cellgroup for Receptor",options,selected=options[1])
-     })
-   })
-   
-   #If user chooses to select both cluster and genes, generate drop down menus to pick ligand cluster
-   output$clust2.1 <- renderUI({
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-     scrna=fileload()
-     t=paste("scrna@meta.data$",input$pairby2,sep="")
-     options=unique(eval(parse(text=t)))
-     selectInput("clust2.1","Pick cellgroup for Ligand",options,selected=options[2])
-     })
-   })
-   
-   #generate Expression limit for Ligand gene
-   output$bigene_rangea2 <- renderUI({
-     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       table=finalres()
-       s=input$pairs_res_rows_selected
-       table=table[s, ,drop=FALSE]
-       validate(need(nrow(table) > 0,"No Ligand-receptor pairs found"))
-       bigene_genea=table$ligand
-       #textInput("bigene_genea", label = "Gene A",value = bigene_genea)
-       r<-getGeneRange(fileload(),bigene_genea)
-       sliderInput("bigene_rangea", "Expression Limit of Ligand Gene (log2 UMI)",
-                   min = 0, max = r[2], value = c(r[1],r[2]),step=.25)
-     })
-   })
-   
-   #generate Expression limit for receptor gene
-   output$bigene_rangeb2 <- renderUI({
-     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       table=finalres()
-       validate(need(nrow(table) > 0,"No Ligand-receptor pairs found"))
-       s=input$pairs_res_rows_selected
-       table=table[s, ,drop=FALSE]
-       bigene_geneb=table$receptor
-       #textInput("bigene_geneb", label = "Gene B",value = bigene_geneb)
-       r<-getGeneRange(fileload(),bigene_geneb)
-       sliderInput("bigene_rangeb", "Expression Limit of Receptor Gene (log2 UMI)",
-                   min = 0, max = r[2], value = c(r[1],r[2]),step=.25)
-     })
-   })
-   
-   #Check if the data is from mouse/human and use the approprite file to list the options for source
-   output$source <- renderUI({
-     file = read.csv("data/param.csv")
-     if (input$filetype=="list"){
-     org=as.character(file$organism[file$projects==input$projects])}
-     else if(input$filetype == "upload"){
-       scrna=fileload()
-       validate(need(scrna@meta.data$org,"Organism not found in meta data. Cannot proceed"))
-       org = unique(scrna@meta.data$org)
-     }
-     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
-     options=as.character(unique(rl$Pair.Source))
-     checkboxGroupInput('source', label='Select source(s)',choices=options,selected=options[2])
-   })
-   
-   #Check if the data is from mouse/human and use the approprite file to list the options for evidence
-   output$evidence <- renderUI({
-     # file = read.csv("data/param.csv")
-     # org=as.character(file$organism[file$projects==input$projects])
-     # if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
-     # options=as.character(unique(rl$Pair.Evidence))
-     options=c("EXCLUDED not ligand","literature supported","putative","EXCLUDED not receptor","EXCLUDED")
-     checkboxGroupInput('evidence',label='Select Evidence(s)',choices=options,selected=options[2])
-   })
-   
-   
-   ###################################################
-   ###################################################
-   #### Load lig-receptor list and display results ###
-   ###################################################
-   ###################################################
-   
-   #For selected project and grouping variable, generate all possible ligand receptor pairs
-   datasetInput = reactive({
-#     results=ligrec(fileload(),pair=input$pairby,prj=projectname(),input$perc_cells,filetype=input$filetype)
-     scrna=fileload()
-     results =  scrna@misc$ligrecres
-   })
-
-      #Subselect lig-rec pairs based on user input
-   finalres= reactive({
-     validate(need(input$lrpgo != 0,"Make your selections and click the Run button"))
-     if(input$lrpgo == 0)
-       return()
-     isolate({
-     result=datasetInput()
-     if(input$clust=="clust" & input$gene=="allgene"){
-       #clusters=c(input$clust1,input$clust2)
-       result=result[(result$Receptor_cluster %in% input$clust1) & (result$Lig_cluster%in% input$clust2),]
-     }else if(input$clust=="clust" & input$gene=="genelist"){
-       #clusters.1=c(input$clust1.1,input$clust2.1)
-       result=result[(result$Receptor_cluster %in% input$clust1.1) & (result$Lig_cluster%in% input$clust2.1),]
-     }else{result=result
-     }
-     
-     if(input$gene=="genelist"){
-       if(input$clust=="all"){
-         g1=input$genelist1
-         g2=input$genelist2
-       }else if(input$clust=="clust"){
-         g1=input$genelist1.1
-         g2=input$genelist2.1
-       }
-       genes=read.table(g1$datapath,stringsAsFactors = F)#get complete gene list as string
-       #to avoid errors due to case, change user-defined genelist to lowecase
-       g1=as.vector(genes$V1)
-       g1=tolower(g1)
-       firstup <- function(x) {
-         substr(x, 1, 1) <- toupper(substr(x, 1, 1))
-         x
-       }
-       g1=firstup(g1)
-       genes2=read.table(g2$datapath,stringsAsFactors = F)
-       g2=as.vector(genes2$V1)
-       g2=tolower(g2)
-       g2=firstup(g2)
-       result=result[(result$receptor %in% g1) & (result$ligand %in% g2),]
-     }else{
-       result=result
-     }
-     if(input$checksource==T){result=result[result$Pair.Source %in% input$source,]}
-     if(input$checkevi==T){result=result[result$Pair.Evidence %in% input$evidence,]}
-     result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
-     })
-     return(result)
-   })
-   
-   #print table with lig-rec pairs
-   output$pairs_res = DT::renderDataTable({
-     input$pairby
-     input$clust1
-     input$clust2
-     input$genelist1
-     input$genelist2
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       DT::datatable(finalres(),
-                     extensions = c('Buttons','Scroller'),
-                     options = list(dom = 'Bfrtip',
-                                    searchHighlight = TRUE,
-                                    pageLength = 10,
-                                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
-                                    scrollX = TRUE,
-                                    buttons = c('copy', 'print')
-                     ),rownames=FALSE,caption= "Result",selection = list(mode = 'single', selected =1),escape = F)
-     })
-   })
-   
-   #plot the bi-gene plot based on the row selected from lig-rec table
-   output$bigeneplot2 <- renderPlot({
-     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       table=finalres()
-       s=input$pairs_res_rows_selected
-       table=table[s, ,drop=FALSE]
-       validate(need(nrow(table) > 0,"No Ligand-receptor pairs found"))
-       bigene_genea=as.character(table$ligand)
-       bigene_geneb=as.character(table$receptor)
-       p=bigene_plot(fileload(),
-                     c(bigene_genea,bigene_geneb),
-                     limita=input$bigene_rangea,
-                     limitb=input$bigene_rangeb,
-                     marker_size = input$bigene_pointsize2,type=input$bigenedimr)
-       p2 <- add_sub(p, paste(projectname(),"_Bigeneplot",sep=""), x = 0.87,vpadding = grid::unit(1, "lines"),size=11)
-       ggdraw(p2)
-     })
-   })
-   
-   ######################################################################################################
-   ######################################################################################################
-   ################################# Network ############################################################
-   ######################################################################################################
-   ######################################################################################################
-   #Generate drop-down to generate variables based on which you want to find pairs 
-   output$pairbynet <- renderUI({
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       scrna=fileload()
-       metadata=as.data.frame(scrna@meta.data)
-       metadata=metadata %>% dplyr::select(starts_with("var_"))
-       options=colnames(metadata)
-       selectInput("pairbynet","Select cell group ",options,selected=options[1])
-     })
-   })
-   
-   #Generate slider to filter ligand receptor pairs by frequency of occurence
-   output$filternet <- renderUI({
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       validate(need(input$lrnset != 0,"Make your selections and click the Set filters button"))
-       
-       if(input$lrnset == 0)
-         return()
-       isolate({
-         scrna=fileload()
-         result=scrna@misc$ligrecres
-       #result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2,filetype=input$filetype)
-       if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
-       if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
-       if(input$checkgrp==T){result=result[result$Lig_cluster %in% input$checkgrp2,]
-       result=result[result$Receptor_cluster %in% input$checkgrp2,]}
-       validate(need(is.na(result)==F,"No pairs found. Change Filtering options"))
-       edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
-       colnames(edges)=c("to","from")
-       e2=as.data.frame(table(edges[,1:2]))
-       min=min(e2$Freq)
-       n=ifelse(min<4,4,min)
-       max=max(e2$Freq)
-       sliderInput("filternet", "Filter by number of interactions",
-                   min = min, max = max, value = c(n,max),step=1)
-     })
-   })})
-   
-   #Check if the data is from mouse/human and use the approprite file to list the options for source
-   output$source2 <- renderUI({
-     file = read.csv("data/param.csv")
-     if (input$filetype=="list"){
-       org=as.character(file$organism[file$projects==input$projects])}
-     else if(input$filetype == "upload"){
-       scrna=fileload()
-       validate(need(scrna@meta.data$org,"Organism not found in meta data. Cannot proceed"))
-       org = unique(scrna@meta.data$org)
-     }
-     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
-     options=as.character(unique(rl$Pair.Source))
-     #checkboxGroupInput('source2', label='Select source(s)',choices=options,selected=options[1])
-     selectInput('source2', label='Select source(s)',options,multiple=TRUE, selectize=TRUE,selected=options[2])
-   })
-   
-   #Check if the data is from mouse/human and use the approprite file to list the options for evidence
-   output$evidence2 <- renderUI({
-     options=c("EXCLUDED not ligand","literature supported","putative","EXCLUDED not receptor","EXCLUDED")
-     #checkboxGroupInput('evidence2',label='Select Evidence(s)',choices=options,selected=options[2])
-     selectInput('evidence2',label='Select Evidence(s)',options,multiple=TRUE, selectize=TRUE,selected=options[2])
-   })
-
-   #Select groups to view in lig-rec pairs
-   output$checkgrp <- renderUI({
-     scrna=fileload()
-     groups=unique(eval(parse(text=paste("scrna@meta.data$",input$pairbynet,sep=""))))
-     selectInput('checkgrp2', 'Group options',groups, multiple=TRUE, selectize=TRUE)
-   })
-   
-   #For selected project and grouping variable, generate all possible ligand receptor pairs and filter based on user input
-   datasetInputnet = reactive({
-     #result=NA
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-     validate(need(input$lrngo != 0,"Make your selections and click the Run button"))
-     
-     if(input$lrngo == 0)
-       return()
-     isolate({
-       scrna=fileload()
-       result=scrna@misc$ligrecres
-     #result=ligrec(fileload(),pair=input$pairbynet,prj=projectname(),input$perc_cells2,filetype=input$filetype)
-     #validate(need(is.na(result)==F,"Invalid Cell group. Pick a different option"))
-     if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
-     if(input$checkevi2==T){result=result[result$Pair.Evidence %in% input$evidence2,]}
-     if(input$checkgrp==T){result=result[result$Lig_cluster %in% input$checkgrp2,]
-     result=result[result$Receptor_cluster %in% input$checkgrp2,]}
-     edges=result %>% dplyr::select(Receptor_cluster,Lig_cluster)
-     e2=as.data.frame(table(edges[,1:2]))
-     e2=e2[e2$Freq>= input$filternet[1] & e2$Freq<= input$filternet[2],]
-     e2$pair=paste(e2$Receptor_cluster,"_",e2$Lig_cluster,sep="")
-     result$pair=paste(result$Receptor_cluster,"_",result$Lig_cluster,sep="")
-     result=result[result$pair %in% e2$pair,]
-     result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
-     })
-     return(result)
-     })
-   })
-   
-   #Render the same lig-rec pairs data table again to create network
-   output$pairs_res2 = DT::renderDataTable({
-     input$pairbynet
-     input$filternet
-     input$source2
-     input$evidence2
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       DT::datatable(datasetInputnet(),
-                     extensions = c('Buttons','Scroller'),
-                     options = list(dom = 'Bfrtip',
-                                    searchHighlight = TRUE,
-                                    pageLength = 10,
-                                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
-                                    scrollX = TRUE,
-                                    buttons = c('copy', 'print')
-                     ),rownames=FALSE,caption= "Ligand Receptor Pairs Result",selection = list(mode = 'single', selected =1),escape = F)
-     })
-   })
-   
-   
-   #create lig-receptor network plot
-   lrnetwork = reactive({
-     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
-       result=datasetInputnet()
-       rec <- result %>% distinct(Receptor_cluster) %>% rename(label = Receptor_cluster)
-       lig <- result %>% distinct(Lig_cluster) %>% rename(label = Lig_cluster)
-       nodes <- full_join(rec,lig, by = "label")
-       nodes <- nodes %>% rowid_to_column("id")
-       col=cpallette[1:nrow(nodes)]
-       nodes$color=col
-       perpair <- result %>% group_by(Receptor_cluster, Lig_cluster) %>% summarise(freq = n()) %>% ungroup()
-       edges <- perpair %>%  left_join(nodes, by = c("Receptor_cluster" = "label")) %>% rename(to = id)
-       
-       edges <- edges %>% left_join(nodes, by = c("Lig_cluster" = "label")) %>% rename(from = id)
-       edges <- dplyr::select(edges, from, to, freq)
-       edges=left_join(edges,nodes,by=c("from"="id")) %>% dplyr::select(-label)
-       edge.col=edges$color
-       edge.lab=as.character(edges$freq)
-       OldRange = (max(edges$freq) - min(edges$freq))  
-       NewRange = 8-2  
-       edges$width = (((edges$freq - min(edges$freq)) * NewRange) / OldRange) + 1.5
-       width=edges$width
-       #network <- network(edges, vertex.attr = nodes, matrix.type = "edgelist", ignore.eval = FALSE)
-       
-       routes_igraph <- graph_from_data_frame(d = edges, vertices = nodes, directed = TRUE)
-       curves <-autocurve.edges2(routes_igraph)
-       plot(routes_igraph, edge.arrow.size = 0.2,vertex.label.color="black",edge.label.color="black",vertex.color=col,edge.color=edge.col,edge.width=width,edge.arrow.width=9.5,edge.arrow.size=9.5,edge.curved=curves)
-     })
-   })
-   
-   
-   #Render the ligand-receptor network plot
-   output$lrnetwork = renderPlot({
-        lrnetwork()
-   })
-   
-   #Download network
-   output$dwldnet <- downloadHandler(
-       filename = function() {
-         paste0("Ligand-Receptorpair_network.pdf")
-       },
-       content = function(file){
-         pdf(file, width = 13, height = 8,useDingbats=FALSE)
-         lrnetwork()
-         dev.off()
-       })
-     
-   ######################################################################################################
-   ######################################################################################################
-   ####################################### GO ANALYSIS ##################################################
-   ######################################################################################################
-   ######################################################################################################
-   #Create dropdown for cluster names
-   output$grp1 <- renderUI({
-     result=datasetInputnet()
-     rec <- result %>% distinct(Receptor_cluster)
-     lig <- result %>% distinct(Lig_cluster)
-     fluidRow(
-     column(6,selectInput('grp1', label='Select Receptor Group for GO Analysis',rec)),
-     column(6,selectInput('grp2', label='Select Ligand Group for GO Analysis',lig))
-     )
-   })
-   
-   #Get gene list and use gene list to get GO terms
-   go_genelist <- reactive({
-     result=datasetInputnet()
-     genes= as.character(result$ligand[result$Receptor_cluster==input$grp1 & result$Lig_cluster==input$grp2])
-     file = read.csv("data/param.csv")
-     if (input$filetype=="list"){
-       org=as.character(file$organism[file$projects==input$projects])}
-     else if(input$filetype == "upload"){
-       scrna=fileload()
-       validate(need(scrna@meta.data$org,"Organism not found in meta data. Cannot proceed"))
-       org = unique(scrna@meta.data$org)
-     }
-     if(org=="human"){
-       dataset="hsapiens_gene_ensembl"
-     }
-     else if(org=="Rat"){
-       dataset="rnorvegicus_gene_ensembl"
-     }
-     else{
-       dataset="mmusculus_gene_ensembl"
-     }
-     ensembl = useEnsembl(biomart="ensembl", dataset=dataset)
-     GO <- getBM(attributes=c('go_id','name_1006','definition_1006'), filters ='external_gene_name', values =genes, mart = ensembl)
-     return(GO)
-   })
-   
-   #Render the GO term table for ligand-receptor pairs 
-   output$gotable = DT::renderDataTable({
-     input$grp1
-     input$grp2
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       DT::datatable(go_genelist(),
-                     extensions = c('Buttons','Scroller'),
-                     options = list(dom = 'Bfrtip',
-                                    searchHighlight = TRUE,
-                                    pageLength = 10,
-                                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
-                                    scrollX = TRUE,
-                                    buttons = c('copy', 'print')
-                     ),rownames=FALSE,caption= "GO Terms",selection = list(mode = 'single', selected =1),escape = F)
-     })
-   })
-   ######################################################################################################
-   ######################################################################################################
-   ################################# Ligand Receptor Heatmap ############################################
-   ######################################################################################################
-   ######################################################################################################
-   #Generate drop-down to generate variables based on which you want to find pairs 
-   output$pairbyheatnet <- renderUI({
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       scrna=fileload()
-       metadata=as.data.frame(scrna@meta.data)
-       metadata=metadata %>% dplyr::select(starts_with("var_"))
-       options=colnames(metadata)
-       selectInput("pairbyheatnet","Select cell group ",options,selected=options[1])
-     })
-   })
-   
-   #Check if the data is from mouse/human and use the approprite file to list the options for source
-   output$source3 <- renderUI({
-     file = read.csv("data/param.csv")
-     if (input$filetype=="list"){
-       org=as.character(file$organism[file$projects==input$projects])}
-     else if(input$filetype == "upload"){
-       scrna=fileload()
-       validate(need(scrna@meta.data$org,"Organism not found in meta data. Cannot proceed"))
-       org = unique(scrna@meta.data$org)
-     }
-     if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
-     options=as.character(unique(rl$Pair.Source))
-     checkboxGroupInput('source3', label='Select source(s)',choices=options,selected=options[2])
-   })
-   
-   #Check if the data is from mouse/human and use the approprite file to list the options for evidence
-   output$evidence3 <- renderUI({
-     # file = read.csv("data/param.csv")
-     # org=as.character(file$organism[file$projects==input$projects])
-     # if(org=="mouse"){rl=read.csv("data/Mm_PairsLigRec.csv")}else if(org=="human"){rl=read.csv("data/Hs_PairsLigRec.csv")}
-     # options=as.character(unique(rl$Pair.Evidence))
-     options=c("EXCLUDED not ligand","literature supported","putative","EXCLUDED not receptor","EXCLUDED")
-     checkboxGroupInput('evidence3',label='Select Evidence(s)',choices=options,selected=options[2])
-   })
-   
-   
-   #Generate lig-receptor pairs table
-   ligrecheat = reactive({
-     validate(need(input$lrhgo != 0,"Make your selections and click the Run button"))
-     
-     if(input$lrhgo == 0)
-       return()
-     isolate({
-       scrna=fileload()
-       result=scrna@misc$ligrecres
-     #result=ligrec(fileload(),pair=input$pairbyheatnet,prj=projectname(),input$perc_cells3,filetype=input$filetype)
-     result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
-     if(input$checksourceheat==T){result=result[result$Pair.Source %in% input$source3,]}
-     if(input$checkeviheat==T){result=result[result$Pair.Evidence %in% input$evidence3,]}
-     })
-     return(result)
-   })
-   
-   #Render the same lig-rec pairs data table again to create network
-   output$pairs_res3 = DT::renderDataTable({
-     input$pairbyheatnet
-     input$source3
-     input$evidence3
-     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
-       DT::datatable(ligrecheat(),
-                     extensions = c('Buttons','Scroller'),
-                     options = list(dom = 'Bfrtip',
-                                    searchHighlight = TRUE,
-                                    pageLength = 10,
-                                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
-                                    scrollX = TRUE,
-                                    buttons = c('copy', 'print')
-                     ),rownames=FALSE,caption= "Ligand Receptor Pairs Result",selection = list(mode = 'single', selected =1),escape = F)
-     })
-   })
-   
-  #Get ligand-receptor pairs and compute frequency and use it to generate a heatmap
-   netheatmap = reactive({
-     dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
-     result=ligrecheat()
-     tab=table(result[,6:7])
-     tab=as.data.frame(tab)
-     tab = tab %>% spread(Receptor_cluster,Freq)
-     rownames(tab)=tab$Lig_cluster
-     tab= tab %>% dplyr::select(-Lig_cluster)
-     tab=Filter(var, tab)
-     if(input$clusterby=="both"){
-       row=TRUE
-       column=TRUE
-     }else if(input$clusterby=="row"){
-       row=TRUE
-       column=FALSE
-     }else if(input$clusterby=="column"){
-       row=FALSE
-       column=TRUE
-     }else if(input$clusterby=="none"){
-       row=NA
-       column=NA
-     }
-     if(input$checkbox==TRUE){
-       aheatmap(as.matrix(tab),distfun=dist2,Rowv=row,Colv=column,col = colorRampPalette(brewer.pal(n = 9,input$hmpcolnet))(30),main= "Receptor genes (x) vs Ligand genes (y)")}
-     else{aheatmap(as.matrix(tab),distfun=dist2,Rowv=row,Colv=column,col = colorRampPalette(rev(brewer.pal(n = 9,input$hmpcolnet)))(30),main= "Receptor genes (x) vs Ligand genes (y)")}
-   })
-   #Render heatmap
-   output$netheatmap = renderPlot({
-     input$hmpcolnet
-     input$clusterby
-     input$checkbox
-     netheatmap()
-   })
-   
-   #Download function for the heatmap
-   output$downloadlrheatmap <- downloadHandler(
-     filename = function() {
-       paste0("Ligand-Receptorpair_Heatmap.pdf")
-     },
-     content = function(file){
-       pdf(file, width = 13, height = 8,useDingbats=FALSE)
-       netheatmap()
-       dev.off()
-     })
-   ######################################################################################################
-   ######################################################################################################
-   ################################# TROUBLESHOOT #######################################################
-   ######################################################################################################
-   ######################################################################################################
-   #list devices in use
-   output$device <- renderText({ 
-     dev.list()
-   })
-   
-   #Reset graphics device
-   observeEvent(input$devoff, {
-     graphics.off()
-   })
-
+  
+  #########################################################################################################################################################
+  #########################################################################################################################################################
+  ########################################################## CREATE HEATMAP FOR LIMMA DATA#################################################################
+  #########################################################################################################################################################
+  #########################################################################################################################################################
+  #Text title for type of heatmap being displayed in the heatmap tab
+  output$htitle <- renderText({
+    hmip=input$hmip
+    if(input$hmip=="genenum"){text="Heatmap of Top Genes "}
+    else if(input$hmip=="geneli"){text="Heatmap of Genelist "}
+    else if(input$hmip=="vargenes"){text="Heatmap of top n variable genes "}
+  })
+  
+  #manually create scale (colorkey) for heatmap
+  output$hmpscale_out = renderPlot({
+    hmpscaletest(hmpcol=input$hmpcol,voom=datasetInput3(),checkbox=input$checkbox)
+  })
+  
+  ###################################################
+  ###################################################
+  #################### TOP GENES ####################
+  ###################################################
+  ###################################################
+  output$dropdown <- renderUI({
+    radio=input$radio
+    if(radio=="none"){
+      selectInput("sortby", "Sort By",c('FDR'="sortnone",'Absolute Fold Change' = "sortab",'Positive Fold Change' = "sortpos",'Negative Fold Change' = "sortneg"))
+    }
+    else if(radio=="up"){
+      selectInput("sortby", "Sort By",c('FDR'="sortnone",'Fold Change' = "sortab"))
+    }
+    else if(radio=="down"){
+      selectInput("sortby", "Sort By",c('FDR'="sortnone",'Fold Change' = "sortab"))
+    }
+    else if(radio=="both"){
+      selectInput("sortby", "Sort By",c('FDR'="sortnone",'Absolute Fold Change' = "sortab",'Positive Fold Change' = "sortpos",'Negative Fold Change' = "sortneg"))
+    }
+    
+  })
+  
+  #create heatmap function for top number of genes as chosen from the slider
+  datasetInput4 <- reactive({
+    validate(
+      need(input$gene, "Please Enter number of genes to plot heatmap ")
+    )
+    #sort by pval
+    n<-input$gene #number of genes selected by user (input from slider)
+    d<-datasetInput()
+    sortby=input$sortby
+    if(sortby=='sortnone'){
+      res<-d[order(d$adj.P.Val),]
+    }else if(sortby=='sortab'){
+      res<-d[order(-abs(d$fc)),]
+    }else if(sortby=='sortpos'){
+      res<-d[order(-d$fc),]
+    }else if(sortby=='sortneg'){
+      res<-d[order(d$fc),]
+    }
+    if(n>nrow(d)){
+      reqd_res=res[1:nrow(d),]} #get top n number of genes
+    else{
+      reqd_res=res[1:n,]
+    }
+    return(reqd_res)
+  })
+  
+  
+  #create heatmap function for top n genes
+  heatmap <- reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    pval=datasetInput4()
+    top_expr= createheatmap(results=fileload(),expr=datasetInput3(),pval=pval,hmpsamp=input$hmpsamp,contrast=input$contrast)
+    top_expr=as.data.frame(top_expr)
+    col=colnames(top_expr)
+    top_expr$ENSEMBL=rownames(top_expr)
+    top_expr=inner_join(top_expr,pval,by="ENSEMBL")
+    rownames(top_expr)=top_expr$SYMBOL
+    top_expr=top_expr %>% dplyr::select(col)
+    validate(
+      need(nrow(top_expr) > 1, "No results")
+    )
+    if(input$checkbox==TRUE){
+      d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby,xaxis_font_size = 10,colors = colorRampPalette(brewer.pal(n = 9, input$hmpcol))(30))}
+    else{d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby,xaxis_font_size = 10,colors = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol)))(30))}
+  })
+  
+  #alternate hearmap function for download
+  heatmapalt <- reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    pval=datasetInput4()
+    top_expr= createheatmap(results=fileload(),expr=datasetInput3(),pval=pval,hmpsamp=input$hmpsamp,contrast=input$contrast)
+    sym=pval$SYMBOL
+    validate(
+      need(nrow(top_expr) > 1, "No results")
+    )
+    if(input$checkbox==TRUE){
+      aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv = TRUE,Colv = TRUE,fontsize = 10,color = colorRampPalette(brewer.pal(n = 9, input$hmpcol))(30),labRow = sym)}
+    else{aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv = TRUE,Colv = TRUE,fontsize = 10,color = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol)))(30),labRow = sym)}
+  })
+  
+  ###################################################
+  ###################################################
+  ####### ENTER GENELIST ############################
+  ###################################################
+  ###################################################
+  # Get gene list from user, annotate to ENSEMBL id and get their expression values
+  datasetInput41 = reactive({
+    file=input$genelistfile
+    genes=read.table(file=file$datapath, stringsAsFactors = F) #get complete gene list as string
+    df=as.vector(genes$V1)
+    df=tolower(df)
+    firstup <- function(x) {
+      substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+      x
+    }
+    genelist=firstup(df)
+    results=fileload()
+    #     pd=pData(results$eset)
+    #     org=unique(pd$organism)
+    #     
+    #     if(org=="human"){
+    #       dataset="hsapiens_gene_ensembl"
+    #     }
+    #     else if(org=="Rat"){
+    #       dataset="rnorvegicus_gene_ensembl"
+    #     }
+    #     else{
+    #       dataset="mmusculus_gene_ensembl"
+    #     }
+    #     ensembl = useEnsembl(biomart="ensembl", dataset=dataset)
+    #load limma and voom data
+    limma=datasetInput()
+    voom=datasetInput3()
+    #get expression values of the genes in the gene list
+    # user-defined identifier for the gene list
+    if(input$selectidentifier=='ensembl')
+    {
+      sym=limma[limma$ENSEMBL %in% genelist,] 
+      sym= sym %>% dplyr::select(ENSEMBL,SYMBOL)
+      #       genes <- getBM(attributes=c('ensembl_gene_id','external_gene_name'), filters ='ensembl_gene_id', values =df, mart = ensembl)
+      #       genelist=genes$ensembl_gene_id
+    }
+    else if(input$selectidentifier=='entrez')
+    {
+      sym=limma[limma$ENTREZID %in% genelist,] 
+      sym= sym %>% dplyr::select(ENSEMBL,SYMBOL)
+      #       genes <- getBM(attributes=c('ensembl_gene_id','entrezgene'), filters ='entrezgene', values =df, mart = ensembl)
+      #       genelist=genes$ensembl_gene_id
+    }
+    else if(input$selectidentifier=='genesym')
+    {
+      sym=limma[limma$SYMBOL %in% genelist,] 
+      sym= sym %>% dplyr::select(ENSEMBL,SYMBOL)
+      #       genes <- getBM(attributes=c('ensembl_gene_id','external_gene_name'), filters ='external_gene_name', values =df, mart = ensembl)
+      #       genelist=genes$ensembl_gene_id
+    }
+    expr_vals=merge(voom,sym,by="row.names")
+    rownames(expr_vals)=expr_vals$SYMBOL
+    expr_vals = expr_vals %>% dplyr::select(-Row.names,-SYMBOL,-ENSEMBL)
+    #expr_vals=data.frame(expr_vals[,-c(1,(ncol(expr_vals)-1))])
+    validate(
+      need(nrow(expr_vals) > 1, "Please Check Identifier chosen or Select genelist from Raw Expression Data tab")
+    )
+    return(expr_vals)
+  })
+  
+  #create heatmap function for gene-list given by user
+  heatmap2 = function(){
+    dist2 = function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    limma=datasetInput()
+    expr = datasetInput41()
+    #expr=data.frame(expr[,-ncol(expr)])
+    #     genelist= rownames(expr)
+    #     sym=limma[limma$ENSEMBL %in% genelist,] %>% dplyr::select(SYMBOL)
+    expr2= createheatmap(results=fileload(),expr=expr,hmpsamp=input$hmpsamp,contrast=input$contrast)
+    validate(
+      need(nrow(expr2)>1, "No results")
+    )
+    if(input$checkbox==TRUE){
+      d3heatmap(as.matrix(expr2),distfun=dist2,scale="row",dendrogram=input$clusterby,xaxis_font_size = 10,colors = colorRampPalette(brewer.pal(n = 9, input$hmpcol))(30))}
+    else{d3heatmap(as.matrix(expr2),distfun=dist2,scale="row",dendrogram=input$clusterby,xaxis_font_size = 10,colors = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol)))(30))}
+  }
+  
+  heatmap2alt = function(){
+    dist2 = function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    expr = datasetInput41()
+    #expr2=data.frame(expr[,-ncol(expr)])
+    top_expr= createheatmap(results=fileload(),expr=expr2,hmpsamp=input$hmpsamp,contrast=input$contrast)
+    if(input$checkbox==TRUE){
+      aheatmap(as.matrix(expr2),distfun=dist2,scale="row",Rowv=TRUE,Colv=TRUE,fontsize = 10,color = colorRampPalette(brewer.pal(n = 9, input$hmpcol))(30))}
+    else{aheatmap(as.matrix(expr2),distfun=dist2,scale="row",Rowv=TRUE,Colv=TRUE,fontsize = 10,color = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol)))(30))}
+  }
+  
+  ###################################################
+  ###################################################
+  ####### TOP VARIABLE GENES  #######################
+  ###################################################
+  ###################################################
+  #Extract top n (user-selected) variable genes
+  var.genes = reactive({
+    n=as.numeric(input$vgene)
+    results=fileload()
+    v = results$eset
+    keepGenes <- v@featureData@data
+    #keepGenes <- v@featureData@data %>% filter(!(seq_name %in% c('X','Y')) & !(is.na(SYMBOL)))
+    pData<-phenoData(v)
+    v.filter = v[rownames(v@assayData$exprs) %in% rownames(keepGenes),]
+    Pvars <- apply(v.filter@assayData$exprs,1,var)
+    select <- order(Pvars, decreasing = TRUE)[seq_len(min(n,length(Pvars)))]
+    v.var <-v.filter[select,]
+    m<-v.var@assayData$exprs
+    rownames(m) <- v.var@featureData@data$SYMBOL
+    m=as.data.frame(m)
+    m=unique(m)
+    return(m)
+  })
+  
+  #D3 heatmap for top n variable genes
+  varheatmap <- reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    top_expr= createheatmap(results=fileload(),expr=var.genes(),hmpsamp=input$hmpsamp,contrast=input$contrast)
+    validate(
+      need(nrow(top_expr) > 1, "No results")
+    )
+    if(input$checkbox==TRUE){
+      d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby,xaxis_font_size = 10,colors = colorRampPalette(brewer.pal(n = 9, input$hmpcol))(30))}
+    else{d3heatmap(as.matrix(top_expr),distfun=dist2,scale="row",dendrogram=input$clusterby,xaxis_font_size = 10,colors = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol)))(30))}
+  })
+  
+  # Alternate function to download non-interactive heatmap of top n variable genes
+  varheatmapalt <- reactive({
+    dist2 <- function(x, ...) {as.dist(1-cor(t(x), method="pearson"))}
+    top_expr= createheatmap(results=fileload(),expr=var_genes(),hmpsamp=input$hmpsamp,contrast=input$contrast)
+    validate(
+      need(nrow(top_expr) > 1, "No results")
+    )
+    if(input$checkbox==TRUE){
+      aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv = TRUE,Colv = TRUE,fontsize = 10,color = colorRampPalette(brewer.pal(n = 9, input$hmpcol))(30))}
+    else{aheatmap(as.matrix(top_expr),distfun=dist2,scale="row",Rowv = TRUE,Colv = TRUE,fontsize = 10,color = colorRampPalette(rev(brewer.pal(n = 9, input$hmpcol)))(30))}
+  })
+  
+  
+  # Render d3 heatmap function 
+  output$heatmap <- renderD3heatmap({
+    input$hmpcol #user input-color palette
+    input$clusterby #user input-cluster by
+    input$checkbox #user input-reverse colors
+    input$gene #user input-slider input for number of genes
+    input$genelist
+    input$hmip
+    input$makeheat
+    input$gage
+    input$go_dd
+    input$ga
+    input$table4_rows_selected
+    input$tablecam_rows_selected
+    input$radio
+    input$projects
+    input$contrast
+    input$cameradd
+    input$hmpsamp
+    input$hmplim
+    input$lfc
+    input$apval
+    input$sortby
+    input$vgene
+    #if user selected enter n num of genes, call heatmap() and if user entered genelist, call heatmap2()
+    isolate({
+      if(input$hmip == 'genenum'){heatmap()}
+      else if(input$hmip == 'geneli'){heatmap2()}
+      else if(input$hmip == 'vargenes' ){varheatmap()}
+    })
+  })
+  
+  #Download function for heatmaps 
+  output$downloadheatmap <- downloadHandler(
+    filename = function(){
+      paste0('heatmap','.pdf',sep='')
+    },
+    content = function(file){
+      pdf(file,width=9,height =14,useDingbats=FALSE, onefile = F)
+      if(input$hmip == 'genenum'){heatmapalt()}
+      else if(input$hmip == 'geneli'){heatmap2alt()}
+      else if(input$hmip == 'vargenes' ){varheatmapalt()}
+      dev.off()
+    })
+  
 }#end of server
