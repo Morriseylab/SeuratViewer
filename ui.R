@@ -210,7 +210,7 @@ ui <- dashboardPage(
                       condition = "input.subsb ==true",uiOutput("subsbui") #generate ident list for right plot
                     )
                     ))),
-              box(title = "tSNE plots",solidHeader = TRUE,width=12,status='primary',
+              box(title = "Plots",solidHeader = TRUE,width=12,status='primary',
                   plotOutput("comptsne2", height = 600),
                   downloadButton('downloadtsneplot', 'Download tSNE plot')
               )

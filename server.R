@@ -234,8 +234,12 @@ server <- function(input, output,session) {
       porg="prj$organism"
     }
     scrna=fileload()
-    numcells.nf=dim(GetAssayData(object = scrna, slot = "counts"))[2]
-    tcells=dim(GetAssayData(object=scrna))[2]
+    if("filterstats" %in% names(scrna@misc)){
+      numcells.nf = scrna@misc$filterstats$TotalSamples
+    }else{
+      numcells.nf="Information Unavailable"
+    }
+    tcells=dim(scrna)[2]
     tgenes=dim(GetAssayData(object=scrna))[1]
     if(is.null(scrna[["pca"]])){
       maxdim=dim(scrna@dr$cca.aligned@cell.embeddings)[2]
@@ -323,7 +327,7 @@ server <- function(input, output,session) {
     dim=input$ndim
     validate(need(dim,"PCA dimensional Reduction has not been computed"))
     par(mar=c(4,5,3,3))
-    g1=VizDimLoadings(object = scrna, dims = dim:dim,nCol=1,nfeatures = input$ngenes)
+    g1=VizDimLoadings(object = scrna, dims = dim:dim,ncol=1,nfeatures = input$ngenes)
     return(g1) 
   })
   
@@ -352,7 +356,7 @@ server <- function(input, output,session) {
   output$feascacolor = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data) 
-    metadata=metadata %>% select(starts_with("var"))
+    metadata=metadata %>% dplyr::select(starts_with("var"))
     var=colnames(metadata)
     selectInput("feascacolor","Select Variable for Color by option",var ,selected = var[1])
   })
@@ -836,7 +840,7 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       scrna=fileload()
       metadata=as.data.frame(scrna@meta.data) 
-      metadata=metadata %>% select(starts_with("var"))
+      metadata=metadata %>% dplyr::select(starts_with("var"))
       var=colnames(metadata)
       selectInput("var3d","Select a Variable",var,"pick one")
     })
@@ -1448,7 +1452,7 @@ server <- function(input, output,session) {
       )
       genes=input$genelistfile2
     }
-    g1=DotPlot(object = scrna, features                                                          = genes, plot.legend = TRUE,group.by=input$setdotvar,do.return=TRUE) 
+    g1=DotPlot(object = scrna, features= genes,group.by=input$setdotvar) 
     return(g1) 
   })
   
@@ -1602,6 +1606,7 @@ server <- function(input, output,session) {
   datasetInput = reactive({
     #     results=ligrec(fileload(),pair=input$pairby,prj=projectname(),input$perc_cells,filetype=input$filetype)
     scrna=fileload()
+    validate(need("ligrecres" %in% names(scrna@misc),"Ligand Receptor Analysis has not been run for this dataset"))
     results =  scrna@misc$ligrecres
   })
   
@@ -1743,6 +1748,7 @@ server <- function(input, output,session) {
         return()
       isolate({
         scrna=fileload()
+        validate(need("ligrecres" %in% names(scrna@misc),"Ligand Receptor Analysis has not been run for this dataset"))
         result=scrna@misc$ligrecres
         #result=ligrec(fileload(),pair=input$pairbynet,prj=input$projects,input$perc_cells2,filetype=input$filetype)
         if(input$checksource2==T){result=result[result$Pair.Source %in% input$source2,]}
@@ -1801,6 +1807,7 @@ server <- function(input, output,session) {
         return()
       isolate({
         scrna=fileload()
+        validate(need("ligrecres" %in% names(scrna@misc),"Ligand Receptor Analysis has not been run for this dataset"))
         result=scrna@misc$ligrecres
         #result=ligrec(fileload(),pair=input$pairbynet,prj=projectname(),input$perc_cells2,filetype=input$filetype)
         #validate(need(is.na(result)==F,"Invalid Cell group. Pick a different option"))
@@ -1995,6 +2002,7 @@ server <- function(input, output,session) {
       return()
     isolate({
       scrna=fileload()
+      validate(need("ligrecres" %in% names(scrna@misc),"Ligand Receptor Analysis has not been run for this dataset"))
       result=scrna@misc$ligrecres
       #result=ligrec(fileload(),pair=input$pairbyheatnet,prj=projectname(),input$perc_cells3,filetype=input$filetype)
       result=result %>% dplyr::select(pairname,receptor,ligand,Pair.Source:Lig_cluster)
