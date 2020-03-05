@@ -1126,7 +1126,7 @@ server <- function(input, output,session) {
   #Dropdown to select cluster
   output$heatmapclust = renderUI({
     scrna=fileload()
-    clust=order(unique(scrna@misc$findallmarkers$cluster))
+    clust=sort(unique(scrna@misc$findallmarkers$cluster))
     selectInput("heatmapclust", "Select cluster",clust)
   })
   
