@@ -236,8 +236,10 @@ server <- function(input, output,session) {
     scrna=fileload()
     if("filterstats" %in% names(scrna@misc)){
       numcells.nf = scrna@misc$filterstats$TotalSamples
+      mitofilt = scrna@misc$filterstats$Mitofilter
     }else{
       numcells.nf="Information Unavailable"
+      mitofilt="Information Unavailable"
     }
     tcells=dim(scrna)[2]
     tgenes=dim(GetAssayData(object=scrna))[1]
@@ -245,8 +247,8 @@ server <- function(input, output,session) {
       maxdim=dim(scrna@dr$cca.aligned@cell.embeddings)[2]
     }else{maxdim=length(scrna[["pca"]]@stdev)}
     c.cnt=as.data.frame(table(Idents(object=scrna)))
-    df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),numcells.nf,tcells,tgenes,maxdim,"","",c.cnt$Freq))
-    rownames(df)=c("Project name","Project Description","Organism","Total number of cells before filtration","Total nummber of cells after filtering","Total number of genes","Dimension","","Cluster-wise number of genes",as.character(c.cnt$Var1))
+    df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),numcells.nf,tcells,tgenes,maxdim,mitofilt,"","",c.cnt$Freq))
+    rownames(df)=c("Project name","Project Description","Organism","Total number of cells before filtration","Total nummber of cells after filtering","Total number of genes","Dimension","Number of mitochondrial genes filtered","","Cluster-wise number of genes",as.character(c.cnt$Var1))
     colnames(df)<- NULL
     return(df)
   })
