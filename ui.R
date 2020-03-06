@@ -41,7 +41,7 @@ ui <- dashboardPage(
                      ),
                      menuItem('Project Summary', tabName = 'summ', icon = icon('hand-o-right')),
                      menuItem('Variable Genes', tabName = 'vargenes', icon = icon('hand-o-right')),
-                     menuItem('Feature correlation Plot', tabName = 'featurescatter', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
+                     menuItem('Feature correlation Plot', tabName = 'featurescatter', icon = icon('hand-o-right')),
                      menuItem('Principle component Analysis', tabName = 'pca', icon = icon('hand-o-right')),
                      menuItem('Dimension Reduction Plots', tabName = 'tplot', icon = icon('hand-o-right'),
                               menuSubItem("Compare Plots", tabName = "tsneplot"),
@@ -69,6 +69,7 @@ ui <- dashboardPage(
                                 column(2,bsButton("q3", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
                               bsTooltip(id = "q3", title = "Upload genelist to view the gene expression across cellgroups as a dotplot",placement = "right",trigger = "hover", options = NULL)
                      ),
+                     menuItem('Trajectory Analysis', tabName = 'slingshot', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
                      menuItem('Ligand Receptor Pairs', tabName = 'ligrecmenu', icon = icon('hand-o-right'),
                               menuSubItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right')),
                               menuSubItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right')),
@@ -379,6 +380,19 @@ ui <- dashboardPage(
                   downloadButton('downloaddotplot', 'Download Plot')
               )
       ),#end of dotplot
+      ######################################################################################################################################
+      tabItem(tabName = "slingshot",
+              box(title = "Trajectory Analysis",solidHeader = TRUE,width=8,status='primary',
+                  plotOutput("slingcurves", height = 600),
+                  downloadButton('downloadtrajplot', 'Download Plot')
+              ),
+              box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
+                  uiOutput("setDR"),
+                  uiOutput("setclust"),
+                  uiOutput("startpt")
+              )
+              
+      ),#end of slingshot
       ######################################################################################################################################
       tabItem(tabName = "ligrec",
               box(width=9, status='primary',title = "Bigene Plot",solidHeader = TRUE,

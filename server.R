@@ -28,6 +28,7 @@ library(igraph)
 #library(igraph,lib.loc = "/home/bapoorva/R_lib")
 library(shinyBS)
 library(scExtras)
+library(slingshot)
 source("functions.R")
 
 #Specify color palette for the tSNE and UMAP plsots
@@ -1473,6 +1474,56 @@ server <- function(input, output,session) {
     content = function(file){
       pdf(file,width=10,height = 9,useDingbats=FALSE)
       plot(dotplot())
+      dev.off()
+    })
+  ###################################################
+  ###################################################
+  ############### TRAJECTORY ANALYSIS ###############
+  ###################################################
+  ###################################################
+  #Select DR
+  output$setDR = renderUI({
+    scrna=fileload()
+    dimr=names(scrna@reductions)
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      selectInput("setDR","Dimensionality Reduction",dimr,selected = "umap")})
+  })
+  
+  #Select grouping variable
+  output$setclust = renderUI({
+    scrna=fileload()
+    metadata=as.data.frame(scrna@meta.data)
+    metadata=metadata %>% dplyr::select(starts_with("var_"))
+    var=c(colnames(metadata))
+    selectInput("setclust","Choose category",var,"pick one")
+  })
+  
+  #Select start point
+  output$startpt = renderUI({
+    scrna=fileload()
+    t=paste("scrna@meta.data$",input$setclust,sep="")
+    options=sort(unique(eval(parse(text=t))))
+    selectInput("startpt","Choose Starting point",options,"pick one")
+  })
+  
+  #Run slingshot and plot
+  #render the dot plot
+  output$slingcurves = renderPlot({
+    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+      scrna=fileload()
+      scrna <- runSlingshot(scrna,reduction='umap', start.clus = input$startpt, group.by=input$setclust)
+      CurvePlot(scrna,sds = scrna@misc$sds$data)
+    })
+  })
+  
+  #Download plot
+  output$downloadtrajplot <- downloadHandler(
+    filename = function() {
+      paste0(input$project,"_Trajectory.pdf",sep="")
+    },
+    content = function(file){
+      pdf(file,width=10,height = 9,useDingbats=FALSE)
+      plot(slingcurves())
       dev.off()
     })
   ###################################################
