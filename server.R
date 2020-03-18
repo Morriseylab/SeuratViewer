@@ -153,8 +153,9 @@ server <- function(input, output,session) {
     selectInput("projects","Select a project",as.list(sort(as.character(prj))))
   })
   
+
   #display project list in Dashboard
-  output$datasetTable<- renderTable({
+  datasetTable <- reactive({
     user=input$username
     file=read.csv('data/param.csv',stringsAsFactors = F)
     colnames(file)=c("Project Name","Project Description","Organism","Username","File type")
@@ -164,10 +165,23 @@ server <- function(input, output,session) {
     }else{
       file=file[file$Username==user,] %>% dplyr::select(-Username,-`File type`)
       colnames(file)=c("Project Name","Project Description","Organism")
-      file=file[order(file$`Project Name`),]
+      file=file[sort(file$`Project Name`),]
     }
-  }, digits = 1)
+  })
   
+  output$datasetTable = DT::renderDataTable({
+    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+      DT::datatable(datasetTable(),
+                    extensions = c('Buttons','Scroller'),
+                    options = list(dom = 'Bfrtip',
+                                   searchHighlight = TRUE,
+                                   pageLength = 20,
+                                   lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                   scrollX = TRUE,
+                                   buttons = c('copy', 'print')
+                    ),rownames=FALSE,caption= "LBI Human Lung",selection = list(mode = 'single', selected =1),escape = F)
+    })
+  })
   #scrna <- reactiveValues(scrna = NULL)
   
   # observeEvent(input$load, {
@@ -421,7 +435,7 @@ server <- function(input, output,session) {
       evenindex=seq(2,length(PCs),2)
       p=list()
       for(j in seq(1,0.5*(length(PCs)))){
-        p[[j]]=FeatureScatter(scrna,PCs[oddindex][j],PCs[evenindex][j],group.by=input$feascacolor)}
+        p[[j]]=FeatureScatter(scrna,PCs[oddindex][j],PCs[evenindex][j],group.by=input$feascacolor, cols = cpallette)}
       plot_grid(plotlist = p,ncol=3)}
     else if(input$feasca == 'pg'){
       p=list()
@@ -429,7 +443,7 @@ server <- function(input, output,session) {
       n2=as.numeric(strsplit(input$plotpages,"-")[[1]][2])
       PCs=PCs[n1:n2]
       for(i in PCs){
-        p[[i]]=FeatureScatter(scrna,i,input$feagene,group.by=input$feascacolor)}
+        p[[i]]=FeatureScatter(scrna,i,input$feagene,group.by=input$feascacolor,cols = cpallette)}
       plot_grid(plotlist = p,ncol=3)
     }
   })

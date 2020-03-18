@@ -69,7 +69,7 @@ ui <- dashboardPage(
                                 column(2,bsButton("q3", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
                               bsTooltip(id = "q3", title = "Upload genelist to view the gene expression across cellgroups as a dotplot",placement = "right",trigger = "hover", options = NULL)
                      ),
-                     menuItem('Trajectory Analysis', tabName = 'slingshot', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
+                     #menuItem('Trajectory Analysis', tabName = 'slingshot', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
                      menuItem('Ligand Receptor Pairs', tabName = 'ligrecmenu', icon = icon('hand-o-right'),
                               menuSubItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right')),
                               menuSubItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right')),
@@ -90,7 +90,7 @@ ui <- dashboardPage(
               box(
                 width = 12, status = "primary",solidHeader = TRUE,
                 title = "scRNA Data Sets",
-                tableOutput("datasetTable")
+                DT::dataTableOutput("datasetTable")
               )
       ),
       ######################################################################################################################################
