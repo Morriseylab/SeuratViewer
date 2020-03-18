@@ -179,7 +179,7 @@ server <- function(input, output,session) {
                                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
                                    scrollX = TRUE,
                                    buttons = c('copy', 'print')
-                    ),rownames=FALSE,caption= "LBI Human Lung",selection = list(mode = 'single', selected =1),escape = F)
+                    ),rownames=FALSE,selection = list(mode = 'single', selected =1),escape = F)
     })
   })
   #scrna <- reactiveValues(scrna = NULL)
