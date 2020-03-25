@@ -179,11 +179,35 @@ getMaxDim <- function(object){
 }
 
 #Seurat Extras functions
-runSlingshot  <- function(object,reduction='dm',groups=NULL, start.clus=NULL,end.clus=NULL){
-  rd <- Embeddings(object,reduction)
-  cl <- Idents(object = object)
-  object@misc[['sds']] <-  list("dr"=reduction,"data"=slingshot(rd,cl,start.clus=start.clus,end.clus=end.clus))
-  ps <- slingPseudotime(object@misc[['sds']]$data)
-  object@meta.data[,colnames(ps)] <- ps 
-  return(object)
+CurvePlot = function(object,
+                     sds=NULL,
+                     group.by = NULL,
+                     reduction = 'umap',
+                     dims = 1:2,
+                     cols=NULL,
+                     label=T
+) {
+  object[['ident']] <- Idents(object = object)
+  group.by <- group.by %||% 'ident'
+  dims <- paste0(Key(object = object[[reduction]]), dims)
+  
+  curved <-
+    bind_rows(lapply(names(slingCurves(sds)), function(x) {
+      c <- slingCurves(sds)[[x]]
+      d <- as.data.frame(c$s[c$ord, dims])
+      d$curve <- x
+      return(d)
+    }))
+  
+  
+  DimPlot(object,cols=cols,label = label,group.by = group.by,reduction = reduction) +
+    geom_path(aes_string(dims[1], dims[2], linetype = "curve"), curved, size =1)
+}
+
+`%||%` <- function(lhs, rhs) {
+  if (!is.null(x = lhs)) {
+    return(lhs)
+  } else {
+    return(rhs)
+  }
 }

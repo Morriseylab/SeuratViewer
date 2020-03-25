@@ -164,8 +164,8 @@ server <- function(input, output,session) {
       file=file
     }else{
       file=file[file$Username==user,] %>% dplyr::select(-Username,-`File type`)
-      colnames(file)=c("Project Name","Project Description","Organism")
-      file=file[sort(file$`Project Name`),]
+      #colnames(file)=c("Project Name","Project Description","Organism")
+      file=file[order(file$`Project Name`),]
     }
   })
   
@@ -1523,10 +1523,14 @@ server <- function(input, output,session) {
   #Run slingshot and plot
   #render the dot plot
   output$slingcurves = renderPlot({
-    withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
+    withProgress(session = session, message = 'Generating.',detail = 'Please Wait.This may take a while. Do not refresh or go back.',{
+      if(input$trajgo == 0)
+        return()
+      isolate({
       scrna=fileload()
-      scrna <- runSlingshot(scrna,reduction='umap', start.clus = input$startpt, group.by=input$setclust)
+      scrna <- scExtras::runSlingshot(scrna,reduction='umap', start.clus = input$startpt, group.by=input$setclust)
       CurvePlot(scrna,sds = scrna@misc$sds$data)
+      })
     })
   })
   
