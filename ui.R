@@ -390,9 +390,9 @@ ui <- dashboardPage(
                   uiOutput("setDR"),
                   uiOutput("setclust"),
                   uiOutput("startpt"),
-                  actionButton("trajgo", "Change Parameters and Run"),br(),br(),
+                  actionButton("trajgo", "Change Parameters and Run"),br(),br()
               )
-              
+
       ),#end of slingshot
       ######################################################################################################################################
       tabItem(tabName = "ligrec",

@@ -190,7 +190,7 @@ CurvePlot = function(object,
   object[['ident']] <- Idents(object = object)
   group.by <- group.by %||% 'ident'
   dims <- paste0(Key(object = object[[reduction]]), dims)
-  
+
   curved <-
     bind_rows(lapply(names(slingCurves(sds)), function(x) {
       c <- slingCurves(sds)[[x]]
@@ -198,8 +198,8 @@ CurvePlot = function(object,
       d$curve <- x
       return(d)
     }))
-  
-  
+
+
   DimPlot(object,cols=cols,label = label,group.by = group.by,reduction = reduction) +
     geom_path(aes_string(dims[1], dims[2], linetype = "curve"), curved, size =1)
 }
@@ -210,4 +210,24 @@ CurvePlot = function(object,
   } else {
     return(rhs)
   }
+}
+
+runSlingshot_int  <- function(object,sds.name='sds',reduction='dm',group.by=NULL, start.clus=NULL,end.clus=NULL, allow.breaks=TRUE, extend='n',stretch=0){
+  rd <- Embeddings(object,reduction)
+  
+  #Set ident to groupby option
+  if(!is.null(group.by)){
+    Idents(object)<- group.by
+  }
+  
+  cl <- Idents(object = object)
+  ### Need to fix this not working
+  #group.by <- group.by %||% 'ident'
+  #cl <- FetchData(object = object, vars = group.by) %>% pull(`group.by`)
+  
+  object@misc[[sds.name]] <-  list("dr"=reduction,"data"=slingshot(rd,cl,start.clus=start.clus,end.clus=end.clus,allow.breaks=allow.breaks,extend=extend,stretch=stretch))
+  #ps <- slingPseudotime(object@misc[['sds']]$data)
+  #object@meta.data[,colnames(ps)] <- as.data.frame(ps)
+  object <- LogSeuratCommand(object = object)
+  return(object)
 }

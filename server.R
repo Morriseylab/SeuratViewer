@@ -1528,7 +1528,10 @@ server <- function(input, output,session) {
         return()
       isolate({
       scrna=fileload()
-      scrna <- scExtras::runSlingshot(scrna,reduction='umap', start.clus = input$startpt, group.by=input$setclust)
+      #####This function is an internal function from functions.R. Server version is R 3.6 and slingshot version
+      #is 1.2 whereas latest version is R 4.0 and slingshot 1.4. Due to older R version, approx_points arg in function
+      # doesn't exist. So until server is updated, cannot run function from scExtras
+      scrna <- runSlingshot_int(scrna,reduction='umap', start.clus = input$startpt, group.by=input$setclust)
       CurvePlot(scrna,sds = scrna@misc$sds$data)
       })
     })
