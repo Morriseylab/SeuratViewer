@@ -85,11 +85,16 @@ ui <- dashboardPage(
       tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
     ),
     useShinyjs(),
+    tags$script("Shiny.addCustomMessageHandler('resetInputValue', function(variableName){
+                Shiny.onInputChange(variableName, null);
+                });
+                "),
     tabItems(
       tabItem(tabName = "dashboard",
               box(
                 width = 12, status = "primary",solidHeader = TRUE,
                 title = "scRNA Data Sets",
+                uiOutput("modalDTDialog"),
                 DT::dataTableOutput("datasetTable")
               )
       ),

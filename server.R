@@ -31,7 +31,7 @@ library(scExtras)
 library(slingshot)
 source("functions.R")
 
-#Specify color palette for the tSNE and UMAP plsots
+#Specify color palette for the tSNE and UMAP plots
 cpallette=c("#64B2CE", "#DA5724", "#74D944", "#CE50CA", "#C0717C", "#CBD588", "#5F7FC7",
             "#8B4484", "#D3D93E", "#508578", "#D7C1B1", "#689030", "#AD6F3B", "#CD9BCD",
             "#D14285", "#6DDE88", "#652926", "#7FDCC0", "#C84248", "#8569D5", "#5E738F", "#D1A33D",
@@ -162,7 +162,19 @@ server <- function(input, output,session) {
     file=file[order(file$`Project Name`),]
     if(user=="allusers" | user=="admin"){
       file=file
-    }else{
+    }else if(user=="lungMap"){
+      file=file[file$Username==user,]
+      file <- file %>% mutate(GID = 1:nrow(file))
+      file <- file %>%
+        mutate(More = paste0('
+  <span style="float:right;">
+    <a href="javascript:void(0)" onmousedown="',
+                             'Shiny.onInputChange(\'DTClick\',[', GID, ']);',
+                             ' event.preventDefault(); event.stopPropagation(); return false;">
+        <font color="grey">&#9679;&#9679;&#9679;&nbsp;&nbsp;</font></a></span>')
+        )
+      file=file %>% select(-GID)
+        }else{
       file=file[file$Username==user,] %>% dplyr::select(-Username,-`File type`)
       #colnames(file)=c("Project Name","Project Description","Organism")
       file=file[order(file$`Project Name`),]
@@ -182,15 +194,43 @@ server <- function(input, output,session) {
                     ),rownames=FALSE,selection = list(mode = 'single', selected =1),escape = F)
     })
   })
-  #scrna <- reactiveValues(scrna = NULL)
+  # scrna <- reactiveValues(scrna = NULL)
+  # output$modalDTDialog <- renderUI({
+  #   bsModal("DTDialog", "Test Title", "", size="small",
+  #           div(HTML(paste0("You just clicked row ", as.numeric(input$DTClick[1]))),
+  #               uiOutput("modalContent")))
+  # })
   
-  # observeEvent(input$load, {
-  #   inFile = paste('data/',as.character(input$projects),'.RData',sep = '')
-  #   withProgress(session = session, message = 'Loading Data...',detail = 'Please Wait...',{
-  #   load(inFile)
-  #   })
-  #   scrna <<- scrna
-  # })  
+  output$modalContent <- renderPrint({
+    file=read.csv('data/param.csv',stringsAsFactors = F)
+    colnames(file)=c("Project Name","Project Description","Organism","Username","File type")
+    file=file[file$Username==input$username,]
+    file <- file %>% mutate(GID = 1:nrow(file))
+    prj = file$'Project Name'[file$GID == input$DTClick]
+    lungmap = read.csv("data/LBI_tissue_bank.csv", stringsAsFactors = F)
+    colnames(lungmap)=gsub("[.]","_",colnames(lungmap))
+    colnames(lungmap)=gsub("__","_",colnames(lungmap))
+    lungmap = lungmap %>% select(-SeqCenter_Name)
+    if(prj %in% lungmap$Sample_name_Web_){
+    df= as.data.frame(t(lungmap[lungmap$Sample_name_Web_==prj,]))
+    colnames(df) =prj
+    }else{
+      df= "No information available"
+    }
+    
+    print(df)
+  })
+
+  observeEvent(input$DTClick, {
+    showModal(modalDialog(
+      title = "Sample Information",
+      div(
+        #HTML(paste0("You just clicked row ", input$DTClick)),
+        verbatimTextOutput("modalContent")),
+      easyClose = TRUE,
+      footer = NULL
+    ))
+  })
   
   #Load Rdata
   fileload <- reactive({
