@@ -26,6 +26,7 @@ library(igraph)
 library(shinyBS)
 library(scExtras)
 library(slingshot)
+library(ReactomeGSA)
 source("functions.R")
 
 #Specify color palette for the tSNE and UMAP plots
@@ -1532,11 +1533,7 @@ server <- function(input, output,session) {
       plot(dotplot())
       dev.off()
     })
-  ###################################################
-  ###################################################
   ############### TRAJECTORY ANALYSIS ###############
-  ###################################################
-  ###################################################
   #Select DR
   output$setDR = renderUI({
     scrna=fileload()
@@ -1589,11 +1586,139 @@ server <- function(input, output,session) {
       plot(slingcurves())
       dev.off()
     })
-  ###################################################
-  ###################################################
+  
+
+  ############### PATHWAY ANALYSIS ###############
+  #Run pathway analysis
+  panalysis = reactive({
+    scrna= fileload()
+      DefaultAssay(scrna)<- 'RNA'
+      gsva_result <- analyse_sc_clusters(scrna, verbose = TRUE)
+      return(gsva_result)
+  })
+  
+  panalysis2 = reactive({
+    gsva_result = panalysis()
+    pathway_expression <- pathways(gsva_result)
+    colnames(pathway_expression) <- gsub("\\.Seurat", "", colnames(pathway_expression))
+    colnames(pathway_expression) <- gsub("X", "Cluster_", colnames(pathway_expression))
+    max_difference <- do.call(rbind, apply(pathway_expression, 1, function(row) {
+      values <- as.numeric(row[2:length(row)])
+      return(data.frame(name = row[1], min = min(values), max = max(values)))
+    }))
+    
+    max_difference$diff <- max_difference$max - max_difference$min
+    max_difference$ID=rownames(max_difference)
+    pathway_expression= left_join(pathway_expression,max_difference,by=c("Name"="name")) %>% column_to_rownames("ID") %>% select(-min,-max)
+    pathway_expression <- pathway_expression[order(pathway_expression$diff, decreasing = T), ]
+    return(pathway_expression)
+  })
+  #Render table
+  output$pathwayres = DT::renderDataTable({
+    withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
+      DT::datatable(panalysis2(),
+                    extensions = c('Buttons','Scroller'),
+                    options = list(dom = 'Bfrtip',
+                                   searchHighlight = TRUE,
+                                   pageLength = 10,
+                                   lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
+                                   scrollX = TRUE,
+                                   buttons = c('copy', 'print')
+                    ),rownames=FALSE,caption= "Results",selection = list(mode = 'single', selected =1),escape = F)
+    })
+  })
+  
+  #PLot selected pathway
+  plotpathway = reactive({
+    gsva_result = panalysis()
+    colnames(gsva_result@results$Seurat$pathways) <- gsub("X", "Cluster_", colnames(gsva_result@results$Seurat$pathways))
+    s = input$pathwayres_rows_selected #select rows from table
+    dt = panalysis2() #load data
+    dt1 = dt[s, , drop=FALSE]#get limma data corresponding to selected row in table
+    id = rownames(dt1)
+    plot_gsva_pathway(gsva_result, pathway_id = id)
+  })
+  
+  #Render 
+  output$plotpathway = renderPlot({
+    plotpathway()
+  })
+  
+  #Download plot
+  output$downloadpath <- downloadHandler(
+    filename = function() {
+      paste0("Pathway_analysis.pdf")
+    },
+    content = function(file){
+      pdf(file, width = 15, height = 8,useDingbats=FALSE)
+      plotpathway()
+      dev.off()
+    })
+  
+
+  ############### PATHWAY HEATMAP ###############
+  output$selectpath = renderUI({
+    dt = panalysis2() #load data
+    options = rownames(dt)
+    withProgress(session = session, message = 'Generating gene list...',detail = 'Please Wait...',{
+      selectInput('pathlist', label='Pathway Names',options,multiple=TRUE, selectize=TRUE,selected=options[1])})
+  })
+  
+  
+  pathheat <- reactive({
+    gsva_result = panalysis()
+    colnames(gsva_result@results$Seurat$pathways) <- gsub("X", "Cluster_", colnames(gsva_result@results$Seurat$pathways))
+    
+    if(input$checkselpath ==T){
+      validate(
+        need(input$pathlist, "Please Select pathway")
+      )
+      relevant_pathways <- input$pathlist
+      plot_gsva_heatmap(gsva_result, pathway_ids = relevant_pathways, dendrogram=input$dendby,scale=input$scaleby)
+    }else{
+     plot_gsva_heatmap(gsva_result, max_pathways = input$maxpath, dendrogram=input$dendby,scale=input$scaleby)}
+  })
+  #Render 
+  output$pathheat = renderPlot({
+    pathheat()
+  })
+  
+  #Download plot
+  output$downloadpaheat <- downloadHandler(
+    filename = function() {
+      paste0("Pathway_analysis_heatmap.pdf")
+    },
+    content = function(file){
+      pdf(file, width = 15, height = 8,useDingbats=FALSE)
+      pathheat()
+      dev.off()
+    })
+  
+  
+  ############### PATHWAY PCA ###############
+  
+  plotpathwaypca = reactive({
+    gsva_result = panalysis()
+    plot_gsva_pca(gsva_result)
+  })
+  #Render 
+  output$plotpathwaypca = renderPlot({
+    plotpathwaypca()
+  })
+  
+  #Download plot
+  output$downloadpathpca <- downloadHandler(
+    filename = function() {
+      paste0("Pathway_analysis_pca.pdf")
+    },
+    content = function(file){
+      pdf(file, width = 15, height = 8,useDingbats=FALSE)
+      plotpathwaypca()
+      dev.off()
+    })
+
   ##### CONTROL PANEL FOR LIGAND-RECEPTOR PAIRS #####
-  ###################################################
-  ###################################################
+
   #Generate drop down for dimensionality reduction for bi-gene plot
   output$bigenedimr = renderUI({
     scrna=fileload()
@@ -1712,11 +1837,8 @@ server <- function(input, output,session) {
   })
   
   
-  ###################################################
-  ###################################################
+
   #### Load lig-receptor list and display results ###
-  ###################################################
-  ###################################################
   
   #For selected project and grouping variable, generate all possible ligand receptor pairs
   datasetInput = reactive({
@@ -1839,12 +1961,8 @@ server <- function(input, output,session) {
       dev.off()
     })
   
-  ######################################################################################################
-  ######################################################################################################
-  ################################# Network ############################################################
-  ######################################################################################################
-  ######################################################################################################
-  #Generate drop-down to generate variables based on which you want to find pairs 
+   ################################# Network ############################################################
+    #Generate drop-down to generate variables based on which you want to find pairs 
   output$pairbynet <- renderUI({
     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
       scrna=fileload()
@@ -2010,12 +2128,8 @@ server <- function(input, output,session) {
       dev.off()
     })
   
-  ######################################################################################################
-  ######################################################################################################
   ####################################### GO ANALYSIS ##################################################
-  ######################################################################################################
-  ######################################################################################################
-  #Create dropdown for cluster names
+   #Create dropdown for cluster names
   output$grp1 <- renderUI({
     result=datasetInputnet()
     rec <- result %>% distinct(Receptor_cluster)
@@ -2068,12 +2182,8 @@ server <- function(input, output,session) {
                     ),rownames=FALSE,caption= "GO Terms",selection = list(mode = 'single', selected =1),escape = F)
     })
   })
-  ######################################################################################################
-  ######################################################################################################
   ################################# Ligand Receptor Heatmap ############################################
-  ######################################################################################################
-  ######################################################################################################
-  #Generate drop-down to generate variables based on which you want to find pairs 
+   #Generate drop-down to generate variables based on which you want to find pairs 
   output$pairbyheatnet <- renderUI({
     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
       scrna=fileload()
@@ -2191,12 +2301,8 @@ server <- function(input, output,session) {
       netheatmap()
       dev.off()
     })
-  ######################################################################################################
-  ######################################################################################################
-  ################################# TROUBLESHOOT #######################################################
-  ######################################################################################################
-  ######################################################################################################
-  #list devices in use
+   ################################# TROUBLESHOOT #######################################################
+    #list devices in use
   output$device <- renderText({ 
     dev.list()
   })

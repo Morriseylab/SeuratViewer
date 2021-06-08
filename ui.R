@@ -69,14 +69,19 @@ ui <- dashboardPage(
                                 column(2,bsButton("q3", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
                               bsTooltip(id = "q3", title = "Upload genelist to view the gene expression across cellgroups as a dotplot",placement = "right",trigger = "hover", options = NULL)
                      ),
-                     menuItem('Trajectory Analysis', tabName = 'slingshot', icon = icon('hand-o-right'),badgeLabel = "new", badgeColor = "green"),
+                     menuItem('Trajectory Analysis', tabName = 'slingshot', icon = icon('hand-o-right')),
                      menuItem('Ligand Receptor Pairs', tabName = 'ligrecmenu', icon = icon('hand-o-right'),
                               menuSubItem('Ligand Receptor Pairs', tabName = 'ligrec', icon = icon('hand-o-right')),
                               menuSubItem('Ligand Receptor Network', tabName = 'network', icon = icon('hand-o-right')),
                               menuSubItem('Ligand Receptor Heatmap', tabName = 'netheatmap', icon = icon('hand-o-right'))
                      ),
+                     menuItem('Pathway analysis', tabName = 'reactome', icon = icon('hand-o-right'),
+                              menuSubItem('Pathway analysis results', tabName = 'pares', icon = icon('hand-o-right')),
+                              menuSubItem('Pathway analysis Heatmap', tabName = 'paheat', icon = icon('hand-o-right')),
+                              menuSubItem('Pathway-level PCA', tabName = 'papca', icon = icon('hand-o-right'))),
                      menuItem('Troubleshoot', tabName = 'troubleshoot', icon = icon('hand-o-right')),
                      menuItem('Help page', tabName = 'help', icon = icon('hand-o-right'))
+                     
                    )#end of sidebar menu
   ),#end dashboardSidebar
   
@@ -179,9 +184,12 @@ ui <- dashboardPage(
                     column(6,selectInput("categoryb2", "Select one",c('Categories' = "var",'Cluster' = "clust", 'Gene Expression' = "geneexp"),selected = "clust"))
                   ),
                   sliderInput("pointa2", "Point Size:",min = 0, max = 5, value = 1,step=.25),
-                  fluidRow(
-                    column(6,selectInput("genecolor1", "Pick color 1 for Gene Expression Plot",colors(),selected = "grey")),
-                    column(6,selectInput("genecolor2", "Pick color 2 for Gene Expression Plot",colors(),selected = "blue"))
+                  conditionalPanel(
+                    condition = "input.categorya2 == 'geneexp' || input.categoryb2 == 'geneexp'",
+                    fluidRow(
+                      column(6,selectInput("genecolor1", "Pick color 1 for Gene Expression Plot",colors(),selected = "grey")),
+                      column(6,selectInput("genecolor2", "Pick color 2 for Gene Expression Plot",colors(),selected = "blue"))
+                    )
                   ),
                   fluidRow(
                     column(6,conditionalPanel(
@@ -218,7 +226,7 @@ ui <- dashboardPage(
                     ))),
               box(title = "Plots",solidHeader = TRUE,width=12,status='primary',
                   plotOutput("comptsne2", height = 600),
-                  downloadButton('downloadtsneplot', 'Download tSNE plot')
+                  downloadButton('downloadtsneplot', 'Download Dimension Reduction plot')
               )
       ),#end of degtab
       
@@ -524,6 +532,46 @@ ui <- dashboardPage(
                   DT::dataTableOutput('pairs_res3')
               )#End box
       ),
+      ######################################################################################################################################
+      tabItem(tabName = "pares",
+              box(title = "Pathway Analysis",solidHeader = TRUE,width=12,status='primary',
+                  plotOutput("plotpathway", height = 400),
+                  downloadButton('downloadpath', 'Download Plot')
+              ),
+              box(title = "Results",solidHeader = TRUE,width=12,status='primary',
+                  DT::dataTableOutput('pathwayres')
+              )
+      ),#end of pathway results
+      ######################################################################################################################################
+      tabItem(tabName = "paheat",
+              box(title = "Pathway Heatmap",solidHeader = TRUE,width=8,status='primary',
+                  plotOutput("pathheat", height = 600),
+                  downloadButton('downloadpaheat', 'Download Plot')
+              ),
+              box(title = "Controls",solidHeader = TRUE,width=4,status='primary',
+                  selectInput("dendby", "Cluster By",c('Both'="both",'Column' = "column",'Row' = "row",'None' = "none")),
+                  selectInput("scaleby", "Scale By",c('Column' = "column",'Row' = "row",'None' = "none")),
+                  checkboxInput("checkselpath", label = "Check to select pathways to plot", value = FALSE),
+                  conditionalPanel(
+                    condition = "input.checkselpath ==true",
+                    uiOutput("selectpath")
+                  ),
+                  conditionalPanel(
+                    condition = "input.checkselpath ==false",
+                    sliderInput("maxpath", "Max pathways to plot:",min = 5, max = 25, value = 15,step=1)
+                  )
+                  
+              )
+              
+      ),#end of slingshot
+      ######################################################################################################################################
+      tabItem(tabName = "papca",
+              box(title = "Pathway Analysis PCA",solidHeader = TRUE,width=12,status='primary',
+                  plotOutput("plotpathwaypca", height = 600),
+                  downloadButton('downloadpathpca', 'Download Plot')
+              )
+              
+      ),#end of slingshot
       ######################################################################################################################################
       tabItem(tabName = "troubleshoot",
               box(title = "Graphics device",solidHeader = TRUE,width=12,status='primary',
