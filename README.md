@@ -49,6 +49,8 @@ For linux users, other R dependencies include
 - lme4
 - flexmix
 
+An alternative is to use the Dockerfile using [Shinyproxy](https://github.com/openanalytics/shinyproxy)
+
 ## Creating Input data
 
 ### Set parameters
