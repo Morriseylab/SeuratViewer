@@ -49,7 +49,7 @@ For linux users, other R dependencies include
 - lme4
 - flexmix
 
-An alternative is to use the Dockerfile using [Shinyproxy](https://github.com/openanalytics/shinyproxy)
+An alternative is to use the Dockerfile using [Shinyproxy.](https://github.com/openanalytics/shinyproxy)Docker container can be found in [dockerhub](https://hub.docker.com/repository/docker/apoorvababu/seurat_viewer)
 
 ## Creating Input data
 
