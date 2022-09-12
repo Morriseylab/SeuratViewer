@@ -27,6 +27,7 @@ sudo apt-get install libxml2-dev
 sudo apt-get install libftgl2 freetype2-demos libfreetype6-dev
 sudo apt-get install libhdf5-dev
 sudo apt-get install r-cran-rcppeigen
+sudo apt install libgeos-dev
 ```
 Run the following commands in R to install all required packages
 ```
@@ -41,8 +42,10 @@ BiocManager::install(c("biomaRt","Biobase","slingshot","ComplexHeatmap"))
 
 ##This package contains helper functions 
 require(devtools)
-install_github("Morriseylab/scExtras")
 install_github("Morriseylab/ligrec")
+install_github("chris-mcginnis-ucsf/DoubletFinder")
+install_github("Morriseylab/scExtras")
+
 ```
 For linux users, other R dependencies include
 - RcppEigen
