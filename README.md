@@ -37,7 +37,7 @@ install.packages(c("devtools","shiny","shinydashboard","shinyjs","shinyBS","shin
 
 #Install packages from bioconductor
 install.packages("BiocManager")
-BiocManager::install(c("biomaRt","Biobase","slingshot","ComplexHeatmap"))
+BiocManager::install(c("biomaRt","Biobase","slingshot","ComplexHeatmap","destiny"))
 
 
 ##This package contains helper functions 
