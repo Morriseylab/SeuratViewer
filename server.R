@@ -14,15 +14,12 @@ library(DT)
 library(scExtras)
 library(SeuratDisk)
 library(Seurat)
-#library(Seurat, lib.loc="/home/bapoorva/R_lib")
 library(cowplot)
-#library(cowplot,lib.loc = "/home/bapoorva/R_lib")
 library(data.table)
 library(NMF)
 library(tibble)
 library(network)
 library(igraph)
-#library(igraph,lib.loc = "/home/bapoorva/R_lib")
 library(shinyBS)
 library(scExtras)
 library(slingshot)
@@ -41,7 +38,7 @@ auth=read.csv("data/authentication.csv")
 my_username <- auth$user
 my_password <- auth$pwd
 Sys.setenv(
-  "AWS_ACCESS_KEY_ID" = "xxxxx",
+  "AWS_ACCESS_KEY_ID" = "xxxx",
   "AWS_SECRET_ACCESS_KEY" = "xxxxx",
   "AWS_DEFAULT_REGION" = "us-east-1"
 )
@@ -282,7 +279,6 @@ server <- function(input, output,session) {
   #Get all information from the scrna object (input file) and generate some basic project summary for the summary
   prjsumm <- reactive({
     user=input$username
-    #user="allusers"
     prj= read.csv("data/param.csv")
     if(user=="allusers" | user=="admin"){
       prj=prj
@@ -296,16 +292,11 @@ server <- function(input, output,session) {
       porg=prj$organism}
     else{
       pdesc=""
-      porg="prj$organism"
+      porg=prj$organism
     }
     scrna=fileload()
-    if("filterstats" %in% names(scrna@misc)){
-      numcells.nf = scrna@misc$filterstats$TotalSamples
-      mitofilt = scrna@misc$filterstats$Mitofilter
-    }else{
-      numcells.nf="Information Unavailable"
-      mitofilt="Information Unavailable"
-    }
+    numcells.nf = ifelse(is.null(scrna@misc$filterstats$TotalCellsbeforefilteration),"NA",scrna@misc$filterstats$TotalCellsbeforefilteration)
+    mitofilt = ifelse(is.null(scrna@misc$filterstats$Mitofilter),"NA",scrna@misc$filterstats$Mitofilter)
     tcells=dim(scrna)[2]
     tgenes=dim(GetAssayData(object=scrna))[1]
     if(is.null(scrna[["pca"]])){
@@ -313,7 +304,7 @@ server <- function(input, output,session) {
     }else{maxdim=length(scrna[["pca"]]@stdev)}
     c.cnt=as.data.frame(table(Idents(object=scrna)))
     df=as.data.frame(c(as.character(pname),as.character(pdesc),as.character(porg),numcells.nf,tcells,tgenes,maxdim,mitofilt,"","",c.cnt$Freq))
-    rownames(df)=c("Project name","Project Description","Organism","Total number of cells before filtration","Total nummber of cells after filtering","Total number of genes","Dimension","Number of mitochondrial genes filtered","","Cluster-wise number of genes",as.character(c.cnt$Var1))
+    rownames(df)=c("Project name","Project Description","Organism","Total number of cells before filtration","Total number of cells after filtering","Total number of genes","Dimension","Number of mitochondrial genes filtered","","Cluster-wise number of genes",as.character(c.cnt$Var1))
     colnames(df)<- NULL
     return(df)
   })
@@ -321,7 +312,6 @@ server <- function(input, output,session) {
   output$prjsumm <- renderPrint({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       prjsumm()
-      #return(df)
     })
   })
   
@@ -350,12 +340,13 @@ server <- function(input, output,session) {
   #Load the scrna input RData file and extract the variable genes and its stats
   vargenes= reactive({
     scrna=fileload()
-    var=as.data.frame(VariableFeatures(object = scrna))
-    #var=as.data.frame(scrna@var.genes)
-    colnames(var)="Gene"
+    var=data.frame(Gene=VariableFeatures(object = scrna))
+    #colnames(var)="Gene"
+    validate(need(nrow(var)>0,"Variable Features not computed"))
     stat=HVFInfo(object = scrna)
     stat$Gene=rownames(stat)
-    var=left_join(var,stat,by="Gene")
+    var=left_join(var,stat,by="Gene") %>% column_to_rownames("Gene")
+    return(var)
   })
   
   output$vargenes = DT::renderDataTable({
@@ -368,7 +359,7 @@ server <- function(input, output,session) {
                                    lengthMenu = list(c(30, 50, 100, 150, 200, -1), c('30', '50', '100', '150', '200', 'All')),
                                    scrollX = TRUE,
                                    buttons = c('copy', 'print')
-                    ),rownames=FALSE,caption= "Variable genes",selection = list(mode = 'single', selected =1),escape = F)
+                    ),rownames=TRUE,caption= "Variable genes",selection = list(mode = 'single', selected =1),escape = F)
     })
   })
   
@@ -423,7 +414,7 @@ server <- function(input, output,session) {
   output$feascacolor = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data) 
-    metadata=metadata %>% dplyr::select(starts_with("var"))
+    metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
     var=colnames(metadata)
     selectInput("feascacolor","Select Variable for Color by option",var ,selected = var[1])
   })
@@ -633,10 +624,10 @@ server <- function(input, output,session) {
     tsne=names(met[met==FALSE])
     
     if(input$categorya2 =="clust" & input$subsa==F){
-      plot1=DimPlot(object = scrna,reduction=input$umapa,group.by = "ident",label = input$checklabel1,  pt.size = input$pointa2,label.size = 7, cols=cpallette)
+      plot1=DimPlot(object = scrna,reduction=input$umapa,label = input$checklabel1,group.by = "var_cluster",  pt.size = input$pointa2,label.size = 7, cols=cpallette)
     }else if(input$categorya2 =="clust" & input$subsa==TRUE){
       cells=names(Idents(object=scrna)[Idents(object=scrna)==input$selclust])
-      plot1=DimPlot(object = scrna,reduction=input$umapa,cells.highlight=cells,group.by = "ident",label = F,  pt.size = input$pointa2, cols=cpallette)
+      plot1=DimPlot(object = scrna,reduction=input$umapa,cells.highlight=cells,group.by = "var_cluster",label = F,  pt.size = input$pointa2, cols=cpallette)
     }else if(input$categorya2=="geneexp"){
       validate(need(input$gene1a %in% rownames(GetAssayData(object=scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
       plot1=FeaturePlot(object = scrna,reduction=input$umapa, features = input$gene1a, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
@@ -658,10 +649,10 @@ server <- function(input, output,session) {
     }
     
     if(input$categoryb2 =="clust" & input$subsb==F){
-      plot2=DimPlot(object = scrna,reduction=input$umapb,group.by = "ident",label = input$checklabel2, pt.size = input$pointa2,label.size = 7, cols=cpallette)
+      plot2=DimPlot(object = scrna,reduction=input$umapb,label = input$checklabel2,group.by = "var_cluster", pt.size = input$pointa2,label.size = 7, cols=cpallette)
     }else if(input$categoryb2 =="clust" & input$subsb==TRUE){
       cells=names(Idents(object=scrna)[Idents(object=scrna)==input$selclustb])
-      plot2=DimPlot(object = scrna,reduction=input$umapb,cells.highlight=cells,group.by = "ident",label = F,  pt.size = input$pointa2, cols=cpallette)
+      plot2=DimPlot(object = scrna,reduction=input$umapb,cells.highlight=cells,group.by = "var_cluster",label = F,  pt.size = input$pointa2, cols=cpallette)
     }else if(input$categoryb2=="geneexp"){
       validate(need(input$gene2a %in% rownames(GetAssayData(object=scrna)),"Incorrect Gene name.Gene names are case-sensitive.Please check for typos."))
       plot2=FeaturePlot(object = scrna,reduction=input$umapb, features = input$gene2a, cols = c(input$genecolor1, input$genecolor2),pt.size = input$pointa2)
@@ -726,7 +717,7 @@ server <- function(input, output,session) {
   output$setcategory = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% dplyr::select(starts_with("var_"))
+    metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
     var=c(colnames(metadata))
     selectInput("setcategory","Choose category",var,"pick one")
   })
@@ -907,7 +898,7 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       scrna=fileload()
       metadata=as.data.frame(scrna@meta.data) 
-      metadata=metadata %>% dplyr::select(starts_with("var"))
+      metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
       var=colnames(metadata)
       selectInput("var3d","Select a Variable",var,"pick one")
     })
@@ -928,7 +919,7 @@ server <- function(input, output,session) {
       scrna.sub=fileload()
       reduction=input$dimr3d
       groupby=input$var3d
-      maxdim <- getMaxDim(scrna.sub)
+      maxdim <- length(scrna.sub@reductions$pca@stdev)
       if(reduction=='umap'){
         scrna.sub <- RunUMAP(scrna.sub,dims=1:maxdim,n.components = 3)
       }else if(reduction=='tsne'){
@@ -938,43 +929,17 @@ server <- function(input, output,session) {
       dims=1:3
       dims <- paste0(Key(object = scrna.sub[[reduction]]), dims)
       data <- FetchData(object = scrna.sub, vars = c(dims,groupby))
+      data$label=paste(rownames(data))
       colnames(data)[1:4] = c("DM_1","DM_2","DM_3","var_cluster")
-      a3=aggregate(data$DM_3, by=list(data$var_cluster), FUN=mean)
-      a2=aggregate(data$DM_2, by=list(data$var_cluster), FUN=mean)
-      a1=aggregate(data$DM_1, by=list(data$var_cluster), FUN=mean)
-      centers=inner_join(a1,a2,by="Group.1")
-      centers=inner_join(centers,a3,by="Group.1")
-      colnames(centers)=c("var_cluster","x","y","z")
-      
-      a <- list()
-      for (i in 1:nrow(centers)) {
-        a[[i]] <- list(x= centers$x[i],y= centers$y[i],z= centers$z[i],text= centers$var_cluster[i],showarrow= T,arrowhead=4,arrowsize=0.5)
-      }
-      if(input$check3d == T){
-        validate(
-          need(is.na(scrna.sub@misc$sds)==F,"Lineage curve information not found. Please run slingshot on the dataset and upload to website again")
-        )
-        curved <- bind_rows(lapply(names(scrna.sub@misc$sds$data@curves), function(x){c <- slingCurves(scrna.sub@misc$sds$data)[[x]]
-        d <- as.data.frame(c$s[c$ord,seq_len(2)])
-        d$curve<-x
-        return(d)}))
-        colnames(data)[1:3] = c("DM_1","DM_2","DM_3")
-        plot=plot_ly(side=I(3)) %>%
-          add_trace(x = data$DM_1,y = data$DM_2,z = data$DM_3,colors=cpallette,color=data$var_cluster,type = "scatter3d") %>% 
-          add_paths(x = curved$DM_1,y = curved$DM_2,z = curved$DM_3, mode="lines",color=I("black"),size=I(7)) %>% 
-          layout(scene = list(
-            aspectratio = list(x = 1,y = 1,z = 1),
-            dragmode = "turntable",
-            xaxis = list(title = dims[1]),yaxis = list(title = dims[2]),zaxis = list(title = dims[3]),annotations = a))
-      }else{
-        plot=plot_ly(side=I(3)) %>%
-          add_trace(x = data$DM_1,y = data$DM_2,z = data$DM_3,colors=cpallette,color=data$var_cluster,type = "scatter3d") %>% 
-          #add_paths(x = curved$DM_1,y = curved$DM_2,z = curved$DM_3, mode="lines",color=I("black"),size=I(7)) %>% 
-          layout(scene = list(
-            aspectratio = list(x = 1,y = 1,z = 1),
-            dragmode = "turntable",
-            xaxis = list(title = dims[1]),yaxis = list(title = dims[2]),zaxis = list(title = dims[3]),annotations = a))
-      }
+      plot <- plot_ly(data = data, 
+                     x = ~DM_1, y = ~DM_2, z = ~DM_3, 
+                     color = ~var_cluster, 
+                     colors = cpallette,
+                     type = "scatter3d", 
+                     mode = "markers", 
+                     marker = list(size = 5, width=2), # controls size of points
+                     text=~label, #This is that extra column we made earlier for which we will use for cell ID
+                     hoverinfo="text")
       plot
     })
   })
@@ -997,7 +962,7 @@ server <- function(input, output,session) {
     metadata=as.data.frame(scrna@meta.data) 
     #metadata=metadata %>% select(starts_with("var"))
     var=c(colnames(metadata),'Ident')
-    selectInput("tsnea","Select Group to display",var,selected = "Ident")
+    selectInput("tsnea","Select Group to display",var,selected = "var_cluster")
   })
   
   #Generate drop down menu for the default ident/cluster/variable of comparison
@@ -1011,7 +976,7 @@ server <- function(input, output,session) {
   output$setidentlist = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% dplyr::select(starts_with("var_"))
+    metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
     var=c(colnames(metadata))
     selectInput("setidentlist","Choose category to compare",var,"pick one")
     
@@ -1226,7 +1191,7 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       scrna=fileload()
       metadata=as.data.frame(scrna@meta.data)
-      metadata=metadata %>% dplyr::select(starts_with("var_"))
+      metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
       var=c("ident",colnames(metadata))
       selectInput("hmpgrp","Select a Variable",var,"pick one")
     })
@@ -1236,6 +1201,11 @@ server <- function(input, output,session) {
   heatmap <- reactive({
     withProgress(session = session, message = 'Generating...',detail = 'Please Wait...',{
       scrna=fileload()
+      if("SCT5" %in% names(scrna@assays)){
+        DefaultAssay(scrna)="SCT5"
+      }else{
+        DefaultAssay(scrna)="SCT"
+      }
       if(input$shmptype =="deggene"){
         markers=scrna@misc$findallmarkers
         markers=markers[markers$cluster==input$heatmapclust,]
@@ -1356,7 +1326,7 @@ server <- function(input, output,session) {
   output$setvar = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% dplyr::select(starts_with("var_"))
+    metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
     var=c(colnames(metadata))
     selectInput("setvar","Choose category",var,"pick one")
   })
@@ -1375,8 +1345,8 @@ server <- function(input, output,session) {
   #they are expressed in
   clusts= reactive({
     scrna=fileload()
-    Idents(object = scrna) = input$setvar
-    avgexp=AverageExpression(object = scrna,group.by = input$setvar)
+    Idents(scrna) = input$setvar
+    avgexp=AggregateExpression(scrna,group.by = input$setvar)
     avgexp= as.data.frame(avgexp$RNA) %>% dplyr::select(input$selectcluster)
     genes.use=rownames(avgexp)
     data.use <- GetAssayData(object = scrna,slot = "data")
@@ -1489,7 +1459,7 @@ server <- function(input, output,session) {
   output$setdotvar = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% dplyr::select(starts_with("var_"))
+    metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
     var=c(colnames(metadata))
     selectInput("setdotvar","Choose category",var,"pick one")
   })
@@ -1553,7 +1523,7 @@ server <- function(input, output,session) {
   output$setclust = renderUI({
     scrna=fileload()
     metadata=as.data.frame(scrna@meta.data)
-    metadata=metadata %>% dplyr::select(starts_with("var_"))
+    metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
     var=c(colnames(metadata))
     selectInput("setclust","Choose category",var,"pick one")
   })
@@ -1740,7 +1710,7 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
       scrna=fileload()
       metadata=as.data.frame(scrna@meta.data)
-      metadata=metadata %>% dplyr::select(starts_with("var_"))
+      metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
       options=colnames(metadata)
       selectInput("pairby","Select cell group ",options,selected=options[1])
     })
@@ -1858,7 +1828,7 @@ server <- function(input, output,session) {
     # }else{
       Idents(scrna)=input$pairby
       org=as.character(file$organism[file$projects==input$projects])
-      scrna= RunLigRec(scrna,group.by = input$pairby,org = org)
+      scrna= RunLigRec2(scrna,group.by = input$pairby,org = org,assay = "SCT5")
       results =  scrna@misc$ligrecres 
     #}
     return(results)
@@ -1983,7 +1953,7 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
       scrna=fileload()
       metadata=as.data.frame(scrna@meta.data)
-      metadata=metadata %>% dplyr::select(starts_with("var_"))
+      metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
       options=colnames(metadata)
       selectInput("pairbynet","Select cell group ",options,selected=options[1])
     })
@@ -2213,7 +2183,7 @@ server <- function(input, output,session) {
     withProgress(session = session, message = 'Loading...',detail = 'Please Wait...',{
       scrna=fileload()
       metadata=as.data.frame(scrna@meta.data)
-      metadata=metadata %>% dplyr::select(starts_with("var_"))
+      metadata=metadata %>% dplyr::select(contains(c("var_","predicted.")))%>% dplyr::select(!contains("score"))
       options=colnames(metadata)
       selectInput("pairbyheatnet","Select cell group ",options,selected=options[1])
     })

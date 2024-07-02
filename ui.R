@@ -11,7 +11,7 @@ library(shinyBS)
 options(shiny.sanitize.errors = FALSE)
 options(shiny.maxRequestSize=600*1024^2) 
 ui <- dashboardPage(
-  dashboardHeader(title = "sEuRaT",titleWidth = 350,dropdownMenuOutput("userloggedin")),
+  dashboardHeader(title = "SeuratViewer - single cell RNASeq",titleWidth = 350,dropdownMenuOutput("userloggedin")),
   dashboardSidebar(width = 350,
                    div(style="overflow-y: scroll"),
                    # tags$style(type="text/css",
@@ -180,8 +180,8 @@ ui <- dashboardPage(
                     column(6,uiOutput("umapb")) #Dimensionality reduction method of left plot
                   ),
                   fluidRow(
-                    column(6,selectInput("categorya2", "Select one",c('Categories' = "var",'Cluster' = "clust", 'Gene Expression' = "geneexp"),selected = "clust")),
-                    column(6,selectInput("categoryb2", "Select one",c('Categories' = "var",'Cluster' = "clust", 'Gene Expression' = "geneexp"),selected = "clust"))
+                    column(6,selectInput("categorya2", "Select metadata",c('Categories' = "var",'Cluster' = "clust", 'Gene Expression' = "geneexp"),selected = "clust")),
+                    column(6,selectInput("categoryb2", "Select metadata",c('Categories' = "var",'Cluster' = "clust", 'Gene Expression' = "geneexp"),selected = "clust"))
                   ),
                   sliderInput("pointa2", "Point Size:",min = 0, max = 5, value = 1,step=.25),
                   conditionalPanel(
